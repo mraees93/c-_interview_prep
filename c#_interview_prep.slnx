@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="OOP_Basics/OOP_Basics.csproj" />
+  <Project Path="SOLID_Principles/SOLID_Principles.csproj" />
+</Solution>
