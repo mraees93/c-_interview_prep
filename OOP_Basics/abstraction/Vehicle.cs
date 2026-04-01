@@ -4,6 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 // Abstraction hides unecessary details and only shows important details to the user
+
+/* benefits: 
+- to achieve security
+- can also use an interface
+*/
 namespace OOP_Basics.abstraction
 {
     abstract class Vehicle
