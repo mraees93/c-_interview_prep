@@ -1,0 +1,3 @@
+In the refactored code, the User class is responsible solely for representing user data. The UserService class now handles user registration, separating concerns related to user data management from user registration logic. The UserService class is responsible only for the business logic of registering a user.
+
+This separation of responsibilities adheres to the Single Responsibility Principle, making the code easier to understand, maintain, and extend.
