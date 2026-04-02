@@ -1,0 +1,3 @@
+Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.
+
+This principle promotes the idea that existing code should be able to be extended with new functionality without modifying its source code. It encourages the use of abstraction and polymorphism to achieve this goal, allowing for code to be easily extended through inheritance or composition.
