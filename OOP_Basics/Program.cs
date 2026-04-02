@@ -1,9 +1,15 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using OOP_Basics.abstraction;
- Vehicle myCar = new Car();
-        myCar.Start();
-        myCar.Stop();
+// using OOP_Basics.abstraction;
+//  Vehicle myCar = new Car();
+//         myCar.Start();
+//         myCar.Stop();
 
-        Vehicle myBike = new Bike();
-        myBike.Start();
-        myBike.Stop();
+//         Vehicle myBike = new Bike();
+//         myBike.Start();
+//         myBike.Stop();
+
+using OOP_Basics.encapsulation;
+BankAccount myAccount = new BankAccount(1000);
+        myAccount.Deposit(500);
+        myAccount.Withdraw(200);
+        Console.WriteLine($"Final Balance: {myAccount.GetBalance()}");
