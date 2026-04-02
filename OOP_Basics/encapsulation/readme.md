@@ -20,3 +20,5 @@ Bank account functionality explained:
 - Users can only modify balance through the Deposit() and Withdraw() methods.
 
 - The GetBalance() method provides controlled access to check the balance.
+
+This ensures security and prevents unauthorized changes, just like how a bank protects your money.
