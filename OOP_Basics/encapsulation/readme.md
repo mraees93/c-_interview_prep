@@ -12,3 +12,11 @@ Imagine you are using an ATM to withdraw money:
 - You request cash by pressing buttons (methods to access data).
 
 - The ATM only allows valid transactions and prevents direct access to the cash inside.
+
+Bank account functionality explained:
+
+- The balance variable is private, meaning it cannot be accessed directly from outside the class.
+
+- Users can only modify balance through the Deposit() and Withdraw() methods.
+
+- The GetBalance() method provides controlled access to check the balance.
