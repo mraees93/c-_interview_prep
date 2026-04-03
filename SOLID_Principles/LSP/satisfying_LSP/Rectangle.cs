@@ -1,0 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SOLID_Principles.LSP.satisfying_LSP
+{
+    public class Rectangle : Shape
+    {
+        public double Width { get; set; }
+
+        public double Height { get; set; }
+
+        public override double Area => Width * Height;
+    }
+}
