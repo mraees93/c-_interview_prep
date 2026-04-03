@@ -1,0 +1,3 @@
+In the fixed example, we've segregated the IShape interface into two smaller, more focused interfaces: IShape2D and IShape3D. Each shape class now implements only the interface that is relevant to its functionality.
+
+This adheres to the Interface Segregation Principle by ensuring that clients are not forced to depend on methods that they do not use. Clients can now depend only on the interfaces that they need, promoting better code reuse and flexibility.
