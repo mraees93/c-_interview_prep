@@ -1,0 +1,1 @@
+allows a class (child) to inherit properties and behaviors (methods) from another class (parent).
