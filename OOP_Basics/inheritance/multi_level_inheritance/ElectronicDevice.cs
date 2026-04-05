@@ -29,7 +29,7 @@ namespace OOP_Basics.inheritance.multi_level_inheritance
             Smartphone myPhone = new Smartphone();
             myPhone.PowerOn();
             myPhone.MakeCall();
-            myPhone.BrowseInternet();
+            myPhone.BrowseInternet(); // Smartphone class inherits from both parents
         }
     }
 }
