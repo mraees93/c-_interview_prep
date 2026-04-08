@@ -5,33 +5,54 @@ using System.Threading.Tasks;
 
 namespace OOP_Basics.abstraction
 {
-    abstract class Vehicle
-    {
-        //abstract method (must be implemented by derived classes)
-        public abstract void Start();
+    // abstract class Vehicle
+    // {
+    //     //abstract method (must be implemented by derived classes, you cannot create objects from it)
+    //     public abstract void Start();
 
-        //concrete method (already implemented)
-        public void Stop()
-        {
-            Console.WriteLine("Vehicle stopped.");
-        }
+    //     //concrete method (already implemented)
+    //     public void Stop()
+    //     {
+    //         Console.WriteLine("Vehicle stopped.");
+    //     }
+    // }
+
+    //An interface is a completely "abstract class", which can only contain abstract methods and properties (with empty bodies)
+    interface IVehicle
+    {
+        void Start();
+        void Stop();
     }
 
 //car class inherits from vehicle
-class Car : Vehicle
+class Car : IVehicle
 {
-    public override void Start()
+    public void Start()
     {
         Console.WriteLine("Car is starting.");
+    }
+    //Abstract methods are "incomplete" and act as a requirement for child classes.
+
+    // Using override tells the compiler that this method is intentionally fulfilling that requirement, rather than 
+    // just being a new method with the same name.
+
+     public void Stop()
+    {
+        Console.WriteLine("Car is stopping.");
     }
 }
 
 //bike class inherits from vehicle
-class Bike : Vehicle
+class Bike : IVehicle
 {
-    public override void Start()
+    public void Start()
     {
         Console.WriteLine("Bike is starting.");
+    }
+
+    public void Stop()
+    {
+        Console.WriteLine("Bike is stopping.");
     }
 }
 
