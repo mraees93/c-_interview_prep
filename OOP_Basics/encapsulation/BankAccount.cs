@@ -8,7 +8,7 @@ namespace OOP_Basics.encapsulation
     public class BankAccount
     {
         private double balance; // internal data is hidden
-        public BankAccount (double initialBalance)
+        public BankAccount (double initialBalance) //constructor
         {
             balance = initialBalance;
         }
