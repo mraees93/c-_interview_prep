@@ -11,3 +11,5 @@ namespace SOLID_Principles.SRP.violating_SRP.satisfying_SRP
         public string Email { get; set; }
     }
 }
+
+//in this class we can add more fields and methods thats very closely related to the user
