@@ -23,6 +23,7 @@ namespace alogorithm_patterns.sliding_window
     {
         static int maxSum(int[] arr, int n, int k)
         {
+            //check length of arr
             if(n <= k)
             {
                 Console.WriteLine("Invalid");
@@ -46,5 +47,5 @@ namespace alogorithm_patterns.sliding_window
 
             return maxSum;
         }
-    }
+    } // ms= 6, ws=6
 }
