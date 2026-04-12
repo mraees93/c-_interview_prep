@@ -21,6 +21,7 @@ namespace SOLID_Principles.SRP.violating_SRP
     }
 }
 /*
+the User class is a Data Model (or Entity).
 the User class manages user data (username and email), and contains logic
 for registering a user. This violates the SRP because the class has more
 than one reason to change. It could change due to:
