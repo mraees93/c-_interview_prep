@@ -56,6 +56,14 @@ class Bike : IVehicle
     }
 }
 
+/*
+Abstraction is the act of hiding these internal details. A user of your code only needs to know about IVehicle; 
+they don't need to care how the bike’s engine or chain works internally.
+
+Implementation Hiding
+By using the interface, you can write code that operates on a vehicle without knowing it’s a Bike
+*/
+
 // class Program
 // {
 //     static void Main()
