@@ -1,0 +1,4 @@
+difficult:
+dip
+lsp
+ocp
