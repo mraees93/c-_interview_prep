@@ -22,7 +22,20 @@ Use the Adapter Pattern or Wrapper Pattern. I would create my own interface (e.g
 
 pro tip: This shows you know how to protect the "Core" of your application from external changes—a sign of a mature Intermediate Engineer.
 
-If you want to prove you've mastered DIP, mention these three things together:
-Abstractions: High-level and low-level modules both depend on interfaces.
-DI Container: You use .NET Core’s built-in IServiceCollection to manage these.
-Mocking: You use libraries like Moq or NSubstitute in your Unit Tests to take advantage of these inverted dependencies.
+5. How would you explain DIP to a junior developer without using the word 'Interface'?
+
+I’d explain it using the Plug-and-Socket analogy. Imagine a wall socket (the abstraction) and a lamp (the detail). The lamp doesn’t care how the electricity is generated—whether it's coal, nuclear, or solar—it just needs the plug to fit the socket. DIP is about ensuring our high-level business logic defines the 'socket' it needs, rather than being hard-wired directly into a specific power plant.
+
+6. What is the difference between Dependency Inversion (DIP), Dependency Injection (DI), and Inversion of Control (IoC)?
+
+DIP is the Principle (the 'What'): It’s the high-level rule that we should depend on abstractions.
+IoC is the Design Pattern (the 'Where'): It’s the broad concept of handing over control of the flow to a framework.
+DI is the Implementation (the 'How'): It’s the actual act of passing the dependency (usually via a constructor) into the class that needs it."
+
+7. If we have 50 services and we create 50 interfaces just to satisfy DIP, aren't we over-engineering?
+
+It can be. This is called 'Interface Explosion.' In an intermediate role, I aim for balance. If a class is a simple internal helper that will never be swapped and has no side effects (like I/O), an interface might be overkill. However, for any class that performs business logic or external communication, the 'cost' of the interface is worth the 'benefit' of testability and decoupling.
+
+8. How does violating DIP affect your Unit Tests?
+
+It makes true unit testing impossible. If my Service class creates a new SqlDatabase(), my test is forced to connect to a real database. This makes the tests slow, flaky, and dependent on the environment. By following DIP, I can inject a Mock or Stub implementation, allowing me to test my business logic in isolation without any external dependencies.
