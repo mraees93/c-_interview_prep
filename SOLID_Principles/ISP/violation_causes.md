@@ -9,3 +9,8 @@ The Impact: This leads to a codebase filled with NotImplementedException or empt
 3. Violation of the "Principle of Least Privilege"
 ISP violation creates a security and stability risk by exposing functionality to parts of the system that shouldn't have access to it.
 The Impact: If a GuestUser class implements a "fat" interface that includes DeleteRecord(), a bug or a malicious actor could theoretically call that method. By segregating interfaces, you ensure that a class literally cannot perform actions it isn't authorized for.
+
+Quick Memorization Recap:
+Bloated Builds: Too many unnecessary recompilations.
+Lying Code: Classes full of NotImplemented "junk."
+Security Risk: Exposing dangerous methods to unauthorized classes.
