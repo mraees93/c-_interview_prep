@@ -67,4 +67,62 @@ In short: Your query answers "Who earns a lot?" while the goal was to answer "Wh
 
 
 
-3. Return a list of all customers (Names and Emails) who have spent more than R5,000 in total across all their orders, but only include orders that are currently marked as 'Shipped'.
+Schema Details:
+Lawyers (LawyerID, Name, Department)
+Matters (MatterID, Title, LeadLawyerID)
+Documents (DocID, MatterID, FileSizeKB)
+
+1. Show every Matter title and the name of the Lawyer leading it.
+
+SELECT m.Title, l.Name
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LawyerID
+
+SELECT m.Title, l.Name 
+FROM Matters m 
+JOIN Lawyers l ON m.LeadLawyerID = l.LawyerID;
+
+*tip:
+In a database, you make Matters.LeadLawyerID point to Lawyers.LawyerID using a Foreign Key constraint. This tells the database that every ID entered in the Matters table must already exist in the Lawyers table.
+
+
+Schema Details:
+Lawyers (LawyerID, Name, Department)
+Matters (MatterID, Title, LeadLawyerID)
+Documents (DocID, MatterID, FileSizeKB)
+
+2. Find all Lawyers who do not currently have any Matters assigned to them.
+
+Mine:
+SELECT l.Name, m.Title
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+WHERE m.Matters IS NULL; *** i was referring to a table alias instead of a column
+
+answer:
+SELECT l.Name
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+WHERE m.MatterID IS NULL;
+
+*tip:
+To find records that have no match in a LEFT JOIN, always pick the Primary Key of the right-hand table
+
+3. List every Document ID alongside its Matter title and the Lead Lawyer's name.
+
+SELECT d.DocID, m.Title, l.Name
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON d.MatterID = m.MatterID;
+
+
+Schema Details:
+Lawyers (LawyerID, Name, Department)
+Matters (MatterID, Title, LeadLawyerID)
+Documents (DocID, MatterID, FileSizeKB)
+
+4. Calculate the total sum of FileSizeKB for each Lawyer based on the matters they lead.
+
+join the 3 tables based on relationships
+use group by based on matters group
+calculate sum by group
