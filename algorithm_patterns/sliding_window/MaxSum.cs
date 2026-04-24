@@ -41,11 +41,11 @@ namespace alogorithm_patterns.sliding_window
 
             for(int i = k; i < n; i++)
             {
-                windowSum += arr[i] - arr[i - k];
+                windowSum += arr[i] - arr[i - k]; // adds next number to window then subtracts first number in previous window
                 maxSum = Math.Max(maxSum, windowSum);
-            }
-
+            }// ms=39, ws=39
+            //17 + (23 - 1)
             return maxSum;
         }
-    } // ms= 6, ws=6
+    } 
 }

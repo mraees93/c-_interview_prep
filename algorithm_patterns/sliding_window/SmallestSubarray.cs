@@ -29,11 +29,12 @@ namespace alogorithm_patterns.sliding_window
 
             return minLength == int.MaxValue ? 0 : minLength;
         }
-    } // currentSum = 6, minlength = 2, left=4, right=5
+    } // currentSum = 8, minlength = 2, left=4, right=4, nums.length=6
 }
 /*
 Target: 7 
 Array (nums): [2, 3, 1, 2, 4, 3]
+output: 2 coz [4, 3]
 */
 
 /*
