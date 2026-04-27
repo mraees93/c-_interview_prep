@@ -123,6 +123,46 @@ Documents (DocID, MatterID, FileSizeKB)
 
 4. Calculate the total sum of FileSizeKB for each Lawyer based on the matters they lead.
 
-join the 3 tables based on relationships
-use group by based on matters group
-calculate sum by group
+mine:
+SELECT l.Name, m.Title, SUM(d.FileSizeKB)
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+
+answer:
+SELECT l.Name, SUM(d.FileSizeKB) AS TotalStorage
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Name;
+
+*tip:
+Columns: The result set will have exactly two columns: Name and TotalStorage.
+Grouping: It collapses all the individual rows for "John Doe" into a single row. If John Doe is leading 5 different matters with 10 documents total, you won't see the 10 rows; you will see one row with his name and the combined sum of all those files.
+
+4.1. What if I only want to see lawyers who are using more than 10,000 KB?
+
+SELECT l.Name, SUM(d.FileSizeKB) AS TotalStorage
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Name
+HAVING SUM(d.FileSizeKB) > 10000;
+
+
+Schema Details:
+Lawyers (LawyerID, Name, Department)
+Matters (MatterID, Title, LeadLawyerID)
+Documents (DocID, MatterID, FileSizeKB)
+
+5. Show all Matters and the count of documents each has, including matters with zero documents.
+
+SELECT m.Title, COUNT(d.Documents) // forgot "d.DocID" and alias here e.g COUNT(d.DocID) AS DocumentCount
+FROM Matters m
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+//You have to use GROUP BY when you use an aggregate function like COUNT(), SUM(), or AVG() alongside a regular column (like m.Title), SQL needs to know how to group the individual rows.
+
+SELECT m.Title, COUNT(d.DocID) AS DocumentCount
+FROM Matters m
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY m.Title;

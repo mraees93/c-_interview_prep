@@ -25,11 +25,11 @@ No. It is impossible and often impractical to make a class closed to every possi
 Pro Tip: Use the phrase "Identify the axis of change." It shows you think about business requirements before over-engineering
 
 5. How does Dependency Injection (DI) help in following the Open/Closed Principle ?
-- Dependency Injection (DI) is a software design pattern used in C# and .NET to achieve Inversion of Control (IoC). Instead of a class creating its own dependencies (e.g., using the new keyword), the dependencies are "injected" into the class from an external source
+- Dependency Injection (DI) is a software design pattern used in C# and .NET to achieve Inversion of Control (IoC). Instead of a class creating its own dependencies (e.g., using the new keyword), the dependencies are "injected" into the class via constructor from an external source
 
 DI allows us to swap implementations at the configuration level (e.g., in Program.cs or Startup.cs) rather than inside the business logic. If my service depends on IEmailProvider, I can swap SmtpEmailProvider for SendGridEmailProvider just by changing the DI container registration. The service itself remains closed because its code never changes, but its functionality is extended by the new provider.
 
-i can also implement dependency injection by creating an abstract class or interface, implement it, create different classes to eliminate if/else statements and use polymorphism to change to form of the methods inside the abstract class or interface
+i can also implement dependency injection by creating an abstract class or interface, implement it, create different classes to eliminate if/else statements and use polymorphism to change the form of the methods inside the abstract class or interface
 
 Since LexisNexis uses .NET Core, mention how the built-in IServiceCollection makes OCP easier to implement.
 
