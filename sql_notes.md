@@ -18,3 +18,17 @@ Logic: You join them, then look for the "empty" spots where the match failed.
 4. The "Integrity" check
 If you know for a fact (via the schema) that a column is NOT NULL (mandatory), an INNER JOIN and LEFT JOIN will actually return the exact same result.
 Example: If every Matter must have a LeadLawyerID, then Matters JOIN Lawyers is the same as Matters LEFT JOIN Lawyers.
+
+
+
+Tip:
+If they ask you to filter based on an aggregate (Sum, Count, Avg), always reach for HAVING. If they ask you to filter based on a specific row property, use WHERE.
+
+
+
+
+a LEFT JOIN is more "expensive" for the database than an INNER JOIN, and that you only use it when strictly necessary.???
+
+
+The Bottom Line:
+Mastering Inner and Left Joins is 80% of the battle. The other 20%—which is what the interview focuses on—is knowing when to use which one and how to keep the query fast as the database grows to millions of records.

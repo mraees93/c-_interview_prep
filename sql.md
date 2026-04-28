@@ -65,7 +65,7 @@ In short: Your query answers "Who earns a lot?" while the goal was to answer "Wh
 */
 
 
-
+questions confirming you know how to join:
 
 Schema Details:
 Lawyers (LawyerID, Name, Department)
@@ -150,11 +150,6 @@ GROUP BY l.Name
 HAVING SUM(d.FileSizeKB) > 10000;
 
 
-Schema Details:
-Lawyers (LawyerID, Name, Department)
-Matters (MatterID, Title, LeadLawyerID)
-Documents (DocID, MatterID, FileSizeKB)
-
 5. Show all Matters and the count of documents each has, including matters with zero documents.
 
 SELECT m.Title, COUNT(d.Documents) // forgot "d.DocID" and alias here e.g COUNT(d.DocID) AS DocumentCount
@@ -166,3 +161,45 @@ SELECT m.Title, COUNT(d.DocID) AS DocumentCount
 FROM Matters m
 LEFT JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY m.Title;
+
+Schema Details:
+Lawyers (LawyerID, Name, Department)
+Matters (MatterID, Title, LeadLawyerID)
+Documents (DocID, MatterID, FileSizeKB)
+
+6. Retrieve only the Matters that have a total file size larger than 5000 KB.
+
+mine:
+SELECT m.Title, d.FileSizeKB
+FROM Matters m
+JOIN Documents d ON m.MatterID = d.MatterID
+WHERE d.FileSizeKB > 5000;
+
+answer:
+SELECT m.Title, SUM(d.FileSizeKB) TotalFileSize
+FROM Matters m
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY m.Title
+HAVING SUM(d.FileSizeKB) > 5000;
+
+
+Schema Details:
+Lawyers (LawyerID, Name, Department)
+Matters (MatterID, Title, LeadLawyerID)
+Documents (DocID, MatterID, FileSizeKB)
+
+
+
+
+
+
+Intermediate-level questions that specifically target the "20%" logic, performance, and data integrity:
+
+
+1. List all Lawyers and their total file storage. If a lawyer has no files, show 0 instead of NULL
+
+SELECT l.Name, COALESCE(SUM(d.FileSizeKB), 0) AS TotalFileStorage
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Name
