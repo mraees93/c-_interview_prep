@@ -35,3 +35,5 @@ LEFT JOIN Documents d ON m.MatterID = d.MatterID
 WHERE d.DocID IS NULL;
 
 -- Key Concept: Combining an INNER JOIN (must have a matter) with a LEFT JOIN (to check for missing documents).
+-- The reason we use LEFT JOIN for the documents is specifically so we don't lose the Matter title just because it's empty. 
+-- If you used an INNER JOIN there, any matter without a document would vanish from the list entirely!
