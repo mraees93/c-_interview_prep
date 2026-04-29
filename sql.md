@@ -7,6 +7,8 @@ Employees (ID, Name, DeptID, Salary) //child of Departments coz DeptID (foreign 
 Products (ProductID, ProductName) 
 Sales (SaleID, EmployeeID, ProductID, Amount, SaleDate) //child of Products coz ProductID (foreign key) refers to Products ProductID primary key
 
+
+
 1. Intermediate Joins & Unmatched Records
 Question: Write a SQL query to retrieve all employee names and their department names. Ensure you include employees who have not been assigned to a department yet.
 
@@ -202,4 +204,25 @@ SELECT l.Name, COALESCE(SUM(d.FileSizeKB), 0) AS TotalFileStorage
 FROM Lawyers l
 LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 LEFT JOIN Documents d ON m.MatterID = d.MatterID
-GROUP BY l.Name
+GROUP BY l.Name  
+
+//The database now looks at the Name column, "squashes" all rows with the same name into one, and runs the SUM calculation on the FileSizeKB column
+//By adding GROUP BY l.Name, you are explicitly telling SQL: "I want one row per name."
+
+
+2. Find the Names of Lawyers who have at least one Matter, but that Matter has zero documents.
+
+try:
+SELECT l.Name, m.Title, COUNT(d.MatterID) AS DocumentCount
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+WHERE COUNT(d.MatterID) >= 1  //You cannot use an aggregate function (like COUNT) in a WHERE clause.
+GROUP BY l.Name;
+//WHERE filters individual rows before the computer counts them. To filter after the count is calculated, you must use HAVING.
+//You selected l.Name and m.Title, but you only grouped by l.Name.
+The Rule: Every column in your SELECT that isn't inside a function (like COUNT) must be in your GROUP BY.
+The Result: The database wouldn't know which Title to show if a lawyer had three different matters.
+
+//You used LEFT JOIN to keep all lawyers, but then used WHERE COUNT... >= 1.
+The Result: This effectively turns your query into an INNER JOIN. If you only want lawyers with at least one document, an INNER JOIN is more efficient.
