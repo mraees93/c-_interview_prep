@@ -64,3 +64,19 @@ GROUP BY l.LawyerID, l.Name;
 -- they are completely deleted from your results.
 -- The Previous Solution (LEFT JOIN): This keeps every lawyer in the list. If they have no documents, they stay in the list with a count of 0.
 -- Interview Tip: In a reporting scenario, managers usually want to see everyone (including those with 0), so LEFT JOIN is safer.
+
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+--Q4: Filtered Aggregates (Where vs. Having)
+-- 4. List Matters that have a total file size greater than 10,000 KB, but ignore any individual documents that are smaller 
+-- than 100 KB in that calculation.
+
+SELECT m.Title, SUM(CASE WHEN d.FileSizeKB >= 10000 THEN d.FileSizeKB END) AS TotalFileSize
+FROM Matters m 
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY m.Title
+HAVING SUM(d.FileSizeKB) > 10000;

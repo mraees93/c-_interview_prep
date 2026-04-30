@@ -32,3 +32,8 @@ a LEFT JOIN is more "expensive" for the database than an INNER JOIN, and that yo
 
 The Bottom Line:
 Mastering Inner and Left Joins is 80% of the battle. The other 20%—which is what the interview focuses on—is knowing when to use which one and how to keep the query fast as the database grows to millions of records.
+
+
+
+
+Rule of Thumb: Use SUM for values (money, weight, sizes) and COUNT for tracking "how many" items there are.
