@@ -24,3 +24,8 @@ isp
 
 
 to test solid further ask ai to give code examples to identify whuch principle its violating
+
+1 May:
+tested all 5 in snippet
+
+skim through basic definitions, smells, fixes in mind

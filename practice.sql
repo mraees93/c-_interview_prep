@@ -71,6 +71,12 @@ GROUP BY l.LawyerID, l.Name;
 -- Matters (MatterID, Title, LeadLawyerID)
 -- Documents (DocID, MatterID, FileSizeKB)
 
+
+
+
+
+--4, 5 double check ------------------------------------------------------------------------
+
 --Q4: Filtered Aggregates (Where vs. Having)
 -- 4. List Matters that have a total file size greater than 10,000 KB, but ignore any individual documents that are smaller 
 -- than 100 KB in that calculation.
@@ -80,3 +86,40 @@ FROM Matters m
 JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY m.Title
 HAVING SUM(d.FileSizeKB) > 10000;
+
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+
+--5. List all Lawyers and any Matters they lead with 'Litigation' in the title. Lawyers with no 'Litigation' matters must still 
+-- appear in the list.
+
+--mine:
+SELECT l.Name, m.Title
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+WHERE m.Title LIKE '%Litigation%';
+
+--answer:
+SELECT l.Name, m.Title
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID 
+     AND m.Title LIKE '%Litigation%';
+
+
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+--6. Find the average document size (FileSizeKB) for each Department.
+
+SELECT l.Department, AVG(d.FileSizeKB) AS AvgDocSize
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Department;
