@@ -75,7 +75,7 @@ GROUP BY l.LawyerID, l.Name;
 
 
 
---4, 5 double check ------------------------------------------------------------------------
+------------------------------------------------------ 4, 5, 7 double check ------------------------------------------------------------------------
 
 --Q4: Filtered Aggregates (Where vs. Having)
 -- 4. List Matters that have a total file size greater than 10,000 KB, but ignore any individual documents that are smaller 
@@ -123,3 +123,25 @@ FROM Lawyers l
 JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY l.Department;
+
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+-- 7. Find the single largest document (highest FileSizeKB) for each Department. Show the Department name, the Document ID, and the size.
+
+SELECT l.Department, d.DocID, MAX(d.FileSizeKB) AS MaxFileSize
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Department, d.DocID
+
+
+
+--8. List all Lawyers who lead more than one Matter in the 'Litigation' department.
+
+--9. Calculate the percentage of the total system storage (FileSizeKB) that each Department is responsible for.
+
+-- 10. Identify Matters where the Lead Lawyer belongs to a different Department than the Matter's title would suggest. (Specifically: Find Matters with 'Corporate' in the title, but led by a Lawyer in the 'Litigation' department).

@@ -29,3 +29,6 @@ to test solid further ask ai to give code examples to identify whuch principle i
 tested all 5 in snippet
 
 skim through basic definitions, smells, fixes in mind
+
+
+4 may - went through all 5 definitions
