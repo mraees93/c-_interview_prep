@@ -139,8 +139,27 @@ JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY l.Department, d.DocID
 
 
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
 
 --8. List all Lawyers who lead more than one Matter in the 'Litigation' department.
+--try:
+SELECT l.Name
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+WHERE m.Title LIKE '%Litigation%'
+AND m.Title > 1;
+
+--answer:
+SELECT l.Name, COUNT(m.MatterID) AS LitigationMatters
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+WHERE l.Department = 'Litigation'   -- Step 1: Filter the rows first
+GROUP BY l.LawyerID, l.Name         -- Step 2: Group them by lawyer
+HAVING COUNT(m.MatterID) > 1;       -- Step 3: Filter the groups after counting
+
 
 --9. Calculate the percentage of the total system storage (FileSizeKB) that each Department is responsible for.
 
