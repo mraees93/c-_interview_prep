@@ -75,24 +75,38 @@ GROUP BY l.LawyerID, l.Name;
 
 
 
------------------------------------------------------- 4, 5, 7 double check ------------------------------------------------------------------------
+------------------------------------------------------ 5, 7 double check ------------------------------------------------------------------------
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
 
---Q4: Filtered Aggregates (Where vs. Having)
--- 4. List Matters that have a total file size greater than 10,000 KB, but ignore any individual documents that are smaller 
--- than 100 KB in that calculation.
+-- 4. List Matters that have a total file size greater than 10,000 KB, 
+--but ignore any individual documents that are smaller than 100 KB in that calculation.
 
+--try:
 SELECT m.Title, SUM(CASE WHEN d.FileSizeKB >= 10000 THEN d.FileSizeKB END) AS TotalFileSize
 FROM Matters m 
 JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY m.Title
 HAVING SUM(d.FileSizeKB) > 10000;
 
+--answer:
+SELECT m.Title, SUM(d.FileSizeKB) AS TotalLargeFiles
+FROM Matters m
+JOIN Documents d ON m.MatterID = d.MatterID
+WHERE d.FileSizeKB >= 100        -- Step 1: Ignore files < 100KB immediately
+GROUP BY m.Title                 -- Step 2: Group the remaining "large" files
+HAVING SUM(d.FileSizeKB) > 10000; -- Step 3: Check if their sum is > 10,000
+
+--Use WHERE when you want to exclude specific items from a calculation (like "ignore small files").
+--Use HAVING when you want to exclude entire groups based on the final result (like "ignore cases that are small overall").
+
 
 -- Schema Details:
 -- Lawyers (LawyerID, Name, Department)
 -- Matters (MatterID, Title, LeadLawyerID)
 -- Documents (DocID, MatterID, FileSizeKB)
-
 
 --5. List all Lawyers and any Matters they lead with 'Litigation' in the title. Lawyers with no 'Litigation' matters must still 
 -- appear in the list.
@@ -109,6 +123,8 @@ FROM Lawyers l
 LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID 
      AND m.Title LIKE '%Litigation%';
 
+--Filter in ON: Filters the "right" table before the join. Keeps all rows from the "left" table.
+--Filter in WHERE: Filters the entire result after the join. Can accidentally delete "left" table rows.
 
 
 -- Schema Details:
