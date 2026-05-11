@@ -7,7 +7,7 @@ namespace SOLID_Principles.DIP.violating_DIP_2
 {
     public class LegalSearchService 
     {
-        // VIOLATION: Hard-coded dependency on a concrete class
+        // VIOLATION: Hard-coded dependency on a concrete class, its tightly coupled
         private readonly SqlLawReportRepository _repository = new SqlLawReportRepository();
 
         public void DisplayCase(int id)

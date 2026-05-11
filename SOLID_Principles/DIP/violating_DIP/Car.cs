@@ -13,7 +13,7 @@ namespace SOLID_Principles.DIP.violating_DIP
         {
             this.engine = new Engine(); // Violates DIP: Direct dependency on concrete Engine class
             //It is a violation when you use new to instantiate service-like dependencies or "volatile" 
-            //objects that perform logic, I/O, or database work.
+            //objects that perform logic, I/O, or database work. Its tightly coupled
         }
 
         public void StartCar()
