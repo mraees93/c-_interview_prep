@@ -75,7 +75,7 @@ GROUP BY l.LawyerID, l.Name;
 
 
 
------------------------------------------------------- 5, 7 double check ------------------------------------------------------------------------
+------------------------------------------------------ 7 double check ------------------------------------------------------------------------
 -- Schema Details:
 -- Lawyers (LawyerID, Name, Department)
 -- Matters (MatterID, Title, LeadLawyerID)
@@ -147,13 +147,29 @@ GROUP BY l.Department;
 -- Documents (DocID, MatterID, FileSizeKB)
 
 -- 7. Find the single largest document (highest FileSizeKB) for each Department. Show the Department name, the Document ID, and the size.
-
+--my try:
 SELECT l.Department, d.DocID, MAX(d.FileSizeKB) AS MaxFileSize
 FROM Lawyers l
 JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 JOIN Documents d ON m.MatterID = d.MatterID
-GROUP BY l.Department, d.DocID
+GROUP BY l.Department, d.DocID;
 
+--answer:
+SELECT Department, DocID, FileSizeKB
+FROM (
+    SELECT 
+        l.Department, 
+        d.DocID, 
+        d.FileSizeKB,
+        ROW_NUMBER() OVER(
+            PARTITION BY l.Department  -- Splits data into "piles" by Department
+            ORDER BY d.FileSizeKB DESC -- Sorts each "pile" largest to smallest
+        ) as rnk                       -- Assigns a "ticket number" (#1 is largest)
+    FROM Lawyers l
+    JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+    JOIN Documents d ON m.MatterID = d.MatterID
+) t
+WHERE rnk = 1;                         -- Keeps only the #1 (largest) from each pile
 
 -- Schema Details:
 -- Lawyers (LawyerID, Name, Department)
@@ -176,7 +192,34 @@ WHERE l.Department = 'Litigation'   -- Step 1: Filter the rows first
 GROUP BY l.LawyerID, l.Name         -- Step 2: Group them by lawyer
 HAVING COUNT(m.MatterID) > 1;       -- Step 3: Filter the groups after counting
 
+--you can absolutely use l.Department in the WHERE clause and l.LawyerID in the GROUP BY even if they 
+--aren't "part of the join" (meaning they aren't the columns used to link the tables).
+
+--The WHERE clause can use any column from any table listed in your FROM or JOIN statements.
+--Because you have Lawyers l in your query, you have full access to all its columns (Name, Department, LawyerID) to filter the data.
+
+--The GROUP BY ClauseYou can group by any column from the joined tables. 
+--In fact, grouping by l.LawyerID is highly recommended for an intermediate role:The "Duplicate Name" Problem: 
+--If you only grouped by l.Name and you had two different lawyers named "John Smith," the database would merge their matters together.
+--The Safety Net: By grouping by the Primary Key (LawyerID), you ensure each lawyer's count is kept separate, even if they share a name.
+
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
 
 --9. Calculate the percentage of the total system storage (FileSizeKB) that each Department is responsible for.
+
+SELECT 
+     l.Department, 
+     SUM(d.FileSizeKB) AS TotalSystemStorage,
+     (SUM(d.FileSizeKB) * 100.0 / SUM(SUM(d.FileSizeKB)) OVER()) AS Percentage
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Department
+
+
 
 -- 10. Identify Matters where the Lead Lawyer belongs to a different Department than the Matter's title would suggest. (Specifically: Find Matters with 'Corporate' in the title, but led by a Lawyer in the 'Litigation' department).
