@@ -8,7 +8,7 @@ namespace SOLID_Principles.DIP
     public class AlertSystemExample
     {
         // 1. THE ABSTRACTION
-        // This is the "bridge" that decouples the logic from the detail.
+        // This is the "bridge" that *DECOUPLES* the logic from the detail.
         public interface IMessageSender
         {
             void Send(string message);
