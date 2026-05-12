@@ -198,7 +198,7 @@ HAVING COUNT(m.MatterID) > 1;       -- Step 3: Filter the groups after counting
 --The WHERE clause can use any column from any table listed in your FROM or JOIN statements.
 --Because you have Lawyers l in your query, you have full access to all its columns (Name, Department, LawyerID) to filter the data.
 
---The GROUP BY ClauseYou can group by any column from the joined tables. 
+--The GROUP BY Clause You can group by any column from the joined tables. 
 --In fact, grouping by l.LawyerID is highly recommended for an intermediate role:The "Duplicate Name" Problem: 
 --If you only grouped by l.Name and you had two different lawyers named "John Smith," the database would merge their matters together.
 --The Safety Net: By grouping by the Primary Key (LawyerID), you ensure each lawyer's count is kept separate, even if they share a name.
@@ -221,5 +221,16 @@ JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY l.Department
 
 
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
 
--- 10. Identify Matters where the Lead Lawyer belongs to a different Department than the Matter's title would suggest. (Specifically: Find Matters with 'Corporate' in the title, but led by a Lawyer in the 'Litigation' department).
+-- 10. Identify Matters where the Lead Lawyer belongs to a different Department than the Matter's title would suggest. 
+-- (Specifically: Find Matters with 'Corporate' in the title, but led by a Lawyer in the 'Litigation' department).
+
+SELECT m.Title, l.Name, l.Department
+FROM Matters m
+JOIN Lawyers l ON m.LeadLawyerID = l.LawyerID -- Links the matter to its lead lawyer
+WHERE m.Title LIKE '%Corporate%'               -- Filters for specific matter keyword
+  AND l.Department = 'Litigation';             -- Filters for the "mismatched" department
