@@ -37,3 +37,41 @@ FROM Categories c
 JOIN Products p ON c.CategoryID = p.CategoryID
 JOIN OrderItems oi ON p.ProductID = oi.ProductID
 GROUP BY c.CategoryName;
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--4. List the Names of Customers who have ordered products from the 'Electronics' category.
+
+SELECT DISTINCT o.CustomerName
+FROM Orders o
+JOIN OrderItems oi ON o.OrderID = oi.OrderID
+JOIN Products p ON oi.ProductID = p.ProductID
+JOIN Categories c ON c.CategoryID = p.CategoryID
+WHERE c.CategoryName = 'Electronics';
+
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--------------------------------5. Find Orders where the total quantity of items is greater than 10
+
+SELECT oi.OrderID, COUNT(oi.Quantity) AS QuantityCount
+FROM OrderItems oi
+GROUP BY oi.OrderID
+HAVING COUNT(oi.Quantity) > 10;
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--6. Show every Product and its Category. If a product has no category (NULL CategoryID), show 'Uncategorized' using COALESCE.
+
+SELECT DISTINCT p.ProductName, COALESCE(c.CategoryName, 'Uncategorized') AS CategoryName
+FROM Products p
+LEFT JOIN Categories c ON p.CategoryID = c.CategoryID

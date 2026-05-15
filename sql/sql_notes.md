@@ -39,3 +39,9 @@ Mastering Inner and Left Joins is 80% of the battle. The other 20%—which is wh
 Rule of Thumb: Use SUM for values (money, weight, sizes) and COUNT for tracking "how many" items there are.
 
 If an interviewer asks you to filter based on a number of occurrences (like "more than 1", "at least 5"), your brain should immediately think: "Group By + Having Count."
+
+
+tips to avoid duplicates:
+
+- GROUP BY the column id
+- select DISTINCT

@@ -7,9 +7,12 @@ once p/week (went deep through all):
 srp, isp - last used 23 apr
 
 
-23, 26 apr (went deep through all):
+23, 26 apr, 12 may (went deep through all):
 dip
 lsp 
+ocp
+srp
+isp
 
 (definitions, code examples):
 
