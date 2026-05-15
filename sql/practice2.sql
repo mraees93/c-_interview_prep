@@ -58,7 +58,7 @@ WHERE c.CategoryName = 'Electronics';
 -- Orders (OrderID, OrderDate, CustomerName)
 -- OrderItems (ItemID, OrderID, ProductID, Quantity)
 
---------------------------------5. Find Orders where the total quantity of items is greater than 10
+--5. Find Orders where the total quantity of items is greater than 10
 
 SELECT oi.OrderID, COUNT(oi.Quantity) AS QuantityCount
 FROM OrderItems oi
@@ -76,6 +76,22 @@ HAVING COUNT(oi.Quantity) > 10;
 
 --6. Show every Product and its Category. If a product has no category (NULL CategoryID), show 'Uncategorized' using COALESCE.
 
-SELECT DISTINCT p.ProductName, COALESCE(c.CategoryName, 'Uncategorized') AS CategoryName
+SELECT p.ProductName, COALESCE(c.CategoryName, 'Uncategorized') AS CategoryName
 FROM Products p
-LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
+LEFT JOIN Categories c ON p.CategoryID = c.CategoryID;
+
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--------------------------------------------7. Find the most expensive Product in each Category (using a Window Function).
+
+SELECT c.CategoryName, 
+       p.ProductName,
+       MAX(p.Price) OVER( PARTITION BY c.CategoryName) AS Most_Expensive_Product
+FROM Categories c
+JOIN Products p ON c.CategoryID = p.CategoryID
+GROUP BY c.CategoryID, MAX(p.Price);
+

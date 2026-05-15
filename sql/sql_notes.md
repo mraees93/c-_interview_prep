@@ -65,3 +65,4 @@ SUM(Quantity)      "What is the total math total of the numbers in this column?"
 
 Use DISTINCT when you are jumping "up" a relationship to find unique parents (e.g., "Find unique CustomerNames from the Orders table").
 Do NOT use DISTINCT when you are listing items from a base inventory table (like Products), because each individual item should be allowed to show up on its own row.
+refer to practice2.sql file answer 6
