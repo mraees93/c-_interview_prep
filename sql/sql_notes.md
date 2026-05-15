@@ -36,8 +36,6 @@ Mastering Inner and Left Joins is 80% of the battle. The other 20%—which is wh
 
 
 
-Rule of Thumb: Use SUM for values (money, weight, sizes) and COUNT for tracking "how many" items there are.
-
 If an interviewer asks you to filter based on a number of occurrences (like "more than 1", "at least 5"), your brain should immediately think: "Group By + Having Count."
 
 
@@ -45,3 +43,25 @@ tips to avoid duplicates:
 
 - GROUP BY the column id
 - select DISTINCT
+
+
+
+
+
+Rule of Thumb: Use SUM for values (money, weight, sizes) and COUNT for tracking "how many" items there are.
+
+Using COUNT(Quantity) instead of SUM(Quantity) is one of the most common mistakes candidates make when transitioning from Junior to Intermediate roles.
+Here is why that mistake changes the logic of your code, and how to keep it straight in your notes:The Difference in Output
+
+Let's look at a single order that contains two items:
+Item 1: 2 laptops
+Item 2: 5 mice
+
+Function:            How the Database Thinks:                                                   Your Result: 
+COUNT(Quantity)    "How many rows or entries are there in this group?"                         2 (Because there are two separate rows of items)
+SUM(Quantity)      "What is the total math total of the numbers in this column?"               7 (\(2 + 5\) total items shipped)
+
+
+
+Use DISTINCT when you are jumping "up" a relationship to find unique parents (e.g., "Find unique CustomerNames from the Orders table").
+Do NOT use DISTINCT when you are listing items from a base inventory table (like Products), because each individual item should be allowed to show up on its own row.
