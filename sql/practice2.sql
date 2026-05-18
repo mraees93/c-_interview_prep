@@ -88,6 +88,7 @@ LEFT JOIN Categories c ON p.CategoryID = c.CategoryID;
 
 --------------------------------------------7. Find the most expensive Product in each Category (using a Window Function).
 
+--try:
 SELECT c.CategoryName, 
        p.ProductName,
        MAX(p.Price) OVER( PARTITION BY c.CategoryName) AS Most_Expensive_Product
@@ -95,3 +96,31 @@ FROM Categories c
 JOIN Products p ON c.CategoryID = p.CategoryID
 GROUP BY c.CategoryID, MAX(p.Price);
 
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--answer:
+-- OUTER QUERY: This runs last to select the clean, filtered results from our temporary set
+SELECT CategoryName, ProductName, Price --The outer query only sees these plain columns
+FROM (
+    -- INNER QUERY (Subquery): This runs first to gather the data and rank it
+    SELECT 
+        c.CategoryName, 
+        p.ProductName, 
+        p.Price,
+        
+        -- THE WINDOW FUNCTION:
+        ROW_NUMBER() OVER(
+            PARTITION BY c.CategoryID -- Group 1: Splits all products into virtual "piles" by their Category ID
+            ORDER BY p.Price DESC     -- Group 2: Sorts the products *inside* each pile from highest price to lowest
+        ) as rnk                      -- Group 3: Assigns a sequential number to each row in that pile (#1 is the most expensive)
+        
+    FROM Categories c
+    JOIN Products p ON c.CategoryID = p.CategoryID -- Standard inner join to pair products with their category names
+) t -- "t" is just an alias name given to this temporary subquery table so the outer query can read it
+WHERE rnk = 1; -- THE FILTER: Throws away ranks 2, 3, 4 etc., keeping only the single most expensive product per pile
+
+--Inner Query: Has access to c and p because they are explicitly joined inside it.
+--Outer Query: Only has access to t and the specific columns exposed by the inner SELECT list.
