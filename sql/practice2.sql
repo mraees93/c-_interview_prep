@@ -36,7 +36,7 @@ SELECT c.CategoryName, SUM(p.Price * oi.Quantity) AS TotalRevenue
 FROM Categories c
 JOIN Products p ON c.CategoryID = p.CategoryID
 JOIN OrderItems oi ON p.ProductID = oi.ProductID
-GROUP BY c.CategoryName;
+GROUP BY c.CategoryID, c.CategoryName;
 
 -- Categories (CategoryID, CategoryName)
 -- Products (ProductID, ProductName, CategoryID, Price)
@@ -124,3 +124,12 @@ WHERE rnk = 1; -- THE FILTER: Throws away ranks 2, 3, 4 etc., keeping only the s
 
 --Inner Query: Has access to c and p because they are explicitly joined inside it.
 --Outer Query: Only has access to t and the specific columns exposed by the inner SELECT list.
+
+
+-- 2. Find the Names of Lawyers who have at least one Matter, but that Matter has zero documents.
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+--SELECT l.Name, m.MatterID, 
