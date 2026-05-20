@@ -11,3 +11,9 @@ If you want to prove you've mastered DIP, mention these three things together:
 Abstractions: High-level and low-level modules both depend on interfaces.
 DI Container: You use .NET Core’s built-in IServiceCollection to manage these.
 Mocking: You use libraries like Moq or NSubstitute in your Unit Tests to take advantage of these inverted dependencies.
+
+When to Use an Abstract Class for DIP:
+While interfaces are the default choice for DIP, an abstract class is actually the better choice if your abstraction needs to enforce shared state or reusable logic across all implementations.
+
+TODO: 
+Code with abstract class

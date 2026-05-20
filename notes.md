@@ -16,7 +16,7 @@ isp
 
 (definitions, code examples):
 
-28 apr, skim through code examples:
+20 may, went deep:
 dip
 lsp
 ocp
