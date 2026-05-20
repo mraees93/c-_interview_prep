@@ -27,7 +27,7 @@ If they ask you to filter based on an aggregate (Sum, Count, Avg), always reach 
 
 
 
-a LEFT JOIN is more "expensive" for the database than an INNER JOIN, and that you only use it when strictly necessary.???
+a LEFT JOIN is more "expensive" for the database than an INNER JOIN, and that you only use it when strictly necessary.
 
 
 The Bottom Line:
@@ -59,7 +59,7 @@ Item 2: 5 mice
 
 Function:            How the Database Thinks:                                                   Your Result: 
 COUNT(Quantity)    "How many rows or entries are there in this group?"                         2 (Because there are two separate rows of items)
-SUM(Quantity)      "What is the total math total of the numbers in this column?"               7 (\(2 + 5\) total items shipped)
+SUM(Quantity)      "What is the math total of the numbers in this column?"               7 (\(2 + 5\) total items shipped)
 
 
 
