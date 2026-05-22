@@ -2,4 +2,4 @@ Abstraction hides unecessary details and only shows important details to the use
 
 benefits: 
 - to achieve security
-- can also use an interface
+- can use an interface and abstract class
