@@ -19,4 +19,16 @@ JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 LEFT JOIN Documents d ON m.MatterID = d.MatterID
 WHERE d.DocID IS NULL;
 
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
 -- 3. Calculate total documents per Lawyer, ensuring that if two lawyers have the same name, they are not combined.
+
+SELECT l.Name, COUNT(d.DocID) AS DocumentCount
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.LawyerID, l.Name;
