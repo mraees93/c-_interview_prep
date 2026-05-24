@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+//Behavioral 
+//Use this to eliminate complex conditional blocks (if-else or switch) and satisfy the Open/Closed Principle (OCP).
 namespace design_patterns.strategy_pattern
 {
     public class StrategyPattern
@@ -19,7 +21,7 @@ namespace design_patterns.strategy_pattern
         // This class encapsulates one specific business rule. It is entirely self-contained.
         public class DHLStrategy : IShippingStrategy
         {
-            // Implements DHL-specific logic. If rules change, you only edit this file.
+            // Implements DHL-specific logic. If rules change, you only edit this file. (real-world shipping company (DHL Express)
             public decimal Calculate(decimal orderTotal) => orderTotal * 0.15m;
         }
 
@@ -39,7 +41,7 @@ namespace design_patterns.strategy_pattern
             // Maintain a private reference to the abstraction layer.
             private readonly IShippingStrategy _shippingStrategy;
 
-            // INTERVIEW CHECK: Dependency Injection.
+            // INTERVIEW CHECK: Dependency Injection. not part of the Strategy pattern itself. used here to connect the pattern to modern .NET standards.
             // The precise strategy class is resolved and injected at runtime by the .NET DI engine.
             public OrderProcessor(IShippingStrategy shippingStrategy)
             {
