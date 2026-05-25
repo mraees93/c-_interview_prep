@@ -1,5 +1,11 @@
 //Use this inside Program.cs to explicitly tell the .NET runtime how to manage object creation and memory cleanup.
 
+/*
+"I implement Dependency Injection using Constructor Injection, passing the abstraction interface directly into the class constructor. 
+I then configure the Service Lifetime in Program.cs to control whether the .NET runtime should instantiate a fresh object every time, 
+reuse it within an HTTP request, or maintain a single instance globally."
+*/
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ====================================================================================
