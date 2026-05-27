@@ -96,6 +96,8 @@ FROM Categories c
 JOIN Products p ON c.CategoryID = p.CategoryID
 GROUP BY c.CategoryID, MAX(p.Price);
 
+--------------------------------------------7. Find the most expensive Product in each Category (using a Window Function).
+
 -- Categories (CategoryID, CategoryName)
 -- Products (ProductID, ProductName, CategoryID, Price)
 -- Orders (OrderID, OrderDate, CustomerName)
@@ -124,12 +126,3 @@ WHERE rnk = 1; -- THE FILTER: Throws away ranks 2, 3, 4 etc., keeping only the s
 
 --Inner Query: Has access to c and p because they are explicitly joined inside it.
 --Outer Query: Only has access to t and the specific columns exposed by the inner SELECT list.
-
-
--- 2. Find the Names of Lawyers who have at least one Matter, but that Matter has zero documents.
--- Schema Details:
--- Lawyers (LawyerID, Name, Department)
--- Matters (MatterID, Title, LeadLawyerID)
--- Documents (DocID, MatterID, FileSizeKB)
-
---SELECT l.Name, m.MatterID, 

@@ -19,15 +19,13 @@ Logic: You join them, then look for the "empty" spots where the match failed.
 If you know for a fact (via the schema) that a column is NOT NULL (mandatory), an INNER JOIN and LEFT JOIN will actually return the exact same result.
 Example: If every Matter must have a LeadLawyerID, then Matters JOIN Lawyers is the same as Matters LEFT JOIN Lawyers.
 
+a LEFT JOIN is more "expensive" for the database than an INNER JOIN, and that you only use it when strictly necessary.
+
 
 
 Tip:
 If they ask you to filter based on an aggregate (Sum, Count, Avg), always reach for HAVING. If they ask you to filter based on a specific row property, use WHERE.
 
-
-
-
-a LEFT JOIN is more "expensive" for the database than an INNER JOIN, and that you only use it when strictly necessary.
 
 
 The Bottom Line:
