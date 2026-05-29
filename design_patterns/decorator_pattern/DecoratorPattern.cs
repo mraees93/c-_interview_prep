@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-//The Decorator pattern is used to add features or responsibilities to an existing object dynamically without modifying its original code or breaking its structure.
+//The Decorator pattern is used to add features or responsibilities to an existing object dynamically without modifying its 
+//original code or breaking its structure.
 namespace design_patterns.decorator_pattern
 {
     public class DecoratorPattern
