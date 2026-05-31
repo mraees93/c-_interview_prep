@@ -59,9 +59,13 @@ If an interviewer asks: *"A user reports that a legal search endpoint is taking 
 ## 💡 Quick Recall Cheat Sheet
 
 
-| Visual Indicator / Operator | What It Secretly Means | The Concrete Fix |
+### 🛠️ Quick Recall Cheat Sheet
+
+
+| Visual Indicator / Operator | What It Secretly Means | The Concrete Fix / Status |
 | :--- | :--- | :--- |
-| **Table Scan** | The table has no structural index mapping. | Add a Primary Key / Clustered Index. |
-| **Index Scan** | The engine read everything because your query wasn't SARGable. | Remove functions/wildcards from the `WHERE` clause. |
-| **Key Lookup** | The index found the row but lacked the specific columns requested. | Add requested columns to the index `INCLUDE` clause. |
-| **Thick Data Pipes** | Too many rows are crossing between execution steps. | Apply more aggressive indexing or pagination limits. |
+| **Table Scan** | The table has no structural index mapping. | **FIX**: Add a Primary Key / Clustered Index to the table structure. |
+| **Clustered Index Scan** | An index exists, but your SQL code syntax is forcing a blind top-to-bottom scan. | **FIX**: Rewrite the query to be **SARGable** (e.g., remove functions like `YEAR()` or matching wildcards like `%text%` from the `WHERE` clause). |
+| **Index Seek** | The query is using the B-Tree index layout perfectly to jump straight to the data. | **STATUS**: **Perfect Performance.** This is the ideal architectural outcome; no fix required. |
+| **Key Lookup** | The non-clustered index found the target row but lacked the specific columns requested by the SELECT statement. | **FIX**: Convert it to a **Covering Index** by appending the missing requested columns to the index `INCLUDE` clause. |
+
