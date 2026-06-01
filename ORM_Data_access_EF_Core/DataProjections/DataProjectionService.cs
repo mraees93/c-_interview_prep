@@ -74,6 +74,12 @@ namespace LexisNexisPrep.DataProjections
                     JudgeName = c.Judge.Name // Resolved cleanly in a single combined database query execution pass.
                 })
                 .ToListAsync();
-        }
-    }
+        } //LINQ Projection
+    } 
 }
+//LINQ creates an Expression Tree which the EF Provider compiles into SQL at the ToListAsync materialisation boundary
+/*
+"By projecting directly into a custom DTO using .Select(), I force Entity Framework to compile a single SQL statement utilizing an explicit database join. 
+This resolves the N+1 problem in a single network round-trip, eliminates SELECT * payload bloat by only fetching the columns I need, and implicitly bypasses 
+EF Core's Change Tracker memory snapshots since DTOs are inherently read-only."
+*/
