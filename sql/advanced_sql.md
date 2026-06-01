@@ -137,4 +137,7 @@ WHERE NationalId = '9801015555088';
 
 ***
 
-Now that your advanced database performance file is genuinely complete down to the last line, what should we build next? We can map out your **React State and Render Optimization** note vault, or go through **salary benchmarks for intermediate developers in Century City** so you are completely prepared for the initial HR phone screening.
+
+If the panel asks you how to change a clustered index column, give them this architecturally aware response:
+
+"To add a clustered index to an unindexed column, I first evaluate if the table is a heap or if it already has a clustered index assigned to the Primary Key. Since a table can only have one physical ordering slot on disk, I would drop the existing clustered index constraint, re-assign the Primary Key as a non-clustered index to maintain uniqueness constraints, and then execute CREATE CLUSTERED INDEX on the new target column. I would make sure to only run this during background maintenance windows, as rewriting disk structure locks the table completely."
