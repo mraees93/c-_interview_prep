@@ -59,9 +59,6 @@ If an interviewer asks: *"A user reports that a legal search endpoint is taking 
 ## 💡 Quick Recall Cheat Sheet
 
 
-### 🛠️ Quick Recall Cheat Sheet
-
-
 | Visual Indicator / Operator | What It Secretly Means | The Concrete Fix / Status |
 | :--- | :--- | :--- |
 | **Table Scan** | The table has no structural index mapping. | **FIX**: Add a Primary Key / Clustered Index to the table structure. |
@@ -69,3 +66,75 @@ If an interviewer asks: *"A user reports that a legal search endpoint is taking 
 | **Index Seek** | The query is using the B-Tree index layout perfectly to jump straight to the data. | **STATUS**: **Perfect Performance.** This is the ideal architectural outcome; no fix required. |
 | **Key Lookup** | The non-clustered index found the target row but lacked the specific columns requested by the SELECT statement. | **FIX**: Convert it to a **Covering Index** by appending the missing requested columns to the index `INCLUDE` clause. |
 
+---
+
+## 4. Practice Interview Questions
+
+### Scenario 1: The Left-to-Right Composite Index Trap
+**The Question:**
+*"We have a `LegalCases` table with a composite (multi-column) index on `(JudgeId, CaseYear)`. If a developer writes the query below, will the SQL engine perform a fast Index Seek or a slow Index Scan? Why?"*
+```sql
+SELECT Id, Title FROM LegalCases WHERE CaseYear = 2026;
+```
+**The Winning Answer:**
+*   **The Operator:** Slow **Clustered Index Scan** (or Table Scan).
+*   **The Reason:** Composite indexes are strictly ordered from left to right. Because `JudgeId` is the leading column of the index and is completely missing from this `WHERE` clause, the database engine cannot look up the data directly. It is forced to scan the entire table structure on disk.
+*   **The Fix:** Create a standalone, single-column Non-Clustered index on just `CaseYear`.
+
+### Scenario 2: The Non-SARGable ORM Join
+**The Question:**
+*"Look at this query below. Assume we have a clean Non-Clustered index on the `CaseStatus` column. Why is this query running slowly in production, and how do we optimize the execution plan?"*
+```sql
+SELECT Id, Title FROM LegalCases WHERE ISNULL(CaseStatus, 'Archived') = 'Active';
+```
+**The Winning Answer:**
+*   **The Operator:** **Index Scan** or Table Scan.
+*   **The Reason:** This query is non-SARGable. By wrapping the `CaseStatus` column inside the `ISNULL()` function, we force the engine to calculate that check on every single row in the database table before comparing it. This completely bypasses the index's B-Tree layout.
+*   **The Fix:** Strip the function off the database column entirely to restore SARGability: `WHERE CaseStatus = 'Active';`
+
+### Scenario 3: Missing Covered Columns in a JOIN
+**The Question:**
+*"We have an optimized index on our foreign key: `CREATE INDEX IX_Cases_JudgeId ON LegalCases(JudgeId)`. However, when we run the following query, the execution plan shows a high-cost Key Lookup node. Why is that happening, and how do we resolve it?"*
+```sql
+SELECT c.Id, c.Title, c.CaseNumber FROM LegalCases c INNER JOIN Judges j ON c.JudgeId = j.Id WHERE j.Name = 'Judge Davis';
+```
+**The Winning Answer:**
+*   **The Operator:** High-cost **Key Lookup** combined with an Index Seek.
+*   **The Reason:** The index `IX_Cases_JudgeId` successfully locates the correct rows matching the `JudgeId` join condition. However, our `SELECT` statement requests extra data fields (`Title`, `CaseNumber`) that do not exist inside that index pointer array. The engine has to execute a separate data page jump back to the main table on disk to gather those missing columns.
+*   **The Fix:** Convert it to a **Covering Index** by appending the missing lookup columns into an explicit `INCLUDE` statement: `CREATE INDEX IX_Cases_JudgeId_Covering ON LegalCases(JudgeId) INCLUDE (Title, CaseNumber);`
+
+### Scenario 4: The Aggregation Memory Trap (Hash Match vs. Stream Aggregate)
+**The Question:**
+*"We are writing a data analytics query that groups millions of legal rows by `JudgeId` to count their total case outputs. The execution plan shows a high-cost Hash Match (Aggregate) node that is causing high memory usage. What does this mean, and how can we optimize it?"*
+```sql
+SELECT JudgeId, COUNT(Id) FROM LegalCases GROUP BY JudgeId;
+```
+**The Winning Answer:**
+*   **The Operator:** A high-memory **Hash Match (Aggregate)**.
+*   **The Reason:** Because the rows on disk are unsorted by `JudgeId`, the SQL engine has to build a temporary hash table directly inside the server's RAM to bucket and calculate the counts. On massive datasets, this spills over into disk storage and slows the query down.
+*   **The Fix:** We need to change this operation into a low-memory **Stream Aggregate**. If we create a Non-Clustered index on `JudgeId`, the data will arrive at the query execution engine pre-sorted, calculating the totals on the fly using almost zero memory.
+
+### Scenario 5: Deadlocks and Isolation Levels
+**The Question:**
+*"During peak legal research hours, our background document ingestion service frequently crashes with a Deadlock Error (Error 1205) when trying to update case statuses while users are running read queries. How do you troubleshoot and fix this?"*
+**The Winning Answer:**
+*   **The Cause:** A deadlock happens when two transaction threads lock resources in a conflicting order. The database engine kills one transaction to clear the bottleneck.
+*   **The Troubleshooting Strategy:** I would enable **Trace Flag 1222** or look at the SQL Server Extended Events log to extract the **Deadlock Graph** to view the exact resources that clashed.
+
+### Scenario 6: The "Implicit Conversion" Index Killer
+**The Question:**
+*"Look at this query below. Assume we have an index on the `NationalId` column, which is defined in the database schema as a `VARCHAR(50)`. Why will this query trigger a slow Index Scan instead of a fast Index Seek?"*
+```sql
+SELECT Id, Name FROM Users WHERE NationalId = 9801015555088; -- Note: Passing an Integer literal, not a string literal
+```
+**The Winning Answer:**
+*   **The Operator:** An unexpected **Index Scan**.
+*   **The Reason:** This triggers an **Implicit Conversion**. Because the input parameter is passed as a number (integer) but the column is a string (`VARCHAR`), SQL Server's data type precedence rules force the engine to convert the column data type to match the input. This calculation forces the query engine to run an implicit function (`CONVERT(INT, NationalId)`) on every single row on disk, breaking your index tree structure and making the query completely non-SARGable.
+*   **The Fix:** Match data types explicitly in your arguments by wrapping the lookup value in string literal quotes. This prevents the column-side conversion and instantly restores a fast **Index Seek**:
+```sql
+WHERE NationalId = '9801015555088';
+```
+
+***
+
+Now that your advanced database performance file is genuinely complete down to the last line, what should we build next? We can map out your **React State and Render Optimization** note vault, or go through **salary benchmarks for intermediate developers in Century City** so you are completely prepared for the initial HR phone screening.
