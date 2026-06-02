@@ -40,7 +40,6 @@ namespace algorithm_patterns.last_in_first_out
             // If the stack is completely empty, all opened brackets were successfully closed
             return bracketStack.Count == 0;
         }
-
     }
 }
 /*
