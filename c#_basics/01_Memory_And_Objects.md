@@ -54,14 +54,42 @@ In JavaScript, objects (`{}`) serve as records, dictionaries, and dynamic shapes
 *   **JS/TS:** `const map = new Map<string, number>();` or object literals used as hash maps.
 *   **C#:** `Dictionary<TKey, TValue>`. Statically typed, fast key lookups via internal bucket arrays.
 
+#### 🚨 INTERVIEW TRAP: Accessing Dictionary Data
+In JavaScript/TypeScript, you can read properties dynamically via Dot Notation (`recordScores.User_A`). In C#, **Dot Notation is strictly forbidden** on Dictionaries because it is a type collection, not a structural dynamic object wrapper. You must use indexers or safe retrieval methods.
+
 ```csharp
+using System;
 using System.Collections.Generic;
 
-var recordScores = new Dictionary<string, int> 
+public class DictionaryAccessDemo
 {
-    { "User_A", 95 },
-    { "User_B", 88 }
-};
+    public static void Run()
+    {
+        var recordScores = new Dictionary<string, int> 
+        {
+            { "User_A", 95 },
+            { "User_B", 88 }
+        };
+
+        // ❌ COMPILE ERROR: Dot notation does not look inside the map keys
+        // int badCall = recordScores.User_A; 
+
+        // ⚠️ INDEPENDENT INDEXER NOTATION: Equivalent to JS bracket notation recordScores["User_A"]
+        // CRITICAL TRAP: If the key does not exist, this throws a KeyNotFoundException and crashes your server!
+        int score = recordScores["User_A"]; 
+
+        //  PRODUCTION-SAFE .NET APPROACH (TryGetValue)
+        // Checks for existence and assigns the variable inline using an 'out' parameter without crashing
+        if (recordScores.TryGetValue("User_C", out int userScore))
+        {
+            Console.WriteLine(\$"Score found: {userScore}");
+        }
+        else
+        {
+            Console.WriteLine("Key not found safely without a runtime exception.");
+        }
+    }
+}
 ```
 
 ### 2. Ad-hoc Local Data Shapes (Anonymous Types)
@@ -88,4 +116,35 @@ dynamicRecord.UpdateStatus = (Action<string>)((status) => Console.WriteLine(\$"S
 
 // Invoked identically to a JavaScript closure
 dynamicRecord.UpdateStatus("Approved");
+```
+
+---
+
+## 💾 Intermediate Bonus Topic: Value Types (Structs) vs. Reference Types (Classes)
+
+Interviewers will evaluate your deep awareness of memory allocation patterns.
+
+*   **Classes (Reference Types):** Allocated on the Managed Heap. Variables hold a reference pointer to the actual data address [1]. Passing a class object passes the reference pointer [1].
+*   **Structs (Value Types):** Allocated inline on the Stack [1]. Variables hold the direct actual values [1]. Passing a struct copies the **entire internal values** to the new context memory block [1].
+
+### 🚨 Common Problem: Accidental Value Mutation Bugs
+```csharp
+using System;
+
+public struct PointStruct { public int X; public int Y; }
+public class PointClass { public int X; public int Y; }
+
+public class MemoryDemo
+{
+    public static void MutateData()
+    {
+        PointClass c1 = new PointClass { X = 10 };
+        PointClass c2 = c1; // Passes reference pointer [1]
+        c2.X = 99; // Alters c1.X as well! Both look at the same heap address.
+
+        PointStruct s1 = new PointStruct { X = 10 };
+        PointStruct s2 = s1; // Copies the ENTIRE actual values to a new stack position [1]
+        s2.X = 99; // s1.X stays EXACTLY 10! Structural isolation occurs.
+    }
+}
 ```

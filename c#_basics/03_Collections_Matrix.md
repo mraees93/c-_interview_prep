@@ -18,6 +18,21 @@ Use this comparative matrix to trace C# core data architectures directly back to
 
 ---
 
+## 🛠️ Data Access Notation & Safety Architecture
+
+Understanding how syntax varies across platforms is critical for code execution.
+
+
+| Property Operation Type | JavaScript / TypeScript | C# (.NET Core CLR) |
+| :--- | :--- | :--- |
+| **Dot Access Notation** | `recordScores.User_A` | ❌ **Strictly Prohibited** (Triggers Compile Error) |
+| **Indexer Bracket Lookup** | `recordScores["User_A"]` | `recordScores["User_A"]` (⚠️ Throws exception if missing) |
+| **Defensive Value Retrieval** | `recordScores["Key"] ?? default` | `recordScores.TryGetValue("Key", out int outputValue)` |
+| **Null-Conditional Prop Chain** | `user?.profile?.address` | `user?.Profile?.Address` [1] |
+| **Structural Record Equality** | `JSON.stringify(a) === JSON.stringify(b)` | Built-in via C# `record` types / `Equals()` methods [1] |
+
+---
+
 ## 🛠️ Complete Syntax Cheat Sheet & Reference Implementations
 
 ```csharp
@@ -35,12 +50,18 @@ public class CompilationRunner
         List<int> performanceMetrics = new List<int> { 200, 404, 500 };
         performanceMetrics.Add(201);
 
-        // 3. Dictionary Instantiation
+        // 3. Dictionary Instantiation & Safe Retrieval Pattern
         var microserviceStatus = new Dictionary<int, string>
         {
             { 200, "Healthy" },
             { 503, "Degraded" }
         };
+        
+        // Dynamic key lookup confirmation syntax
+        if (microserviceStatus.TryGetValue(200, out string healthState))
+        {
+            Console.WriteLine(\$"Status evaluated as: {healthState}");
+        }
 
         // 4. HashSet Deduplication usage
         HashSet<string> sessionIdentifiers = new HashSet<string>();
