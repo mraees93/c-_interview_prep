@@ -1,6 +1,7 @@
 # Advanced SQL Performance: Execution Plans & Indexing
 
 This guide covers how database engines physically retrieve data from disk, how to interpret execution blueprints, and how to debug real-world database latency.
+Focuses on performance, memory profiles, disk reads, and debugging.
 
 ---
 
