@@ -17,7 +17,9 @@ GROUP BY c.CategoryID, c.CategoryName;
 SELECT p.ProductName, oi.OrderID
 FROM Products p
 LEFT JOIN OrderItems oi ON p.ProductID = oi.ProductID
-WHERE oi.ItemID IS NULL;
+WHERE oi.ItemID IS NULL; 
+-- oi.ItemID is safer. The ItemID is the Primary Key of the OrderItems table. By definition, a Primary Key can never be empty (NULL) in a real row. 
+-- If it comes back as NULL after a LEFT JOIN, you know with 100% certainty that the product was never ordered
 
 -- Categories (CategoryID, CategoryName)
 -- Products (ProductID, ProductName, CategoryID, Price)

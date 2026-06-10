@@ -66,3 +66,30 @@ Do NOT use DISTINCT when you are listing items from a base inventory table (like
 refer to practice2.sql file answer 6
 
 You have to use GROUP BY when you use an aggregate function like COUNT(), SUM(), or AVG() alongside a regular column (like m.Title), SQL needs to know how to group the individual rows.
+
+
+In SQL, the physical order of your JOIN statements dictates what table aliases are available. You can only use a table's alias if that table has already been introduced in the query above or on that exact line.
+
+Broken Chain: Orders \(\rightarrow \) OrderItems \(\rightarrow \) [Tries to use Products column] \(\rightarrow \) Categories \(\rightarrow \) Products
+Correct Chain: Orders \(\rightarrow \) OrderItems \(\rightarrow \) Products \(\rightarrow \) Categories
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--4. List the Names of Customers who have ordered products from the 'Electronics' category.
+
+SELECT DISTINCT o.CustomerName
+FROM Orders o 
+JOIN OrderItems oi ON o.OrderID = oi.OrderID
+JOIN Categories c ON c.CategoryID = p.CategoryID
+JOIN Products p ON c.CategoryID = p.CategoryID
+WHERE c.CategoryName = 'Electronics';
+
+SELECT DISTINCT o.CustomerName
+FROM Orders o
+JOIN OrderItems oi ON o.OrderID = oi.OrderID
+JOIN Products p ON oi.ProductID = p.ProductID
+JOIN Categories c ON c.CategoryID = p.CategoryID
+WHERE c.CategoryName = 'Electronics';
