@@ -68,6 +68,8 @@ refer to practice2.sql file answer 6
 You have to use GROUP BY when you use an aggregate function like COUNT(), SUM(), or AVG() alongside a regular column (like m.Title), SQL needs to know how to group the individual rows.
 
 
+
+
 In SQL, the physical order of your JOIN statements dictates what table aliases are available. You can only use a table's alias if that table has already been introduced in the query above or on that exact line.
 
 Broken Chain: Orders \(\rightarrow \) OrderItems \(\rightarrow \) [Tries to use Products column] \(\rightarrow \) Categories \(\rightarrow \) Products
