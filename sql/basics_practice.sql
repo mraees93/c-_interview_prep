@@ -39,14 +39,55 @@ GROUP BY c.CategoryID, c.CategoryName;
 SELECT DISTINCT o.CustomerName
 FROM Orders o 
 JOIN OrderItems oi ON o.OrderID = oi.OrderID
+JOIN Products p ON p.ProductID = oi.ProductID
 JOIN Categories c ON c.CategoryID = p.CategoryID
-JOIN Products p ON c.CategoryID = p.CategoryID
 WHERE c.CategoryName = 'Electronics';
 
---answer
 SELECT DISTINCT o.CustomerName
 FROM Orders o
 JOIN OrderItems oi ON o.OrderID = oi.OrderID
 JOIN Products p ON oi.ProductID = p.ProductID
 JOIN Categories c ON c.CategoryID = p.CategoryID
 WHERE c.CategoryName = 'Electronics';
+
+
+
+
+-- 1. List all Lawyers and their total file storage. If a lawyer has no files, show 0 instead of NULL
+
+SELECT l.Name, COALESCE(SUM(d.FileSizeKB), 0) AS TotalFileStorage
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.LawyerID, l.Name;
+
+-- 2. Find the Names of Lawyers who have at least one Matter, but that Matter has zero documents.
+
+SELECT DISTINCT l.Name
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+WHERE d.DocID IS NULL;
+
+-- 3. Calculate total documents per Lawyer, ensuring that if two lawyers have the same name, they are not combined.
+
+SELECT l.Name, COUNT(d.DocID) AS TotalDocuments
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.LawyerID, l.Name;
+
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+-- 4. List Matters that have a total file size greater than 10,000 KB, 
+--but ignore any individual documents that are smaller than 100 KB in that calculation.
+
+SELECT m.Title, SUM(d.FileSizeKB) AS TotalFileSize
+FROM Matters m 
+LEFT JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY MatterID, m.Title
+HAVING SUM(d.FileSizeKB) > 10000
