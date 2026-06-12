@@ -95,3 +95,31 @@ JOIN OrderItems oi ON o.OrderID = oi.OrderID
 JOIN Products p ON oi.ProductID = p.ProductID
 JOIN Categories c ON c.CategoryID = p.CategoryID
 WHERE c.CategoryName = 'Electronics';
+
+
+
+https://www.youtube.com/watch?v=rIcB4zMYMas
+Window functions:
+
+SELECT Gender, Name, Total
+
+    //Function                            //Window
+    //1..2..3 in popularity column rows   // how you wanna view your data when applying your function
+    ROW_NUMBER()                          OVER(ORDER BY Total DESC)                                       AS Popularity
+
+FROM baby_names
+
+
+
+//split the gender column into boy and girl group vertically in the gender column - use PARTITION BY
+
+SELECT Gender, Name, Total
+
+    //Function                            //Window
+    //1..2..3 in popularity column rows   // how you wanna view your data when applying your function
+    ROW_NUMBER()                          OVER(PARTITION BY Gender ORDER BY Total DESC)                                       AS Popularity
+    
+FROM baby_names
+
+
+*** take screenshots and paste
