@@ -1,0 +1,1 @@
+whats a stateless app?
