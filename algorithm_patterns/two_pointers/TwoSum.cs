@@ -21,11 +21,11 @@ Input: arr[] = [-8, 1, 4, 6, 10, 45], target = 16
 Output: true
 Explanation : There is a pair (6, 10) with given target. */
 
-namespace alogorithm_patterns.two_pointers
+namespace algorithm_patterns.two_pointers
 {
-    class TwoSum
+    class TwoSumClass 
     {
-        static bool TwoSum(int[] arr, int target)
+        static bool FindPair(int[] arr, int target)
         {
             // sort the array
             int left = 0, right = arr.Length - 1;
