@@ -18,13 +18,11 @@ public class FileLogger : ILogger
         Console.Write(message);
     }
 }
-public delegate void DisplayDelegate();
-
 public class Program
 {
     // public static void UpdatePoint(Point p)
     // {
-    //     p.X = 100;
+    //     p.X = 100; //this updates [SLOT B]
     // }
 
     // public static string WhatsYourName(string name)
@@ -36,16 +34,18 @@ public class Program
     //     // string floats in memory until the Garbage Collector cleans it up later.
     // }
 
-    public static void SayHi() { Console.Write("Hi "); }
-    public static void SayBye() { Console.Write("Bye"); }
+    //public delegate void DisplayDelegate();
+    // public static void SayHi() { Console.Write("Hi "); }
+    // public static void SayBye() { Console.Write("Bye"); }
 
     public static void Main()
     {
-        // Point myPoint = new Point();
+        // Point myPoint = new Point(); //Stack Memory [Slot A] holds myPoint (X = 10, Y = 20).
         // myPoint.X = 10;
         // myPoint.Y = 20;
-        // UpdatePoint(myPoint);
-        // Console.WriteLine(myPoint.X); //10 because UpdatePoint updates a duplicate copy
+        // UpdatePoint(myPoint); 
+        // //C# looks at the data inside myPoint [Slot A], duplicates it,hands that duplicate to the method param variable p
+        // Console.WriteLine(myPoint.X); //10 because UpdatePoint updates the duplicate copy [Slot B]
 
         //Console.WriteLine(WhatsYourName("raees"));
 
@@ -58,9 +58,9 @@ public class Program
         // ((ILogger)logger).Log("Logging"); //You must explicitly cast the object to the interface type first
         // Console.WriteLine(logger);
 
-        DisplayDelegate del = SayHi;
-        del += SayBye; //array queue holding [SayHi, SayBye]
-        del -= SayHi; //unlinks and leaves only [SayBye]
-        del();
+        // DisplayDelegate del = SayHi;
+        // del += SayBye; //array queue holding [SayHi, SayBye]
+        // del -= SayHi; //unlinks and leaves only [SayBye]
+        // del();
     }
 }
