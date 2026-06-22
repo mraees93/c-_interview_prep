@@ -45,7 +45,7 @@ class Program
 
         // List<int> ranks = new List<int> { 5, 3, 9, 1 };
         // var outcome = ranks.OrderBy(r => r).OrderByDescending(r => r);
-        // Console.WriteLine(outcome.First()); => 9
+        // Console.WriteLine(outcome.First()); // => 9
 
         // List<int> inventory = new List<int> { 10, 20, 30 };
         // foreach (int item in inventory)
