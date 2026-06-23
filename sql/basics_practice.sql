@@ -77,17 +77,34 @@ JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 LEFT JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY l.LawyerID, l.Name;
 
+-- 4. List Matters that have a total file size greater than 10,000 KB, 
+--but ignore any individual documents that are smaller than 100 KB in that calculation.
+
+SELECT m.Title, SUM(d.FileSizeKB) AS TotalFileSize
+FROM Matters m 
+JOIN Documents d ON m.MatterID = d.MatterID
+WHERE d.FileSizeKB > 100
+GROUP BY m.MatterID, m.Title
+HAVING SUM(d.FileSizeKB) > 10000;
+
 
 -- Schema Details:
 -- Lawyers (LawyerID, Name, Department)
 -- Matters (MatterID, Title, LeadLawyerID)
 -- Documents (DocID, MatterID, FileSizeKB)
 
--- 4. List Matters that have a total file size greater than 10,000 KB, 
---but ignore any individual documents that are smaller than 100 KB in that calculation.
+----5. List all Lawyers and any Matters they lead with 'Litigation' in the title. Lawyers with no 'Litigation' matters must still 
+-- appear in the list.
 
-SELECT m.Title, SUM(d.FileSizeKB) AS TotalFileSize
-FROM Matters m 
-LEFT JOIN Documents d ON m.MatterID = d.MatterID
-GROUP BY MatterID, m.Title
-HAVING SUM(d.FileSizeKB) > 10000
+SELECT l.Name, m.Title
+FROM Lawyers l 
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+WHERE m.Title = 'Litigation'
+
+SELECT l.Name, m.Title
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID 
+     AND m.Title LIKE '%Litigation%';
+
+--Filter in ON: Filters the "right" table before the join. Keeps all rows from the "left" table.
+--Filter in WHERE: Filters the entire result after the join. Can accidentally delete "left" table rows.

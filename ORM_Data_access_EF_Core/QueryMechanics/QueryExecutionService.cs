@@ -30,7 +30,7 @@ namespace LexisNexisPrep.QueryMechanics
         {
             // 1. THE TRAP: Calling .AsEnumerable() breaks the query building process immediately.
             // EF Core instantly runs "SELECT * FROM LegalCases" against SQL Server.
-            // Millions of historical records stream across the network network wire.
+            // Millions of historical records stream across the network wire.
             //
             // 2. NOTE ON TRACKING: Even though .AsNoTracking() is used to stop EF Core from taking 
             // reference memory snapshots, it CANNOT fix the massive network saturation and RAM bloat 
