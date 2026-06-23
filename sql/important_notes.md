@@ -122,4 +122,25 @@ SELECT Gender, Name, Total
 FROM baby_names
 
 
-*** take screenshots and paste
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+----5. List all Lawyers and any Matters they lead with 'Litigation' in the title. Lawyers with no 'Litigation' matters must still 
+-- appear in the list.
+
+-------WRONG----------
+SELECT l.Name, m.Title
+FROM Lawyers l 
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+WHERE m.Title = 'Litigation'
+
+SELECT l.Name, m.Title
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID 
+     AND m.Title LIKE '%Litigation%';
+
+--Filter in ON: Filters the "right" table before the join. Keeps all rows from the "left" table.
+--Filter in WHERE: Filters the entire result after the join. Can accidentally delete "left" table rows.

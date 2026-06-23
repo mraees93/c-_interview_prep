@@ -87,12 +87,6 @@ WHERE d.FileSizeKB > 100
 GROUP BY m.MatterID, m.Title
 HAVING SUM(d.FileSizeKB) > 10000;
 
-
--- Schema Details:
--- Lawyers (LawyerID, Name, Department)
--- Matters (MatterID, Title, LeadLawyerID)
--- Documents (DocID, MatterID, FileSizeKB)
-
 ----5. List all Lawyers and any Matters they lead with 'Litigation' in the title. Lawyers with no 'Litigation' matters must still 
 -- appear in the list.
 
@@ -108,3 +102,26 @@ LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 
 --Filter in ON: Filters the "right" table before the join. Keeps all rows from the "left" table.
 --Filter in WHERE: Filters the entire result after the join. Can accidentally delete "left" table rows.
+
+--6. Find the average document size (FileSizeKB) for each Department.
+
+SELECT l.Department, AVG(d.FileSizeKB) AS AvgDocSize
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Department;
+
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+-- 7. Find the single largest document (highest FileSizeKB) for each Department. Show the Department name, the Document ID, and the size.
+
+SELECT l.Department, d.DocID, 
+       MAX(d.FileSizeKB) OVER(PARTITION BY l.Department) AS MaxFileSize
+ FROM Lawyers l
+JOIN Matters m ON l.LawyerID = l.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Department;
