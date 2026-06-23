@@ -122,6 +122,6 @@ GROUP BY l.Department;
 SELECT l.Department, d.DocID, 
        MAX(d.FileSizeKB) OVER(PARTITION BY l.Department) AS MaxFileSize
  FROM Lawyers l
-JOIN Matters m ON l.LawyerID = l.LeadLawyerID
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY l.Department;
