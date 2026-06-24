@@ -125,3 +125,19 @@ SELECT l.Department, d.DocID,
 JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 JOIN Documents d ON m.MatterID = d.MatterID
 GROUP BY l.Department;
+
+SELECT Department, DocID, FileSizeKB
+FROM (
+    SELECT 
+        l.Department, 
+        d.DocID, 
+        d.FileSizeKB,
+        ROW_NUMBER() OVER(
+            PARTITION BY l.Department  -- Splits data into "piles" by Department
+            ORDER BY d.FileSizeKB DESC -- Sorts each "pile" largest to smallest
+        ) as rnk                       -- Assigns a "ticket number" (#1 is largest)
+    FROM Lawyers l
+    JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+    JOIN Documents d ON m.MatterID = d.MatterID
+) t
+WHERE rnk = 1;                         -- Keeps only the #1 (largest) from each pile

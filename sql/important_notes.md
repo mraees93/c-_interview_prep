@@ -101,6 +101,10 @@ WHERE c.CategoryName = 'Electronics';
 https://www.youtube.com/watch?v=rIcB4zMYMas
 Window functions:
 
+The function does the math or counting, while the OVER() clause defines who is included in that calculation.
+
+The OVER clause defines the 'window' (or subset) of data the function calculates across, allowing you to run aggregate math without collapsing your individual rows.
+
 SELECT Gender, Name, Total
 
     //Function                            //Window
