@@ -35,7 +35,7 @@ namespace algorithm_patterns.Hash_Map_Frequency
                 }
 
                 // Append the original unsorted word to its corresponding signature bucket
-                anagramBuckets[sortedKey].Add(word);
+                anagramBuckets[sortedKey].Add(word); //************try
             }
 
             // Cast and return the inner values array collections cleanly as required by the interface

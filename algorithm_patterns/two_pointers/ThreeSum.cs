@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace algorithm_patterns.two_pointers
 {
-    public class ThreeSum
+    public class ThreeSumClass 
     {
         public IList<IList<int>> ThreeSum(int[] nums)
         {
