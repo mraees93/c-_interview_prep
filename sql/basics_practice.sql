@@ -141,3 +141,32 @@ FROM (
     JOIN Documents d ON m.MatterID = d.MatterID
 ) t
 WHERE rnk = 1;                         -- Keeps only the #1 (largest) from each pile
+
+--4. List the Names of Customers who have ordered products from the 'Electronics' category.
+
+SELECT o.CustomerName
+FROM Orders o
+JOIN OrderItems oi ON o.OrderID = oi.OrderID
+JOIN Products p ON oi.ProductID = p.ProductID
+JOIN Categories c ON p.CategoryID = c.CategoryID
+WHERE c.CategoryName = 'Electronics';
+
+SELECT DISTINCT o.CustomerName
+FROM Orders o
+JOIN OrderItems oi ON o.OrderID = oi.OrderID
+JOIN Products p ON oi.ProductID = p.ProductID
+JOIN Categories c ON c.CategoryID = p.CategoryID
+WHERE c.CategoryName = 'Electronics';
+
+
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--5. Find Orders where the total quantity of items is greater than 10
+
+SELECT o.OrderID, COUNT(oi.Quantity)
+FROM Orders o
+JOIN OrderItems oi ON o.OrderID = oi.OrderID
