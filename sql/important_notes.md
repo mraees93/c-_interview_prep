@@ -148,3 +148,22 @@ LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 
 --Filter in ON: Filters the "right" table before the join. Keeps all rows from the "left" table.
 --Filter in WHERE: Filters the entire result after the join. Can accidentally delete "left" table rows.
+
+
+
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--5. Find Orders where the total quantity of items is greater than 10
+
+SELECT oi.OrderID, COUNT(oi.Quantity) AS QuantityCount
+FROM OrderItems oi
+GROUP BY oi.OrderID
+HAVING COUNT(oi.Quantity) > 10;
+-- didnt have to join here despite answer query having a join. Because OrderItems table contains OrderID and Quantity
+-- If an interviewer gives you a question like Q5 and you catch this shortcut, you immediately stand out as an Intermediate Engineer 
+-- because you are actively thinking about Performance and Efficiency.
+-- Cuts database work in half. It reads from a single table, bypassing the expensive join overhead entirely.

@@ -167,6 +167,23 @@ WHERE c.CategoryName = 'Electronics';
 
 --5. Find Orders where the total quantity of items is greater than 10
 
-SELECT o.OrderID, COUNT(oi.Quantity)
-FROM Orders o
-JOIN OrderItems oi ON o.OrderID = oi.OrderID
+SELECT oi.OrderID, COUNT(oi.Quantity) AS QuantityCount
+FROM OrderItems oi
+GROUP BY oi.OrderID
+HAVING COUNT(oi.Quantity) > 10;
+-- didnt have to join here despite answer query having a join
+-- If an interviewer gives you a question like Q5 and you catch this shortcut, you immediately stand out as an Intermediate Engineer 
+-- because you are actively thinking about Performance and Efficiency.
+-- Cuts database work in half. It reads from a single table, bypassing the expensive join overhead entirely.
+
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+--6. Show every Product and its Category. If a product has no category (NULL CategoryID), show 'Uncategorized' using COALESCE.
+
+SELECT DISTINCT p.ProductName, COALESCE(c.CategoryName, 'Uncategorized') AS CategoryName
+FROM Products p 
+LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
