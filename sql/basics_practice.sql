@@ -176,14 +176,16 @@ HAVING COUNT(oi.Quantity) > 10;
 -- because you are actively thinking about Performance and Efficiency.
 -- Cuts database work in half. It reads from a single table, bypassing the expensive join overhead entirely.
 
+--6. Show every Product and its Category. If a product has no category (NULL CategoryID), show 'Uncategorized' using COALESCE.
+
+SELECT DISTINCT p.ProductName, COALESCE(c.CategoryName, 'Uncategorized') AS CategoryName
+FROM Products p 
+LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
+
 
 -- Categories (CategoryID, CategoryName)
 -- Products (ProductID, ProductName, CategoryID, Price)
 -- Orders (OrderID, OrderDate, CustomerName)
 -- OrderItems (ItemID, OrderID, ProductID, Quantity)
 
---6. Show every Product and its Category. If a product has no category (NULL CategoryID), show 'Uncategorized' using COALESCE.
-
-SELECT DISTINCT p.ProductName, COALESCE(c.CategoryName, 'Uncategorized') AS CategoryName
-FROM Products p 
-LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
+--7. Find the most expensive Product in each Category (using a Window Function).
