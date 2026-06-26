@@ -189,3 +189,11 @@ LEFT JOIN Categories c ON p.CategoryID = c.CategoryID
 -- OrderItems (ItemID, OrderID, ProductID, Quantity)
 
 --7. Find the most expensive Product in each Category (using a Window Function).
+
+SELECT ProductName, Price
+FROM (
+    SELECT CategoryID, ProductName, Price,
+    ROW_NUMBER() OVER(PARTITION BY CategoryID ORDER BY Price DESC) AS MostExpensive --completely forgot to PARTITION BY CategoryID
+    FROM Products
+) m
+WHERE MostExpensive = 1;
