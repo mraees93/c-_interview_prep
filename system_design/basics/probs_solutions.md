@@ -1,13 +1,27 @@
 ### Common System Design Problems and Solutions
 
+| Problem / Failure Scenario | Common Solution | Senior Architecture Execution Details |
+| :--- | :--- | :--- |
+| **Read-Heavy System** | • Use Caching<br>• Use Read Replicas | Implement the **Cache-Aside Pattern** with Redis. Serve lookups from memory and asynchronously populate the cache on a miss using non-blocking background tasks. Route heavy residual read traffic to read-only database replicas. |
+| **High-Write Traffic** | • Async Writes<br>• LSM-Tree Storage | Decouple ingestion via a message broker (RabbitMQ/Kafka) to absorb write spikes. Use an LSM-Tree engine (like Cassandra) to write sequentially to memory first, bypassing standard disk indexing bottlenecks. |
+| **Slow Full-Text Phrase Searches** | • Offload to Search Engine | Bypassing B-Tree database indexes for multi-keyword queries (e.g., legal document lookups). Mirror text data into an **Elasticsearch cluster** using inverted indexes to handle phrase searches under sub-second latencies. |
+| **Single Point of Failure (SPOF)** | • Redundancy & Standby Nodes | Eliminate isolated hardware choke points. Configure a live, synchronous **Hot Standby Replica** coupled with an automated cluster health monitor to execute instant failover traffic routing if the primary node dies. |
+| **Data Inconsistency / Dual-Write Drift** | • Change Data Capture (CDC) | Avoid writing to two databases simultaneously from application code. Use a CDC engine (like Debezium) to tail primary transaction or replica logs asynchronously, streaming data deltas reliably into secondary search engines. |
+| **The "Poison Pill" Message** | • Dead Letter Queues (DLQ) | Prevent corrupt data payloads from locking up asynchronous worker pools in infinite retry loops. Configure the broker to automatically eject a message to a isolated DLQ after it hits a designated retry threshold. |
+| **Relational Index Bloat** | • Range Table Partitioning | Prevent giant B-Tree index degradation over tens of millions of rows. Segment a single monolithic table into distinct time-based chunks (e.g., monthly partitions) on the same host, keeping active write trees compact. |
+| **Database Shard Imbalance (Hot Shards)** | • Composite Key Sharding | Avoid sharding solely on generic keys (like `Region_ID`) if one cluster segment receives 80% of data. Mix the shard layout by implementing a composite key (e.g., `Region_ID + Calendar_Year`) to spread data evenly. |
+| **Internal Network Packet Sniffing** | • Zero-Trust Architecture | Assume the internal cloud network perimeter is hostile. Enforce strict Mutual TLS (**mTLS**) for all inner-service and database connections, and replace static credentials with short-lived **ephemeral IAM tokens**. |
+| **Slow Database Queries** | • Indexing & Optimization | Analyze database execution plans. Apply target B-Tree indexes on highly filters columns (`WHERE` clauses), optimize complex table joins, and continuously update database statistics to prevent sequential table scans. |
+| **Handling Massive Files** | • Object Storage Abstraction | Prevent database row and page bloat caused by giant strings or attachments. Store relational document metadata inside the transactional database, and offload the actual file binary data to an Object Store (S3 / Azure Blobs). |
+| **Third-Party API Downtime / Slowness** | • Asynchronous Task Workers | Isolate unpredictable external API integrations (taking 30s to 2m) away from the user HTTP request path. Drop tasks into a message bus and let independent, horizontally scalable background workers manage execution. |
 
-| Problem | Common Solution |
-| :--- | :--- |
-| **Read-heavy system** | • Use caching for faster reads |
-| **High-write traffic** | • Use async writes<br>• Use LSM-Tree database |
-| **Single point of failure** | • Implement redundancy and failover |
-| **High availability** | • Use load-balancing<br>• Use replication |
-| **High latency** | • Use CDN to reduce latency |
-| **Handling large files** | • Use block storage and object storage |
-| **Monitoring and alerting** | • Use centralized logging solution |
-| **Slow database queries** | • Use proper indexes<br>• Use sharding to horizontally scale |
+
+
+### LexisNexis-Specific Scenario Matrix
+
+| Interview Scenario Prompt | The Engineering Choke Point | The Correct Architectural Response |
+| :--- | :--- | :--- |
+| **"We ingest 100,000 new court case files in a nightly batch. How do we update our system without knocking our active user web servers offline?"** | Batch processing jobs draining transactional database connections and CPU. | **Decoupled Bulk Ingestion:** Read files into an isolated staging data pipeline. Use bulk-insert scripts during off-peak hours on the Primary node, or use independent background batch jobs that stream data via Kafka partitions. |
+| **"Multiple law firms are using our search platform. How do we ensure Firm A cannot see Firm B's saved search histories or automated email alerts?"** | Multi-tenant data isolation and protection against data leakage. | **Logical Partitioning & Tenant Filters:** Implement Row-Level Security (RLS) in PostgreSQL or enforce a tenant-ID discriminator key (`Tenant_ID`) on every database query, cache key, and Elasticsearch filter. |
+| **"Our legal datasets rarely change after they are written, but our users read them constantly. Our database costs are spiking. How do we fix this?"** | Over-provisioning expensive primary database compute for historical, read-only data. | **Tiered Storage Architecture:** Move historical, cold case records to cheap Object Storage (S3/Azure Blobs). Keep active, recent metadata in PostgreSQL, and cache high-frequency landing queries in Redis. |
+| **"An external government API we depend on has strict rate limits. If our workers call it too fast, they block our IP address. How do we handle this?"** | Uncontrolled consumer worker pools overwhelming down-stream third-party APIs. | **Token Bucket Rate Limiting / Throttling:** Implement a token-bucket rate limiter middleware on your RabbitMQ consumers. Restrict the number of active worker threads (Concurrency Limits) to match the external provider's Max-RPS allowance. |
