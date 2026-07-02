@@ -95,6 +95,7 @@
 *   **Your Answer:** "i will implement a dead letter queue"
 *   **Full Explanation Answer:** Excellent. Implementing a **Dead Letter Queue (DLQ)** handles this issue gracefully. The worker code catches explicit unrecoverable application errors or tracks retry counts. Once a message exceeds its retry threshold, RabbitMQ routes it to a designated DLQ. This isolates corrupt data instantly, freeing up your active worker pool to process legitimate requests while alerting developers to inspect the bad payloads.
 
+
 ### Question 7: Zero-Trust Security Implementation
 *   **Question:** If an attacker compromises a single container and gains access to the internal virtual network segment to sniff moving packets, what security strategies will you implement across your database and queue layers to prevent data theft?
 *   **Your Answer:** "i will enforce a Zero-Trust network architecture on the different layers... (Unsure on the technical implementation steps)"
