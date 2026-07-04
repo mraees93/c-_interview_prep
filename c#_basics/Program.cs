@@ -71,11 +71,11 @@ public class Program
         // Console.WriteLine(myDouble); 
 
         //Explicit Casting (manually) - converting a larger type to a smaller size type: double -> float -> long -> int -> char
-        double myDouble = 9.78;
-        int myInt = (int) myDouble;    // Manual casting: double to int
+        // double myDouble = 9.78;
+        // int myInt = (int) myDouble;    // Manual casting: double to int
 
-        Console.WriteLine(myDouble);   // Outputs 9.78
-        Console.WriteLine(myInt);      // Outputs 9
+        // Console.WriteLine(myDouble);   // Outputs 9.78
+        // Console.WriteLine(myInt);      // Outputs 9
 
         //Type conversion methods
         // int myInt = 10;
@@ -86,5 +86,9 @@ public class Program
         // Console.WriteLine(Convert.ToDouble(myInt));    
         // Console.WriteLine(Convert.ToInt32(myDouble)); 
         // Console.WriteLine(Convert.ToString(myBool));
+
+        var fullName = "Raees";
+        string[] couple = ["Raees", "Rizia"];
+        Console.Write(couple.First());
     }
 }
