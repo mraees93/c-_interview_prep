@@ -10,10 +10,10 @@
 
 | Concept | What | When to Use | Why (Benefit) | Trade-off (The Catch) | Failure Impact / Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Load Balancer** | A traffic cop that sits in front of your servers. | When one server cannot handle traffic or you need high availability. | Spreads the load; if one server dies, the system stays up. | Adds a mandatory "middleman" layer to infrastructure. | **If it fails:** Absolute system outage unless a backup balancer is configured. |
-| **Rate Limiter** | A throttle that limits how many requests a user can make. | When you need to prevent API abuse, scraping, or DDoS attacks. | Protects backend resources and saves massive cloud scaling costs. | Misconfigurations can frustrate and block valid users. | **If it fails:** Downstream services get flooded, leading to database crashes. |
-| **API Gateway** | A single entry point that handles routing, authentication, and logging. | In microservices where you have dozens of different background services. | Simplifies client logic and centralises authentication/security in one place. | Introduces high operational complexity and architectural overhead. | **If it fails:** Clients cannot talk to microservices; becomes a total point of failure. |
 | **DNS** | A system that translates human domains into machine IP addresses. | Every time a client initiates an internet request to your system. | Routes users to the nearest regional entry point or load balancer automatically. | Updates take time to propagate globally due to aggressive caching. | **If it fails:** The application becomes entirely unreachable by name worldwide. |
+| **Load Balancer** | A traffic cop that sits in front of your servers. | When one server cannot handle traffic or you need high availability. | Spreads the load; if one server dies, the system stays up. | Adds a mandatory "middleman" layer to infrastructure. | **If it fails:** Absolute system outage unless a backup balancer is configured. |
+| **API Gateway** | A single entry point that handles routing, authentication, and logging. | In microservices where you have dozens of different background services. | Simplifies client logic and centralises authentication/security in one place. | Introduces high operational complexity and architectural overhead. | **If it fails:** Clients cannot talk to microservices; becomes a total point of failure. |
+| **Rate Limiter** | A throttle that limits how many requests a user can make. | When you need to prevent API abuse, scraping, or DDoS attacks. | Protects backend resources and saves massive cloud scaling costs. | Misconfigurations can frustrate and block valid users. | **If it fails:** Downstream services get flooded, leading to database crashes. |
 
 ---
 
