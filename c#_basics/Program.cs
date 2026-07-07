@@ -1,4 +1,6 @@
-﻿public struct Point //struct is value type
+﻿using System.Text;
+
+public struct Point //struct is value type
 {
     public int X;
     public int Y;
@@ -87,8 +89,52 @@ public class Program
         // Console.WriteLine(Convert.ToInt32(myDouble)); 
         // Console.WriteLine(Convert.ToString(myBool));
 
-        var fullName = "Raees";
-        string[] couple = ["Raees", "Rizia"];
-        Console.Write(couple.First());
+        // var fullName = "Raees";
+        // string[] couple = ["Raees", "Rizia"];
+        // Console.Write(couple.First());
+
+        //Allocates 5,000 distinct string objects on the Heap
+    //     public static string BadLogProcessor(string[] events)
+    //     {
+    //         string result = string.Empty;
+    //         foreach (var ev in events)
+    //     {
+    //         result += $"[LOG]: {ev}\n";
+    //     }
+    //         return result;
+    //     }
+    
+    //zero unecessary heap allocations
+        // public static string GoodLogProcessor(string[] events)
+        // {
+        //     // Pre-size the internal array buffer if total size is roughly predictable
+        //     var sb = new StringBuilder(events.Length * 30);
+
+        //     foreach (var ev in events)
+        //     {
+        //         sb.Append("[LOG]: ").Append(ev).Append("\n");
+        //     }
+
+        //     return sb.ToString(); // Single final heap allocation
+        // }
+
+        var recordScores = new Dictionary<string, int> 
+        {
+            { "User_A", 95 },
+            { "User_B", 88 }
+        };
+
+        // CRITICAL TRAP: If the key does not exist, this throws a KeyNotFoundException and crashes your server!
+        //int score = recordScores["User_A"];
+
+        //  PRODUCTION-SAFE .NET APPROACH (TryGetValue)
+        // Checks for existence and assigns the variable inline using an 'out' parameter without crashing
+        if(recordScores.TryGetValue("User_C", out int userScore))
+        {
+            Console.WriteLine($"Score found: {userScore}");
+        } else
+        {
+            Console.WriteLine("Key not found safely without a runtime exception.");
+        }
     }
 }
