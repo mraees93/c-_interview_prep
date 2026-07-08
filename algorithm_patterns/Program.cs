@@ -33,19 +33,23 @@ class Program
         // Console.WriteLine(result);
 
         // Create an instance of your algorithm class
-        var solver = new ThreeSumClass();
+        // var solver = new ThreeSumClass();
 
-        // Define a test input array
-        int[] testInput = { -1, 0, 1, 2, -1, -4 };
+        // // Define a test input array
+        // int[] testInput = { -1, 0, 1, 2, -1, -4 };
 
-        // Call the method and get the results
-        IList<IList<int>> results = solver.ThreeSum(testInput);
+        // // Call the method and get the results
+        // IList<IList<int>> results = solver.ThreeSum(testInput);
 
-        // Print the results to the console
-        Console.WriteLine("ThreeSum Results:");
-        foreach (var triplet in results)
-        {
-            Console.WriteLine($"[{string.Join(", ", triplet)}]");
-        }
+        // // Print the results to the console
+        // Console.WriteLine("ThreeSum Results:");
+        // foreach (var triplet in results)
+        // {
+        //     Console.WriteLine($"[{string.Join(", ", triplet)}]");
+        // }
+
+        int[] input = [4, 8, 1, 9, 3, 2];
+
+        
     }
 }
