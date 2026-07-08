@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 // This lets Program.cs find your HashMapBucket class
 using algorithm_patterns.Hash_Map_Frequency;
-using algorithm_patterns.two_pointers;
+//using algorithm_patterns.two_pointers;
 
 
 class Program
@@ -48,8 +48,9 @@ class Program
         //     Console.WriteLine($"[{string.Join(", ", triplet)}]");
         // }
 
+        LCS solver = new LCS();
         int[] input = [4, 8, 1, 9, 3, 2];
-
-        
+        int result = solver.LongestConsecutiveSequence(input);
+        Console.WriteLine(result);
     }
 }

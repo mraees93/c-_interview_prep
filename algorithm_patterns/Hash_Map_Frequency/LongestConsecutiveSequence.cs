@@ -10,19 +10,23 @@ using a HashSet<int>
 */
 namespace algorithm_patterns.Hash_Map_Frequency
 {
-    public class Solution
+    public class LCS
     {
         public int LongestConsecutiveSequence(int[] nums)
         {
             // Store all numbers in a HashSet for O(1) lookups
-            HashSet<int> numSet = new HashSet(nums);
+            HashSet<int> numSet = new HashSet<int>(nums); //same as spread [.. nums];
+            numSet.ToList().ForEach(num => Console.WriteLine(num));
             int longestStreak = 0;
 
             foreach(int num in numSet)
             {
+                Console.WriteLine($"num: {num}");
                 // Check if 'num' is the start of a sequence
                 if(!numSet.Contains(num - 1))
                 {
+                    Console.WriteLine($"num inside if check: {num}");
+
                     int currentNum = num;
                     int currentStreak = 1;
 
@@ -32,11 +36,10 @@ namespace algorithm_patterns.Hash_Map_Frequency
                         currentNum += 1;
                         currentStreak += 1;
                     }
+
+                    longestStreak = Math.Max(longestStreak, currentStreak);
                 }
-
-                longestStreak = Math.Max(longestStreak, currentStreak);
             }
-
             return longestStreak;
         }
     }
