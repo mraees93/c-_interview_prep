@@ -17,6 +17,13 @@
 
 
 
+**When to use DB sharding vs when to use Table partitioning?**
+**Think horizontal scaling vs vertical scaling**
+Use Table Partitioning to split a massive table onto a single server to prevent local index bloat and keep active data cached in RAM. Transition to Database Sharding when data scale or write traffic breaks the physical hardware limits of a single machine, forcing you to distribute rows across multiple separate servers over the network.
+
+With partitioning, the database engine handles the routing seamlessly. With sharding, the application layer or a router middleware has to know exactly which physical machine holds the data.
+
+
 ### LexisNexis-Specific Scenario Matrix
 
 | Interview Scenario Prompt | The Engineering Choke Point | The Correct Architectural Response |

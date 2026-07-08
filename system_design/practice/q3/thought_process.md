@@ -17,9 +17,15 @@ use message queue/kafka with async workers to solve slow Third-Party api's, use 
 
 Audit Logging & Immutability: Every document state change, user access, and third-party API payload must be permanently recorded. To comply with strict legal-tech data standards, these logs must be append-only, cryptographically verifiable to prove they have never been tampered with or deleted, and queryable with sub-second latency by legal auditors.
 
-Use postgresql for acid, replication to handle possible db failures, use background async change data capture(CDC) **not dual writes** for syncing new updates into elasticsearch, proper indexing on tables, for index write speed failures i'll implement Table Partitioning (Range Partitioning by Date) name it by log info and month to speed up large table index bloating
+Use postgresql for acid, 
+replication for high availability, 
+db failover to handle possible db failures, 
+proper indexing on tables, 
+**right idea**for index write speed failures i'll implement Table Partitioning (Range Partitioning by Date) name it by log info and month to speed up large table index bloating.
+**better**For index write speed failures, I'll implement Table Partitioning—specifically Range Partitioning by log info and monthly intervals. This keeps the active write index small, directly mitigating (make less severe) large-table index bloat.
 caching for massive speed boost and frequently accessed data
 elasticsearch for queries for sub-second latency
+use background async change data capture(CDC) **not dual writes** for syncing new updates into elasticsearch, 
 enforce a Zero-Trust network architecture on the different layers for cryptographically verifiable
 
 Scale: 10,000 corporate legal teams uploading an average of 5 million total documents per month. This process generates approximately 100 million audit log entries and 20 Terabytes of raw data monthly.
