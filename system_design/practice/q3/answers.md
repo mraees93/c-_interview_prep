@@ -3,101 +3,93 @@
 ## 1. System Architecture Diagram
 
 ```text
-+----------+      (1) HTTPS Upload     +-------------+      (2) Route Request     +------------------+
+[CLIENT TIER]              [EDGE TIER]               [INGESTION & DATA TIER]                [EVENT BACKBONE]            [ASYNC WORKER & AUDIT TIER]
 
-|          |-------------------------->|             |--------------------------->|                  |
-|   LAW    |                           |     API     |                            |     CONTRACT     |
-|   FIRM   |                           |   GATEWAY   |                            |     SERVICE      |
-|  CLIENT  |                           |  / PROXY    |                            |                  |
-|          |<--------------------------|             |<---------------------------|                  |
-+----------+      (8) WebSockets/Email +-------------+      (7) Alert Signal      +------------------+
++----------+              +-----------+             +--------------------+                 +----------------+          +--------------------+
 
-                                                                                    |              |
-                                                                                   (3a)           (3b)
+|          | (1) HTTPS    |           | (2) Route   |  CONTRACT SERVICE  | (3a) Write Text |   CASSANDRA    |          |  3RD-PARTY SERVICE |
+|          |------------->|    API    |------------>|   (MICROSERVICE)   |---------------->|   DATABASE     |    +---->|   (MICROSERVICE)   |
+|          |              |  GATEWAY  |             +--------------------+                 +----------------+    |      +--------------------+
+|   LAW    |              +-----------+                 |             ^                                          |        |                |
+|   FIRM   |                    |                      (3b)          (3d) Cache Miss                             |       (6a) Async I/O   (7) Result Event
+|  CLIENT  |              (2a) Session Check            v             |                                          |        v                v
+|          |                    v                   +------+      +---------------+                              |      +-----------+    +---------------+
+|          |              +-----------+             | AWS  |      |  REDIS CACHE  |                              |      | EXTI. GOV  |    |  NOTIFICATION |
+|          |<-------------|   REDIS   |             |  S3  |      | (Doc Metadata)|                              |      |  BUREAUS  |    |    SERVICE    |
+|          | (8) WebSockets/  (Auth)  |             +------+      +---------------+                              |      +-----------+    +---------------+
++----------+     Email    +-----------+                 |                                                            |                             |
+                                                       (4) Publish Event                                             |                            (7a) Forward
 
-                                                                                    |              |
-                                                                                    v              v
-                                                                              +-----------+  +-----------+
+                                                        |                                                            |                             v
+                                                        v                                                            |                       +-----------+
+                                                    +------------------------------------------------------------+   |                       |    API    |
 
-                                                                              |  AWS S3   |  | CASSANDRA |
-                                                                              | (Raw PDF) |  |   (Text)  |
-                                                                              +-----------+  +-----------+
-                                                                                    |
-                                                                                   (4) Publish Inbound Event
-                                                                                    |
-                                                                                    v
-                                                                      +----------------------------------+
+                                                    | KAFKA DISTRIBUTED MESSAGE BROKER                           |   |                       |  GATEWAY  |
+                                                    | - Topic: legal-document-ingestion -------------------------+---+                       +-----------+
+                                                    | - Topic: audit-events-stream ------------------------------+--------------------+
 
-                                                                      | KAFKA DISTRIBUTED MESSAGE BROKER |
-                                                                      | - legal-document-ingestion       |
-                                                                      | - audit-events-stream            |
-                                                                      | - third-party-dlq                |
-                                                                      +----------------------------------+
+                                                    | - Topic: third-party-dead-letter-queue (DLQ)               |                    |
+                                                    +------------------------------------------------------------+                    |
+                                                                                                                                     (9) Consume All
+                                                                                                                                      |
+                                                                                                                                      v
+                                                                                                                             +--------------------+
 
-                                                                          |                          |
-                                                                         (5) Consume                (9) Consume All
+                                                                                                                             |  AUDIT LOG SERVICE |
+                                                                                                                             |   (MICROSERVICE)   |
+                                                                                                                             +--------------------+
+                                                                                                                                |
+                                                                                                                               (10) Cryptographic Write
+                                                                                                                                v
+                                                                                                                             +--------------------+
 
-                                                                          |                          |
-                                                                          v                          v
-                                                              +------------------+        +------------------+
+                                                                                                                             | POSTGRESQL PRIMARY |
+                                                                                                                             | (Date Partitioned) |
+                                                                                                                             +--------------------+
+                                                                                                                                |
+                                                                                                                               (11) WAL Capture
+                                                                                                                                v
+                                                                                                                             +--------------------+
 
-                                                              |   THIRD-PARTY    |        |    AUDIT LOG     |
-                                                              |  SERVICE POOL    |        |     SERVICE      |
-                                                              +------------------+        +------------------+
+                                                                                                                             |   DEBEZIUM (CDC)   |
+                                                                                                                             +--------------------+
+                                                                                                                                |
+                                                                                                                               (12) Stream Index
+                                                                                                                                v
+                                                                                                                             +--------------------+
 
-                                                                  |          |                       |
-                                                                 (6a)       (6b)                    (10) Write Row
-                                                                  v          v                       v
-                                                              +-------+  +-------+        +------------------+
+                                                                                                                             |   ELASTICSEARCH    |
+                                                                                                                             +--------------------+
+                                                                                                                                ^
+                                                                                                                               (13) Sub-Second Read
+                                                                                                                                |
+                                                                                                                             +--------------------+
 
-                                                              | Gov   |  | Credit|        |    POSTGRESQL    |
-                                                              | Bureau|  | Bureau|        | (Date Partition) |
-                                                              +-------+  +-------+        +------------------+
-                                                                                                     |
-                                                                                                    (11) WAL Capture
-                                                                                                     |
-                                                                                                     v
-                                                                                          +------------------+
-
-                                                                                          |  DEBEZIUM (CDC)  |
-                                                                                          +------------------+
-                                                                                                     |
-                                                                                                    (12) Stream Index
-                                                                                                     |
-                                                                                                     v
-                                                                                          +------------------+
-
-                                                                                          |  ELASTICSEARCH   |
-                                                                                          +------------------+
-                                                                                                     ^
-                                                                                                     |
-                                                                                          (13) Sub-Second Query
-                                                                                                     |
-                                                                                          +------------------+
-
-                                                                                          | COMPLIANCE AUDIT |
-                                                                                          |   DASHBOARD      |
-                                                                                          +------------------+
+                                                                                                                             |  COMPLIANCE AUDIT  |
+                                                                                                                             |    DASHBOARD       |
+                                                                                                                             +--------------------+
 ```
 
 ### Diagram Legend & Flow Notes
 
 #### Write Path (Document Processing Pipeline)
-*   **(1) to (2):** Client uploads large batches of legal documents securely via HTTPS. The API Gateway routes traffic to the **Contract Service**.
-*   **(3a) & (3b):** The **Contract Service** strips raw binary files to **AWS S3** and saves structured text content to **Cassandra** for distributed access.
-*   **(4):** The Contract Service instantly fires an `Inbound_Document` event to the **Kafka Broker** using the Document UUID as the partition key. It does *not* wait for third-party APIs.
-*   **(5):** The **Third-Party Service** utilizes a dedicated polling thread to pull messages swiftly from Kafka without stalling partitions.
-*   **(6a) & (6b):** Handover occurs to a highly concurrent **Worker Pool Execution Thread** that processes long-running (15s–3min) external calls securely to government and credit bureaus. If timeouts continuously fail, messages route to the **DLQ**.
+*   **(1) to (2):** The Client initiates a batch upload via HTTPS. The API Gateway queries **Redis (2a)** to authenticate active user sessions and enforce rate limiting before routing the request to the decoupled **Contract Service**.
+*   **(3a) & (3b):** The isolated **Contract Service** splits the payload, uploading the heavy raw binary data directly to **AWS S3** and writing the extracted text structure into **Cassandra**.
+*   **(3c) & (3d):** Metadata and transitional tracking information are populated directly into **Redis** using a **Cache-Aside** strategy to offload expensive database reads.
+*   **(4):** The Contract Service instantly publishes an `Inbound_Document` token into the **Kafka Broker** using the Document UUID as the partition key. It safely terminates its own transaction without blocking on external systems.
+*   **(5):** The **Third-Party Service** acts as an independent event-driven consumer, reading messages instantly via dedicated consumer poll threads.
+*   **(6a):** Handover occurs to a concurrent execution worker loop that securely addresses the slow external APIs (15s–3min processing frames) of external government and credit bureaus.
 
 #### Read Path & User Notification
-*   **(7) to (8):** Once the worker receives a payload, it triggers the **Notification Service**, sending real-time job status updates via a persistent **WebSocket** connection or triggering a transactional **Email** confirmation.
+*   **(7) to (8):** Upon receiving third-party response vectors, the **Third-Party Service** fires an execution event down the broker pipeline. The **Notification Service** intercepts this data and targets the active **API Gateway** instance, updating the user immediately over an active **WebSocket** socket or dropping a confirmation **Email**.
 
 #### Write & Read Paths for Auditing & Compliance
-*   **(9):** The **Audit Log Service** listens as an independent consumer to all events across Kafka.
-*   **(10):** Logs stream to **PostgreSQL**. Tables use **Range Partitioning by Date** (monthly cycles) to maintain small index footprints and fast ingestion rates.
-*   *Security Implementation Note:* Every row written encapsulates an application-level **Cryptographic Hash Chain** (`Hash(Current Data + Prior Row Hash)`). 
-*   **(11) to (12):** **Debezium Change Data Capture (CDC)** reads the Postgres Write-Ahead Log (WAL) asynchronously and replicates logs directly into **Elasticsearch**. This bypasses dual-write inconsistency and prevents transactional degradation.
-*   **(13):** Compliance Auditors read logs through a dedicated interface interacting with **Elasticsearch**, ensuring sub-second query latency over hundreds of millions of past entries.
+*   **(9):** Separated entirely from the data routing mechanics, the **Audit Log Service** consumes all raw infrastructure transitions off the Kafka broker logs.
+*   **(10):** The service streams logs into **PostgreSQL**. Tables utilize **Range Partitioning by Date** (monthly rotation) to avoid global index bloat.
+*   *Cryptographic Implementation Note:* Individual log nodes generate an application-level linked **Cryptographic Hash Chain** (`Hash(Current Row Data + Prior Row Hash)`). Any low-level database modification fractures the system sign-offs, alerting compliance frameworks.
+*   **(11) to (12):** **Debezium Change Data Capture (CDC)** tails the Postgres Write-Ahead Log (WAL) engine completely out-of-process, mirroring structures down to **Elasticsearch** without risking dual-write split-brain synchronization errors.
+*   **(13):** Auditor compliance panels pull records directly out of the fast **Elasticsearch** tier for real-time validation.
+
 
 ***
 
