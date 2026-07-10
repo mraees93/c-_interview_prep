@@ -20,29 +20,26 @@ JOIN Products p ON c.CategoryID = p.CategoryID
 JOIN OrderItems oi ON p.ProductID = oi.ProductID
 GROUP BY c.CategoryID, c.CategoryName;
 
--- Categories (CategoryID, CategoryName)
--- Products (ProductID, ProductName, CategoryID, Price)
--- Orders (OrderID, OrderDate, CustomerName)
--- OrderItems (ItemID, OrderID, ProductID, Quantity)
-
 --4. List the Names of Customers who have ordered products from the 'Electronics' category.
 
-SELECT c.CustomerName
+SELECT DISTINCT c.CustomerName
 FROM Orders o
 JOIN OrderItems oi ON o.OrderID = oi.OrderID
 JOIN Products p ON oi.ProductID = p.ProductID
 JOIN Categories c ON p.CategoryID = c.CategoryID
 WHERE c.CategoryName = 'Electronics';
 
-SELECT DISTINCT o.CustomerName
-FROM Orders o
-JOIN OrderItems oi ON o.OrderID = oi.OrderID
-JOIN Products p ON oi.ProductID = p.ProductID
-JOIN Categories c ON c.CategoryID = p.CategoryID
-WHERE c.CategoryName = 'Electronics';
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
 
+--5. Find Orders where the total quantity of items is greater than 10
 
-
+SELECT oi.OrderID, COUNT(oi.Quantity) AS TotalQuantity
+FROM OrderItems oi 
+GROUP BY oi.OrderID
+HAVING COUNT(oi.Quantity) > 10;
 
 
 -- 1. List all Lawyers and their total file storage. If a lawyer has no files, show 0 instead of NULL
@@ -85,12 +82,6 @@ WHERE d.FileSizeKB >= 100
 GROUP BY m.MatterID, m.Title
 HAVING SUM(d.FileSizeKB) > 10000;
 
-
--- Schema Details:
--- Lawyers (LawyerID, Name, Department)
--- Matters (MatterID, Title, LeadLawyerID)
--- Documents (DocID, MatterID, FileSizeKB)
-
 --5. List all Lawyers and any Matters they lead with 'Litigation' in the title. Lawyers with no 'Litigation' matters must still 
 -- appear in the list.
 
@@ -98,3 +89,45 @@ SELECT l.Name, m.Title
 FROM Lawyers l 
 LEFT JOIN Matters m ON L.LawyerID = m.LeadLawyerID 
     AND m.Title LIKE '%Litigation%';
+
+--6. Find the average document size (FileSizeKB) for each Department.
+
+SELECT l.Department, AVG(d.FileSizeKB) AS AvgDocSize
+FROM Lawyers l
+JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+JOIN Documents d ON m.MatterID = d.MatterID
+GROUP BY l.Department;
+
+
+-- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+-- 7. Find the single largest document (highest FileSizeKB) for each Department. Show the Department name, the Document ID, and the size.
+
+SELECT Department, FileSizeKB
+FROM (
+    SELECT l.Department, d.DocID,
+        ROW_NUMBER() OVER(PARTITION BY l.Department ORDER BY d.FileSizeKB DESC) AS DocSize
+    FROM Lawyers l 
+    JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+    JOIN Documents d ON m.MatterID = d.MatterID
+) L
+WHERE DocSize = 1;
+
+SELECT Department, DocID, FileSizeKB
+FROM (
+    SELECT 
+        l.Department, 
+        d.DocID, 
+        d.FileSizeKB,
+        ROW_NUMBER() OVER(
+            PARTITION BY l.Department  -- Splits data into "piles" by Department
+            ORDER BY d.FileSizeKB DESC -- Sorts each "pile" largest to smallest
+        ) as rnk                       -- Assigns a "ticket number" (#1 is largest)
+    FROM Lawyers l
+    JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+    JOIN Documents d ON m.MatterID = d.MatterID
+) t
+WHERE rnk = 1;                         -- Keeps only the #1 (largest) from each pile
