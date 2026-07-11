@@ -3,12 +3,13 @@ System Requirements
 
 Client Requests: Law firms and legal corporate clients log into a web application to upload large batches of legal contracts and court transcripts (PDF, DOCX, and scanned images) for automated compliance scanning and risk analysis.
 
+Thoughts:
 contract service => 
     to upload large batches of legal contracts => use message queue/kafka with async workers to solve write-heavy problem
     the text contracts can then be stored in cassandra and court transcripts can be stored in aws blob storage
 
 
-### Correct Ingestion Path Sequence
+### Correct Drawing Ingestion Path Sequence
 
 * **1. DNS & Load Balancing:** The client application resolves our entry point domain via DNS Geo-Routing. This balances traffic directly across multiple high-availability Application Load Balancers (ALBs).
 * **2. Edge Validation:** The ALB handles ingress traffic routing and forwards requests to our API Gateway tier, which actively manages central authentication, rate limiting, and mTLS termination.
