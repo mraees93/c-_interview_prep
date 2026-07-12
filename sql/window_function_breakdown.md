@@ -75,3 +75,8 @@ The top-level `SELECT` list isolates the specific columns requested by the user 
 | :--- | :--- | :--- |
 | Litigation | Doc-B | 15000 |
 | Corporate | Doc-E | 22000 |
+
+
+What happens if two different documents in the same department have the exact same highest file size? Which one does ROW_NUMBER() pick?"
+
+ROW_NUMBER() is strict—it will arbitrarily assign a 1 to one document and a 2 to the other based on the database engine's storage layout, meaning we might miss a tie. If the business requirement demands we return both documents in the event of a tie for first place, I would simply swap out ROW_NUMBER() for DENSE_RANK().
