@@ -69,6 +69,12 @@ graph RL
 | **Blast Radius (Failure)** | System-wide (Single fault crashes app) | System-wide (Single fault crashes app) | Isolated (Graceful degradation handles faults) |
 | **Horizontal Scaling** | Uniform scaling of entire codebase | Uniform scaling of entire codebase | Granular scaling of specific bottlenecks |
 
+
+Vertical + Uniform: Upgrading a cloud server to the next official tier (e.g., doubling both CPU and RAM together).
+Vertical + Granular: Keeping the same server but adding only 50GB of SSD storage because your database is full.
+Horizontal + Uniform: Adding 5 identical, pre-configured web-server instances to your cluster to handle a traffic spike.
+Horizontal + Granular: In a microservices architecture, adding more instances of only the "Payment Service" while leaving the "Inventory Service" instances alone.
+
 ---
 
 ### Deep-Dive Architectural Profiles
