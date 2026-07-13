@@ -59,3 +59,5 @@ dictionaries, arrays, lists - whats differences
 problem: get even numbers, separate even numbers **two_pointers/SortArrayByParity**
 
 or get a pattern (maybe 1, 2, 3, 4) but its not sequential(4, 8, 9) get longest sequence that increments by 1 out of list or array
+
+**Hash_Map_Frequency/LongestConsecutiveSequence**
