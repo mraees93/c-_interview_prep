@@ -192,3 +192,31 @@ WHERE SubmissionDate >= '2026-01-01'
     AND SubmissionDate < '2026-02-01';
 
 Using an asymmetrical range (>= '2026-01-01' AND < '2026-02-01') instead of a LIKE operator or pulling the month out via a function (like MONTH()) is the exact engineering best practice LexisNexis looks for. It keeps the query sargable, meaning the database engine can fully utilize an index on the SubmissionDate column.
+
+
+
+-- Schema Details:
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+--6. Return the CandidateID and FullName of any candidate who has at least one check with a 'Pending' status, but completely exclude candidates who have any checks 
+-- with a 'Flagged' status.
+
+--my try:
+-- SELECT c.CandidateID, c.FullName
+-- FROM Candidates c 
+-- JOIN Verifications v ON c.CandidateID = v.CandidateID
+-- GROUP BY c.CandidateID, c.FullName
+-- HAVING NOT v.Status;
+-- WHERE v.Status = 'Pending' AND v.Status != 'Flagged';
+
+--shortest solution i found
+SELECT DISTINCT 
+    c.CandidateID, 
+    c.FullName
+FROM Candidates c
+JOIN Verifications p ON c.CandidateID = p.CandidateID AND p.Status = 'Pending' -- filters candidate pool to only include individuals who have at least one 'Pending' check
+LEFT JOIN Verifications f ON c.CandidateID = f.CandidateID AND f.Status = 'Flagged' --find only the 'Flagged' checks for those exact same candidates.
+WHERE f.CandidateID IS NULL; --drop anyone who has a flagged status

@@ -29,11 +29,50 @@ FROM Clients cl
 LEFT JOIN Candidates ca ON cl.ClientID = ca.ClientID --If an industry exists in the Clients table but has zero candidates submitted yet
 GROUP BY cl.Industry;
 
+
+--5. List all corporate CompanyName entries that currently have zero candidates submitted in the Candidates table.
+
+SELECT c.CompanyName
+FROM Clients c
+LEFT JOIN Candidates ca ON c.ClientID = ca.ClientID
+WHERE ca.CandidateID IS NULL;
+
+--alternate:
+SELECT c.CompanyName
+FROM Clients c
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM Candidates ca 
+    WHERE ca.ClientID = c.ClientID
+);
+/*
+The SELECT 1: The subquery does not need to waste resources fetching actual data rows (like ca.CandidateID). It just returns a 1 (true) the second it finds a match, 
+making it highly efficient.Correlated Filter: The WHERE ca.ClientID = c.ClientID links the inner query to the outer query, evaluating each company one by one.
+*/
+
+
 -- Schema Details:
 -- Clients (ClientID, CompanyName, Industry)
 -- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
 -- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
 -- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
 
---5. List all corporate CompanyName entries that currently have zero candidates submitted in the Candidates table.
+--6. Return the CandidateID and FullName of any candidate who has at least one check with a 'Pending' status, but completely exclude candidates who have any checks 
+-- with a 'Flagged' status.
 
+--my try:
+-- SELECT c.CandidateID, c.FullName
+-- FROM Candidates c 
+-- JOIN Verifications v ON c.CandidateID = v.CandidateID
+-- GROUP BY c.CandidateID, c.FullName
+-- HAVING NOT v.Status;
+-- WHERE v.Status = 'Pending' AND v.Status != 'Flagged';
+
+--shortest solution i found
+SELECT DISTINCT 
+    c.CandidateID, 
+    c.FullName
+FROM Candidates c
+JOIN Verifications p ON c.CandidateID = p.CandidateID AND p.Status = 'Pending' -- filters candidate pool to only include individuals who have at least one 'Pending' check
+LEFT JOIN Verifications f ON c.CandidateID = f.CandidateID AND f.Status = 'Flagged' --find only the 'Flagged' checks for those exact same candidates.
+WHERE f.CandidateID IS NULL; --drop anyone who has a flagged status
