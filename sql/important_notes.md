@@ -175,3 +175,20 @@ HAVING COUNT(oi.Quantity) > 10;
 -- If an interviewer gives you a question like Q5 and you catch this shortcut, you immediately stand out as an Intermediate Engineer 
 -- because you are actively thinking about Performance and Efficiency.
 -- Cuts database work in half. It reads from a single table, bypassing the expensive join overhead entirely.
+
+
+
+-- Schema Details:
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+--1. Find the FullName and SubmissionDate of all candidates who submitted their details in January 2026.
+
+SELECT FullName, SubmissionDate
+FROM Candidates
+WHERE SubmissionDate >= '2026-01-01'
+    AND SubmissionDate < '2026-02-01';
+
+Using an asymmetrical range (>= '2026-01-01' AND < '2026-02-01') instead of a LIKE operator or pulling the month out via a function (like MONTH()) is the exact engineering best practice LexisNexis looks for. It keeps the query sargable, meaning the database engine can fully utilize an index on the SubmissionDate column.
