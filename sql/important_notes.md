@@ -60,6 +60,9 @@ COUNT(Quantity)    "How many rows or entries are there in this group?"          
 SUM(Quantity)      "What is the math total of the numbers in this column?"               7 (\(2 + 5\) total items shipped)
 
 
+If the question asks for a specific metric threshold (e.g., HAVING SUM(x) > 500 or HAVING AVG(y) < 50), use an INNER JOIN to optimize performance.
+
+
 
 Use DISTINCT when you are jumping "up" a relationship to find unique parents (e.g., "Find unique CustomerNames from the Orders table").
 Do NOT use DISTINCT when you are listing items from a base inventory table (like Products), because each individual item should be allowed to show up on its own row.

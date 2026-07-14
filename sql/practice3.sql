@@ -51,12 +51,6 @@ making it highly efficient.Correlated Filter: The WHERE ca.ClientID = c.ClientID
 */
 
 
--- Schema Details:
--- Clients (ClientID, CompanyName, Industry)
--- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
--- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
--- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
-
 --6. Return the CandidateID and FullName of any candidate who has at least one check with a 'Pending' status, but completely exclude candidates who have any checks 
 -- with a 'Flagged' status.
 
@@ -76,3 +70,30 @@ FROM Candidates c
 JOIN Verifications p ON c.CandidateID = p.CandidateID AND p.Status = 'Pending' -- filters candidates to only include individuals who have at least one 'Pending' check
 LEFT JOIN Verifications f ON c.CandidateID = f.CandidateID AND f.Status = 'Flagged'--get Flagged for the candidates. If candidate has no 'flagged', f columns become null
 WHERE f.CandidateID IS NULL; --drop anyone who has a flagged status
+
+--7. Find the CompanyName of clients whose average verification check cost (CostZAR) across all their candidates is strictly greater than 200.00.
+
+SELECT cl.CompanyName, AVG(v.CostZAR) AS AverageVerificationCost
+FROM Clients cl
+JOIN Candidates ca ON cl.ClientID = ca.ClientID
+JOIN Verifications v ON ca.CandidateID = v.CandidateID
+GROUP BY cl.CompanyName 
+HAVING AVG(v.CostZAR) > 200;
+
+--8. List every CheckID and its CheckType, alongside a count of how many total log entries exist for that check in the VerificationLogs table. Include checks even if 
+-- they have zero logs.
+
+SELECT v.CheckID, v.CheckType, COUNT(vl.CheckID) AS TotalLogEntries
+FROM Verifications v
+LEFT JOIN VerificationLogs vl ON v.CheckID = vl.CheckID
+GROUP BY v.CheckID, v.CheckType;
+
+-- Schema Details:
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+--9. Write a query to show the CandidateID, CheckType, and CostZAR, alongside a new column displaying the average cost of that specific CheckType across the entire 
+-- database.
+
