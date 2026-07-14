@@ -97,3 +97,4 @@ GROUP BY v.CheckID, v.CheckType;
 --9. Write a query to show the CandidateID, CheckType, and CostZAR, alongside a new column displaying the average cost of that specific CheckType across the entire 
 -- database.
 
+SELECT CandidateID, CheckType, CostZAR
