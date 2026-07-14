@@ -73,6 +73,6 @@ SELECT DISTINCT
     c.CandidateID, 
     c.FullName
 FROM Candidates c
-JOIN Verifications p ON c.CandidateID = p.CandidateID AND p.Status = 'Pending' -- filters candidate pool to only include individuals who have at least one 'Pending' check
-LEFT JOIN Verifications f ON c.CandidateID = f.CandidateID AND f.Status = 'Flagged' --find only the 'Flagged' checks for those exact same candidates.
+JOIN Verifications p ON c.CandidateID = p.CandidateID AND p.Status = 'Pending' -- filters candidates to only include individuals who have at least one 'Pending' check
+LEFT JOIN Verifications f ON c.CandidateID = f.CandidateID AND f.Status = 'Flagged'--get Flagged for the candidates. If candidate has no 'flagged', f columns become null
 WHERE f.CandidateID IS NULL; --drop anyone who has a flagged status
