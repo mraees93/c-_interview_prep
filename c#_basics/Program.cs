@@ -118,23 +118,23 @@ public class Program
         //     return sb.ToString(); // Single final heap allocation
         // }
 
-        var recordScores = new Dictionary<string, int> 
-        {
-            { "User_A", 95 },
-            { "User_B", 88 }
-        };
+        // var recordScores = new Dictionary<string, int> 
+        // {
+        //     { "User_A", 95 },
+        //     { "User_B", 88 }
+        // };
 
         // CRITICAL TRAP: If the key does not exist, this throws a KeyNotFoundException and crashes your server!
         //int score = recordScores["User_A"];
 
         //  PRODUCTION-SAFE .NET APPROACH (TryGetValue)
         // Checks for existence and assigns the variable inline using an 'out' parameter without crashing
-        if(recordScores.TryGetValue("User_C", out int userScore))
-        {
-            Console.WriteLine($"Score found: {userScore}");
-        } else
-        {
-            Console.WriteLine("Key not found safely without a runtime exception.");
-        }
+        // if(recordScores.TryGetValue("User_C", out int userScore))
+        // {
+        //     Console.WriteLine($"Score found: {userScore}");
+        // } else
+        // {
+        //     Console.WriteLine("Key not found safely without a runtime exception.");
+        // }
     }
 }
