@@ -1,6 +1,12 @@
 # SQL Window Function Execution Visualizer
 This document breaks down how an intermediate analytical SQL query runs step-by-step using visual data tables.
 
+# 🪟 The Golden Rule of Window Functions
+
+You **never** need a CTE or subquery just to join tables while calculating a window function. 
+
+You **only** use a CTE or subquery when you want to **filter** on the resulting rank or row number (e.g., `WHERE rnk = 1`).
+
 ## 📋 The Database Schema Reference
 *   **Lawyers** (`LawyerID`, `Name`, `Department`)
 *   **Matters** (`MatterID`, `Title`, `LeadLawyerID`)
@@ -10,6 +16,8 @@ This document breaks down how an intermediate analytical SQL query runs step-by-
 
 ## 🛠️ The Target Query
 ```sql
+--sub query version:
+
 SELECT Department, DocID, FileSizeKB
 FROM (
     SELECT l.Department, d.DocID, d.FileSizeKB,
@@ -22,6 +30,27 @@ FROM (
     JOIN Documents d ON m.MatterID = d.MatterID
 ) t
 WHERE rnk = 1;
+
+
+--Common table expression(CTE) version which interviewers prefer for readability:
+
+-- 1. Define the CTE at the top
+WITH RankedDocuments AS (
+    SELECT l.Department, d.DocID, d.FileSizeKB,
+           ROW_NUMBER() OVER(
+               PARTITION BY l.Department 
+               ORDER BY d.FileSizeKB DESC
+           ) AS rnk
+    FROM Lawyers l
+    JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+    JOIN Documents d ON m.MatterID = d.MatterID
+)
+-- 2. Query the CTE down below
+SELECT Department, DocID, FileSizeKB,
+       AVG(FileSizeKB) OVER() AS AvgOfTopDocuments
+FROM RankedDocuments
+WHERE rnk = 1;
+
 ```
 
 ---
