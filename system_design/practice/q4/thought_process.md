@@ -27,6 +27,14 @@ The Answer: Defend your choice of PostgreSQL by emphasizing the business need fo
 
 Third-Party Integration: The system must securely ingest real-time updates from 15 external regulatory frameworks (e.g., INTERPOL, UN Security Council, South African Reserve Bank, UK OFSI). These third parties publish changes via an unpredictable mix of daily XML file uploads, webhook streams, and slow REST endpoints that frequently experience network timeouts.
 
+Third-Party Integration service => 
+Webhook Streams = POST Requests (Inbound) => for high write availability i'll implement rabbitmq with workers in the background then eventually save Webhook Streams to nosql cassandra db 
+
+Slow REST Endpoints = GET Requests (Outbound) => i'll implement rabbitmq with workers in the background, i wont let the user wait any longer than they have to so i'll use websockets to continuously check for updates and update the ui and maybe also eventually send the user an email.
+
+**SLIGHT CORRECTION**: Instead of saying you will use WebSockets to update the client's UI, say this: "For the outbound GET requests, background cron jobs will drop polling tasks into RabbitMQ. Workers consume these tasks, execute the slow 3-minute GET calls to the third party, and save the data to our core stores. If a highly critical list updates (like a terror sanctions list), the worker will broadcast a system-wide invalidation event to the Notification Service, which uses WebSockets to instantly update active compliance officer dashboards with the new security threshold."
+
+Daily XML File Uploads = SFTP or PUT/POST (Inbound/Outbound) => for high write availability i'll implement rabbitmq with workers in the background, save the raw XML file straight to aws s3 blob storage, rabbitmq gets metadata link from Third-Party Integration service then sends that metadata link to the background workers, the background workers then reads the link from aws s3 blob storage and then saves the text from the XML File to cassandra
 
 
 Performance & Availability: API checks from banking clients must return a definitive "Match/No Match" response within less than 150 milliseconds to avoid slowing down credit card transactions or wire transfers.
