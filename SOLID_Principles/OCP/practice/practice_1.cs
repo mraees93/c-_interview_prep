@@ -14,6 +14,8 @@ public class OrderValidator
     }
 }
 
+// MY FIX
+
 public abstract class Order
 {
     public abstract void ValidateOrderNumber(object orderNumber);
