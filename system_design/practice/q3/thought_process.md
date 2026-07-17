@@ -1,7 +1,7 @@
 Scenario: Legal Document Ingestion & Compliance Analytics System1. 
 System Requirements
 
-Client Requests: Law firms and legal corporate clients log into a web application to upload large batches of legal contracts and court transcripts (PDF, DOCX, and scanned images) for automated compliance scanning and risk analysis.
+1. Client Requests: Law firms and legal corporate clients log into a web application to upload large batches of legal contracts and court transcripts (PDF, DOCX, and scanned images) for automated compliance scanning and risk analysis.
 
 Thoughts:
 contract service => 
@@ -28,12 +28,23 @@ Whether a client uploads a scanned PDF or a text-only document, they all enter v
 
 
 
-Third-Party Integration: The system must securely send the extracted text to external, specialized AI legal-compliance engines and government trademark/patent database APIs for validation. These external API calls are highly throttled, prone to intermittent timeouts, and take anywhere from 15 seconds to 3 minutes to return results.
+2. Third-Party Integration: The system must securely send the extracted text to external, specialized AI legal-compliance engines and government trademark/patent database APIs for validation. These external API calls are highly throttled, prone to intermittent timeouts, and take anywhere from 15 seconds to 3 minutes to return results.
 
 use message queue/kafka with async workers to solve slow Third-Party api's, use dead letter queue for intermittent timeouts, 
 
 **WRONG** implement polling every 10 secs in ui to check if results returned
 **CORRECT** Use websockets to return results and eventually an email
+
+for my drawing:
+[Third-Party Service] ➔ [Kafka: Requests] ➔ [Workers] ➔ [Kafka: Completions] ➔ [Notification Service] ➔ [Client Browser]
+
+Step 6: The Third-Party Service drops a verification token into the Kafka Requests Topic.
+Step 7: Kafka buffers the token securely across its partitions.
+Step 8: Workers pull the token from the requests topic and execute the slow 3-minute external APIs out-of-band.
+Step 9: Once done, the Worker publishes a completion token onto the Kafka Completions Topic.
+Step 10: The decoupled Notification Service consumes that completion token from Kafka.
+Step 11: The Notification Service pushes the data down the open WebSocket straight to the Client Browser.
+
 
 
 Audit Logging & Immutability: Every document state change, user access, and third-party API payload must be permanently recorded. To comply with strict legal-tech data standards, these logs must be append-only, cryptographically verifiable to prove they have never been tampered with or deleted, and queryable with sub-second latency by legal auditors.
