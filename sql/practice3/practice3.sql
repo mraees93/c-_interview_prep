@@ -95,15 +95,42 @@ SELECT CandidateID, CheckType, CostZAR,
        AVG(CostZAR) OVER(PARTITION BY CheckType) AS AvgCostCheckType -- Groups the average calculation by CheckType across the whole table
 FROM Verifications;
 
--- Schema Details:
--- Clients (ClientID, CompanyName, Industry)
--- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
--- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
--- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
-
 --10. Select the CandidateID, FullName, and SubmissionDate, along with a column that assigns a sequential row number to candidates for each unique client, 
 -- ordered by their SubmissionDate from earliest to latest.
 
 SELECT CandidateID, FullName, SubmissionDate,
     ROW_NUMBER() OVER(PARTITION BY ClientID ORDER BY SubmissionDate ASC) AS CandidatesBySubmissionDate
 FROM Candidates;
+
+-- Schema Details:
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+--11. Find the CandidateID, CheckType, and Status for all verifications where the check's CostZAR is higher than the average CostZAR of all checks belonging to 
+-- that specific candidate's client.
+
+--Sub query version:
+SELECT CandidateID, CheckType, Status
+FROM (
+    SELECT c.ClientID, v.CandidateID, v.CheckType, v.CostZAR, v.Status,
+           AVG(v.CostZAR) OVER(PARTITION BY c.ClientID) AS AverageCostZAR
+    FROM Candidates c
+    JOIN Verifications v ON c.CandidateID = v.CandidateID
+) t
+WHERE CostZAR > AverageCostZAR;
+
+-- Common table expression(CTE) version
+
+WITH HighestCostZAR AS (
+    SELECT c.ClientID, v.CandidateID, v.CheckType, v.CostZAR, v.Status,
+           AVG(v.CostZAR) OVER(PARTITION BY c.ClientID) AS AverageCostZAR
+    FROM Candidates c
+    JOIN Verifications v ON c.CandidateID = v.CandidateID
+)
+SELECT CandidateID, CheckType, Status
+FROM HighestCostZAR
+WHERE CostZAR > AverageCostZAR;
+
+--"I chose a CTE to separate the concerns of the calculation logic from the final filtering logic, maximizing code readability and maintainability for the team.

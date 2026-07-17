@@ -46,8 +46,7 @@ WITH RankedDocuments AS (
     JOIN Documents d ON m.MatterID = d.MatterID
 )
 -- 2. Query the CTE down below
-SELECT Department, DocID, FileSizeKB,
-       AVG(FileSizeKB) OVER() AS AvgOfTopDocuments
+SELECT Department, DocID, FileSizeKB
 FROM RankedDocuments
 WHERE rnk = 1;
 
