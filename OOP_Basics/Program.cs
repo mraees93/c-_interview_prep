@@ -15,6 +15,12 @@ using OOP_Basics.abstraction;
 //         Console.WriteLine($"Final Balance: {myAccount.GetBalance()}");
 
  using OOP_Basics.practice;
-ParentDocument doc = new LegalBrief();
-doc.Render();
+ //practice_1
+// ParentDocument doc = new LegalBrief();
+// doc.Render();
 //System.Console.WriteLine(doc);
+
+//practice_2
+LegalEngine engine = new SpecializedSearchEngine();
+engine.Process();
+engine.Run();
