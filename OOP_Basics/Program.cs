@@ -9,7 +9,12 @@ using OOP_Basics.abstraction;
 //         myBike.Stop();
 
  using OOP_Basics.encapsulation;
-BankAccount myAccount = new BankAccount(1000);
-        myAccount.Deposit(500);
-        myAccount.Withdraw(200);
-        Console.WriteLine($"Final Balance: {myAccount.GetBalance()}");
+// BankAccount myAccount = new BankAccount(1000);
+//         myAccount.Deposit(500);
+//         myAccount.Withdraw(200);
+//         Console.WriteLine($"Final Balance: {myAccount.GetBalance()}");
+
+ using OOP_Basics.practice;
+ParentDocument doc = new LegalBrief();
+doc.Render();
+//System.Console.WriteLine(doc);
