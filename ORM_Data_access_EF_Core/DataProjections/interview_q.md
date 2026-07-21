@@ -37,6 +37,7 @@ foreach (var courtCase in casesWithAttachments)
     ProcessAttachments(courtCase.Attachments); 
 }
 ```
+
 ### The Advanced Read-Only Fix: DTO Projection via `.Select()`
 
 **You should absolutely stick to .Select() and DTO projection whenever the operation is read-only.**
