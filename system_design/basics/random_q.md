@@ -1,3 +1,24 @@
+How do I know when we hit the hardware limit for a SQL or NoSQL DB?
+
+### Database Hardware Limits Master Reference (SQL vs. NoSQL)
+
+| Metric / Signal Category | SQL Databases (e.g., PostgreSQL) | NoSQL Databases (e.g., Cassandra) |
+| :--- | :--- | :--- |
+| **Shared: CPU Saturation** | Usage hovers above 80%–90% continuously. | Usage hovers above 80%–90% continuously. |
+| **Shared: Disk I/O Bottleneck** | IOPS exhausted; high I/O wait times. | IOPS exhausted; high I/O wait times. |
+| **Shared: Application Distress** | p99 query latency spikes; backend connection timeouts. | p99 query latency spikes; backend connection timeouts. |
+| **Primary System Bottleneck** | **Memory (RAM) & Disk IOPS** | **CPU & Disk I/O during Compaction** |
+| **Key Infrastructure Metric** | **Cache Hit Ratio drops below 99%** (Indexes no longer fit in RAM, forcing slow disk reads). | **Compaction Pending Tasks climb** (System cannot clean up old disk files fast enough). |
+| **Write Failure Mode** | **Lock Contention / Connection Pool Exhaustion** (Queries queue up waiting for row/table locks). | **CommitLog/Memtable Saturation** (Node starts dropping incoming writes or throwing write timeouts). |
+| **Application Symptom** | **p99 Latency spikes** on complex queries and relational table joins. | **Read Latency spikes** because the system must check too many un-compacted SSTables. |
+| **Storage Failure** | **Physical Disk Capacity** reached on the single primary database instance. | **Data Replication Lag** and disk imbalance across the cluster nodes. |
+
+
+
+
+When to introduce sharding to horizontally scale?
+when we have already implemented Range Table Partitioning for vertical scaling and we now hitting the hardware limit, then only we can introduce any of the 2 sharding techniques.
+
 whats a stateless app?
 
 A stateless app is a system where the server does not store any user data, history, or session context between requests. Every request from a client must be completely self-contained, containing all the information required for the server to process it.
