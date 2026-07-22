@@ -67,7 +67,7 @@ public class Program
 
         //Implicit Casting (automatically) - converting a smaller type to a larger type size: char -> int -> long -> float -> double
         // int myInt = 9;
-        // double myDouble = myInt;       // Automatic casting: int to double
+        // char myDouble = myInt;       // Automatic casting: int to double
 
         // Console.WriteLine(myInt);    
         // Console.WriteLine(myDouble); 
@@ -76,8 +76,16 @@ public class Program
         // double myDouble = 9.78;
         // int myInt = (int) myDouble;    // Manual casting: double to int
 
-        // Console.WriteLine(myDouble);   // Outputs 9.78
-        // Console.WriteLine(myInt);      // Outputs 9
+        // Console.WriteLine(myDouble);   
+        // Console.WriteLine(myInt); 
+
+        // int myNum = 56;
+        // char myChar = (char) myNum; //ASCII code
+        // Console.WriteLine(myChar);     
+
+        // int num = 3;
+        // char myChar2 = char.Parse(num.ToString());
+        // Console.WriteLine(myChar2);
 
         //Type conversion methods
         // int myInt = 10;
@@ -90,21 +98,21 @@ public class Program
         // Console.WriteLine(Convert.ToString(myBool));
 
         // var fullName = "Raees";
-        // string[] couple = ["Raees", "Rizia"];
+        // string[] couple = [fullName, "Rizia"];
         // Console.Write(couple.First());
 
         //Allocates 5,000 distinct string objects on the Heap
-    //     public static string BadLogProcessor(string[] events)
-    //     {
-    //         string result = string.Empty;
-    //         foreach (var ev in events)
-    //     {
-    //         result += $"[LOG]: {ev}\n";
-    //     }
-    //         return result;
-    //     }
+        // public static string BadLogProcessor(string[] events)
+        // {
+        //     string result = string.Empty;
+        //     foreach (var ev in events)
+        // {
+        //     result += $"[LOG]: {ev}\n";
+        // }
+        //     return result;
+        // }
     
-    //zero unecessary heap allocations
+        //zero unecessary heap allocations
         // public static string GoodLogProcessor(string[] events)
         // {
         //     // Pre-size the internal array buffer if total size is roughly predictable
@@ -118,23 +126,24 @@ public class Program
         //     return sb.ToString(); // Single final heap allocation
         // }
 
-        // var recordScores = new Dictionary<string, int> 
-        // {
-        //     { "User_A", 95 },
-        //     { "User_B", 88 }
-        // };
+        var recordScores = new Dictionary<string, int> 
+        {
+            { "User_A", 95 },
+            { "User_B", 88 }
+        };
 
-        // CRITICAL TRAP: If the key does not exist, this throws a KeyNotFoundException and crashes your server!
-        //int score = recordScores["User_A"];
-
+        //CRITICAL TRAP: If the key does not exist, this throws a KeyNotFoundException and crashes your server!
+        // int score = recordScores["User_C"];
+        // System.Console.WriteLine(score);
+        
         //  PRODUCTION-SAFE .NET APPROACH (TryGetValue)
         // Checks for existence and assigns the variable inline using an 'out' parameter without crashing
-        // if(recordScores.TryGetValue("User_C", out int userScore))
-        // {
-        //     Console.WriteLine($"Score found: {userScore}");
-        // } else
-        // {
-        //     Console.WriteLine("Key not found safely without a runtime exception.");
-        // }
+        if(recordScores.TryGetValue("User_C", out int userScore))
+        {
+            Console.WriteLine($"Score found: {userScore}");
+        } else
+        {
+            Console.WriteLine("Key not found safely without a runtime exception.");
+        }
     }
 }
