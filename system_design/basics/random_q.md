@@ -1,4 +1,13 @@
-How do I know when we hit the hardware limit for a SQL or NoSQL DB?
+# Whats a bottleneck?
+A bottleneck is a single component or resource that limits the capacity, speed, or throughput of your entire application.
+Even if every other part of your system is lightning-fast, the system can only perform as fast as its slowest component (the bottleneck).
+
+* **Definition:** The slowest component in a system that limits total performance, throughput, or speed.
+* **The Golden Rule:** Optimizing non-bottleneck components yields zero overall performance gain. You must find and fix the specific bottleneck.
+* **Common Examples:** Maxed-out CPU, slow disk drives (IOPS exhaustion), unindexed database tables, and blocking third-party API dependencies.
+
+
+# How do I know when we hit the hardware limit for a SQL or NoSQL DB?
 
 ### Database Hardware Limits Master Reference (SQL vs. NoSQL)
 
@@ -16,11 +25,10 @@ How do I know when we hit the hardware limit for a SQL or NoSQL DB?
 
 
 
-When to introduce sharding to horizontally scale?
+# When to introduce sharding to horizontally scale?
 when we have already implemented Range Table Partitioning for vertical scaling and we now hitting the hardware limit, then only we can introduce any of the 2 sharding techniques.
 
-whats a stateless app?
-
+# whats a stateless app?
 A stateless app is a system where the server does not store any user data, history, or session context between requests. Every request from a client must be completely self-contained, containing all the information required for the server to process it.
 
 Benefits:
@@ -36,13 +44,13 @@ Larger Network Payloads: Because the server remembers nothing, the client must s
 Client-Side Complexity: The frontend application (browser or mobile app) bears the responsibility of securely storing tokens and managing application state.
 Database Heavy: Since the server doesn't hold data in local memory, it must frequently query databases or external caches (like Redis) to verify permissions or retrieve user records.
 
-what's Operational Overhead?
+# what's Operational Overhead?
 
 refers to the ongoing time, money, and human effort required to keep a software system running smoothly, safely, and reliably in production.
 
 e.g. LLM-TriageAgent would be high operational overhead if i replaced polling with websockets
 
-Whats High-throughput?
+# Whats High-throughput?
 
 High-throughput refers to a system's ability to process a massive volume of data or requests within a specific timeframe. While "speed" usually refers to how fast a single task finishes (latency), throughput refers to how many tasks are completed altogether.
 
