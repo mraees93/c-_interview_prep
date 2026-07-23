@@ -148,7 +148,7 @@ WHERE m.Title = 'Litigation'
 SELECT l.Name, m.Title
 FROM Lawyers l
 LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID 
-     AND m.Title LIKE '%Litigation%';
+     **AND m.Title LIKE '%Litigation%';**
 
 --Filter in ON: Filters the "right" table before the join. Keeps all rows from the "left" table.
 --Filter in WHERE: Filters the entire result after the join. Can accidentally delete "left" table rows.
@@ -160,7 +160,7 @@ Performance: Ultra-fast, especially if the column is indexed.
 **putting percentage signs (%) inside quotation marks is a wildcard tool used for partial text matching (searching).
 Operator used: You must use the LIKE operator. If you use = with percentage signs (e.g., WHERE Title = '%Hardware%'), SQL will literally search for text containing actual percent signs.
 Performance: Slower. It forces SQL Server to perform a full-table scan (reading every single row) because it cannot use standard index sorting trees effectively.
-
+**find out how to optimize/make it SARGable a wildcard partial text matching query**
 
 
 -- Categories (CategoryID, CategoryName)
