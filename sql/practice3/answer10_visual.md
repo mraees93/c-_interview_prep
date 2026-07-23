@@ -1,12 +1,12 @@
 # 🪟 Visual Breakdown: Partitioned Row Numbers
 
--- Schema Details:
--- Clients (ClientID, CompanyName, Industry)
--- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
--- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
--- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+Schema Details:<br>
+Clients (ClientID, CompanyName, Industry)<br>
+Candidates (CandidateID, ClientID, FullName, SubmissionDate)<br>
+Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)<br>
+VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)<br>
 
---10. Select the CandidateID, FullName, and SubmissionDate, along with a column that assigns a sequential row number to candidates for each unique client, ordered by their SubmissionDate from earliest to latest.
+### 10. Select the CandidateID, FullName, and SubmissionDate, along with a column that assigns a sequential row number to candidates for each unique client, ordered by their SubmissionDate from earliest to latest.
 
 ```sql
 SELECT CandidateID, FullName, SubmissionDate,
