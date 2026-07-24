@@ -19,7 +19,8 @@ contract service =>
 
 Raw batch upload on my drawing:
 1. Contract Service sends the heavy raw file into AWS S3.
-2. Contract Service (now holding the AWS S3 metadata pointer link) immediately drops that link into Kafka.
+2. Producer Execution, Contract Service publishes the request token to the Kafka Requests Topic. It attaches a key-value attribute inside the Kafka Message Headers 
+    (e.g., `target-db: postgres` or `target-db: cassandra`) to signal the downstream data requirements. Contract Service (now holding the AWS S3 metadata pointer link) immediately drops that link into Kafka. 
 3. Kafka streams that link to your Workers.
 4. Workers download the file from AWS S3, extract the text.
 5. write it into Cassandra.
@@ -59,5 +60,19 @@ caching for massive speed boost and frequently accessed data
 elasticsearch for queries for sub-second latency
 use background async change data capture(CDC) **not dual writes** for syncing new updates into elasticsearch, 
 enforce a Zero-Trust network architecture on the different layers for cryptographically verifiable
+
+
+
+**can i configure some kafka workers in the pool to either send to cassandra or postgresql? Refer to steps 6 and 9A for this specific scenario**
+
+**Metadata/Header-based Routing pipeline (Cleanest solution):**
+
+*   **Step 6 (Producer Execution):** The Third-Party Service publishes the request token to the Kafka Requests Topic. It attaches a key-value attribute inside the Kafka Message Headers (e.g., `target-db: postgres` or `target-db: cassandra`) to signal the downstream data requirements.
+
+*   **Step 7 (Secure Buffering):** Kafka buffers the request token and its routing headers securely across its partitions.
+*   **Step 8 (Out-of-Band Execution):** Workers pull the token from the requests topic, read the headers, and execute the slow 3-minute external APIs out-of-band.
+
+*   **Step 9A (Dynamic Ingestion Router):** Immediately after the API returns the payload, the worker checks that original header attribute. It instantly hands the third-party API payload directly to the correct database connection pool (**PostgreSQL**) as explicitly requested by the producer header in **step 6**.
+
 
 Scale: 10,000 corporate legal teams uploading an average of 5 million total documents per month. This process generates approximately 100 million audit log entries and 20 Terabytes of raw data monthly.
