@@ -142,3 +142,37 @@ Why do we use private fields with public properties instead of just making all f
 ### Core Answer
 *   **Data Protection & Control**: Making a field public allows external classes to corrupt your object state with invalid data at any time.
 *   **The Guard Clause**: Encapsulating data behind properties enables you to write validation logic (guard clauses) directly inside the property `set` accessor, ensuring your object state remains valid.
+
+---
+
+## 6. Static vs. Instance Members (Memory and Allocation Lifecycle)
+
+### The Panel Question
+What is the precise structural difference between a `static` class member and an instance member, and how does the .NET runtime manage their memory lifecycles?
+
+### Core Answer
+*   **Static Members**: Belong directly to the type definition itself, not to any individual object. The .NET CLR allocates memory for static variables exactly once on the **High-Frequency Heap** when the assembly loads. They persist for the entire lifespan of the application process.
+*   **Instance Members**: Belong exclusively to a specific object instance. They are allocated on the **Managed Heap** every time you use the `new` keyword and are cleaned up by the Garbage Collector when references drop to zero.
+*   *Thread-Safety Warning*: Because static variables share a single memory space globally across the application, they are inherently **not thread-safe** if they are mutable. Simultaneous write operations across concurrent async tasks will corrupt the data.
+
+---
+
+## 7. Polymorphism Types: Compile-Time vs. Runtime
+
+### The Panel Question
+What is the mechanical difference between Compile-Time (Static) Polymorphism and Runtime (Dynamic) Polymorphism in C#?
+
+### Core Answer
+*   **Compile-Time Polymorphism**: Achieved via **Method Overloading** (defining multiple methods with the same name but different signatures within the same class). The compiler resolves exactly which method to execute at compile time based strictly on the parameters passed.
+*   **Runtime Polymorphism**: Achieved via **Method Overriding** (using `virtual` or `abstract` in a base class and `override` in a subclass). The compiler does not know which method will execute. Instead, the .NET runtime evaluates the type of the physical object in memory at runtime and uses the **Virtual Method Table (VMT)** to dynamically dispatch the call.
+
+---
+
+## 8. Abstraction vs. Encapsulation
+
+### The Panel Question
+Developers frequently confuse Abstraction and Encapsulation. What is the definitive conceptual boundary between the two?
+
+### Core Answer
+*   **Abstraction (The "What")**: Focuses on hiding internal complexity and showing only the essential features of an object. You achieve this using **Interfaces** or **Abstract Classes** to present a simple exterior contract while hiding the underlying mechanism.
+*   **Encapsulation (The "How")**: Focuses on **information hiding and state protection**. It groups data (fields) and methods together inside a class and restricts direct access from the outside using access modifiers (`private`, `protected`). This ensures an object maintains absolute control over its internal state via validation rules or guard clauses.
