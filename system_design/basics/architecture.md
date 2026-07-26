@@ -152,18 +152,6 @@ This comprehensive guide outlines the differences between macro-level deployment
 
 ---
 
-## 1. Macro vs. Micro Architecture (The Core Distinction)
-
-**Monolithic vs. Modular Monolithic** defines *how the entire application is packaged and separated by business domains* (Deployment & Macro-level structure). 
-
-**Layered vs. Onion Architecture** defines *how code is organized internally within a single application or module* (Code Organization & Dependency Flow).
-
-| Dimension | Macro Architecture (Monolith vs. Modular Monolith) | Micro/Logical Architecture (Layered vs. Onion) |
-| :--- | :--- | :--- |
-| **Focus** | How the system is split into business features and deployed. | How the technical code inside is structured logically into components. |
-| **Boundaries** | Vertical boundaries (e.g., separating Orders from Billing). | Horizontal boundaries (e.g., separating UI from Database). |
-| **Key Question** | "Do all features live in one project, or are they isolated modules?" | "Does my business logic depend on my database, or vice versa?" |
-
 ### The Macro View: Monolith vs. Modular Monolith
 * **Traditional Monolith:** The entire system is built as a single, indivisible unit. In .NET, this often looks like one giant API project where controllers call repositories across different domains directly. Code easily becomes tightly coupled over time ("Big Ball of Mud").
 * **Modular Monolith:** The application is still deployed as a single unit (one running process, one database), but the code is strictly separated into independent **modules** by business capability (e.g., `Catalog`, `Orders`, `Shipping`). Each module acts like its own isolated "mini-app" with its own database context or schema.
