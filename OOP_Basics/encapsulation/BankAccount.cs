@@ -7,18 +7,24 @@ namespace OOP_Basics.encapsulation
 {
     public class BankAccount
     {
-        private double balance; // internal data is hidden
+        private double _balance; // internal data is hidden
+
+        public double Balance { get; set; }
+        // {
+        //     get { return name; }   // get method
+        //     set { name = value; }  // set method
+        // }
         public BankAccount (double initialBalance) //constructor
         {
-            balance = initialBalance;
+            _balance = initialBalance;
         }
 
         public void Deposit(double amount)
         {
             if(amount > 0)
             {
-                balance += amount;
-                Console.WriteLine($"Deposited: {amount}, New Balance: {balance}");
+                _balance += amount;
+                Console.WriteLine($"Deposited: {amount}, New Balance: {_balance}");
             } else
             {
                 Console.WriteLine("Deposit amount must be positive.");
@@ -27,10 +33,10 @@ namespace OOP_Basics.encapsulation
 
         public void Withdraw(double amount)
         {
-            if (amount > 0 && amount <= balance)
+            if (amount > 0 && amount <= _balance)
             {
-                balance -= amount;
-                Console.WriteLine($"Withdrawn: {amount}, Remaining Balance: {balance}");
+                _balance -= amount;
+                Console.WriteLine($"Withdrawn: {amount}, Remaining Balance: {_balance}");
             }
             else
             {
@@ -40,7 +46,7 @@ namespace OOP_Basics.encapsulation
 
         public double GetBalance() //controlled access
         {
-            return balance;
+            return _balance;
         }
     }
 }
