@@ -11,7 +11,7 @@ namespace OOP_Basics.abstraction
         public abstract void Start();
 
         //concrete method (already implemented)
-        public static void Stop()
+        public virtual void Stop()
         {
             Console.WriteLine("Vehicle stopped.");
         }
@@ -36,7 +36,7 @@ class Car : Vehicle
     // Using override tells the compiler that this method is intentionally fulfilling that requirement, rather than 
     // just being a new method with the same name.
 
-     public static void Stop()
+     public override void Stop()
     {
         Console.WriteLine("Car is stopping.");
     }
