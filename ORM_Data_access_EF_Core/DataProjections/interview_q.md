@@ -23,7 +23,7 @@ foreach (var courtCase in cases)
     *   **Answer**: Force **Eager Loading** using the `.Include()` extension method. This instructs the ORM to generate an optimized SQL command with an explicit `LEFT JOIN` under the hood, fetching the parent cases and child attachments simultaneously in **exactly 1 single database round-trip**.
 *   **The Refactored Fix**:
 
-**You must use .Include() and return full Domain Entities whenever you need to modify the data and save changes back to the database.**
+### You must use .Include() and return full Domain Entities whenever you need to modify the data and save changes back to the database.**
 
 ```csharp
 // Eagerly loading child dependencies completely resolves the N+1 trap
@@ -60,13 +60,18 @@ var summaryReport = _context.Cases
     .ToList(); // Executes exactly 1 highly optimized, column-specific query. No Change Tracking occurs.
 ```
 
+```csharp
 // BAD: You cannot save changes to a DTO
+
 var dto = _context.Cases.Select(c => new CaseDto { Id = c.Id, Status = c.Status }).First();
 dto.Status = "Archived"; 
 _context.SaveChanges(); // NOTHING HAPPENS!
+```
 
+```csharp
 // GOOD: Use Eager Loading because you are executing a Command/Update
 var courtCase = _context.Cases.Include(c => c.Attachments).First(c => c.Id == targetId);
 courtCase.Status = "Archived"; // Change Tracker detects this change
 courtCase.Attachments.Add(new Attachment { Name = "Archived_Manifest.pdf" }); // Tracks child addition
 await _context.SaveChangesAsync(); // Generates optimized UPDATE and INSERT SQL statements in 1 transaction
+```
