@@ -153,7 +153,7 @@ LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
 --Filter in ON: Filters the "right" table before the join. Keeps all rows from the "left" table.
 --Filter in WHERE: Filters the entire result after the join. Can accidentally delete "left" table rows.
 
-**putting quotation marks around a string value is used to match an exact text string, 
+**putting '' around a string value is used to match an exact text string, 
 Operator used: Equals sign (=)
 Performance: Ultra-fast, especially if the column is indexed.
 
