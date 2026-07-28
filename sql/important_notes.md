@@ -160,8 +160,17 @@ Performance: Ultra-fast, especially if the column is indexed.
 **putting percentage signs (%) inside quotation marks is a wildcard tool used for partial text matching (searching).
 Operator used: You must use the LIKE operator. If you use = with percentage signs (e.g., WHERE Title = '%Hardware%'), SQL will literally search for text containing actual percent signs.
 Performance: Slower. It forces SQL Server to perform a full-table scan (reading every single row) because it cannot use standard index sorting trees effectively.
-**find out how to optimize/make it SARGable a wildcard partial text matching query**
 
+**How to optimize a wildcard partial text matching query?**
+
+**This QUERY doesnt make it truly SARGable in the true sense but it achieves the exact same ultimate goal: high performance without a full table scan.**
+
+SELECT l.Name, m.Title
+FROM Lawyers l 
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+AND CONTAINS(m.Title, 'Litigation'); -- This utilizes an MS SQL Full-Text Index and is highly performant
+
+**normally, wrapping a column inside a function completely destroys SARGability and forces an Index Scan. CONTAINS() is the one major exception to this rule because it does not use standard database indexes it uses Microsoft SQL Server's Full-Text Search (FTS) engine.**
 
 -- Categories (CategoryID, CategoryName)
 -- Products (ProductID, ProductName, CategoryID, Price)
