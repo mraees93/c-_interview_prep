@@ -74,5 +74,14 @@ enforce a Zero-Trust network architecture on the different layers for cryptograp
 
 *   **Step 9A (Dynamic Ingestion Router):** Immediately after the API returns the payload, the worker checks that original header attribute. It instantly hands the third-party API payload directly to the correct database connection pool (**PostgreSQL**) as explicitly requested by the producer header in **step 6**.
 
+**This entire data synchronization flow (from Step 10 all the way to Step 13) happens completely in the background (asynchronously).**
+10. Replication:
+    PostgreSQL: The primary instance records the transaction to its local **Write-Ahead Log (WAL)** and automatically streams these binary changes to the read replicas via background processes.
+    
+    Trade-off: This native approach guarantees data consistency and prevents application bloat, but introduces a tiny delay called **Replication Lag** before the data becomes readable on the replica instances.
+
+11. The Read Replicas stream those replication logs **(Write-Ahead Logs, WAL)** directly into the CDC Engine (Debezium) out-of-band.
+12. The CDC Engine converts those database row mutations into events and publishes them onto a dedicated Kafka Change-Log Topic.
+13. An Elasticsearch Sink consumes those events from Kafka and indexes the data into Elasticsearch for sub-second searching.
 
 Scale: 10,000 corporate legal teams uploading an average of 5 million total documents per month. This process generates approximately 100 million audit log entries and 20 Terabytes of raw data monthly.
