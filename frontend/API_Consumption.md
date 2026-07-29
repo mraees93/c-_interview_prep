@@ -50,7 +50,7 @@ export const CaseList: React.FC = () => {
     return () => abortController.abort(); // Instant network level cleanup on unmount
   }, []);
 
-  // Performance Optimization: Memorize derived array mutations to preserve CPU cycles
+  // Performance Optimization: Memoize derived array mutations to preserve CPU cycles
   const filteredCases = useMemo(() => {
     return cases.filter(c => c.title.toLowerCase().includes(filter.toLowerCase()));
   }, [cases, filter]);
@@ -69,9 +69,10 @@ export const CaseList: React.FC = () => {
         style={{ marginBottom: '15px', padding: '8px', width: '300px' }}
       />
       
-      @if (filteredCases.length === 0) {
+      {/* Corrected JSX Conditional Ternary Operators */}
+      {filteredCases.length === 0 ? (
         <p>No matching cases found.</p>
-      } @else {
+      ) : (
         <ul>
           {filteredCases.map(c => (
             <li key={c.caseId} style={{ padding: '4px 0' }}>
@@ -79,7 +80,7 @@ export const CaseList: React.FC = () => {
             </li>
           ))}
         </ul>
-      }
+      )}
     </div>
   );
 };
