@@ -88,12 +88,31 @@ FROM Candidates
 WHERE SubmissionDate >= '2026-01-01' 
     AND SubmissionDate < '2026-02-01';
 
+--2. List the FullName of the candidate, the CheckType, and the Status for all individual checks that have been 'Flagged'.
 
--- Schema Details:
--- Clients (ClientID, CompanyName, Industry)
--- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
--- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
--- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+SELECT c.FullName, v.CheckType, v.Status
+FROM Candidates c
+JOIN Verifications v ON c.CandidateID = v.CandidateID
+WHERE v.Status = 'Flagged';
+
+--3. Find the CompanyName and the total sum of CostZAR spent on all verifications ordered by that client.
+
+SELECT c.CompanyName, SUM(v.CostZAR) AS TotalSpent
+FROM Clients cl
+JOIN Candidates ca ON cl.ClientID = ca.ClientID
+JOIN Verifications v ON ca.CandidateID = v.CandidateID
+GROUP BY cl.ClientID, cl.CompanyName;
+
+--4. Display the Industry name and the total count of candidates submitted under each industry.
+
+--6. Return the CandidateID and FullName of any candidate who has at least one check with a 'Pending' status, but completely exclude candidates who have any checks 
+-- with a 'Flagged' status.
+
+SELECT c.CandidateID, c.FullName
+FROM Candidates c 
+JOIN Verifications p ON c.CandidateID = p.CandidateID AND p.Status = 'Pending'
+LEFT JOIN Verifications f ON p.CandidateID = f.CandidateID AND f.Status = 'Flagged'
+WHERE f.CandidateID IS NULL;
 
 --6. Return the CandidateID and FullName of any candidate who has at least one check with a 'Pending' status, but completely exclude candidates who have any checks 
 -- with a 'Flagged' status.
@@ -111,3 +130,18 @@ FROM Candidates c
 JOIN Verifications p ON c.CandidateID = p.CandidateID AND p.Status = 'Pending' -- filters candidate pool to only include individuals who have at least one 'Pending' check
 LEFT JOIN Verifications f ON c.CandidateID = f.CandidateID AND f.Status = 'Flagged' --find only the 'Flagged' checks for those exact same candidates.
 WHERE f.CandidateID IS NULL; --drop anyone who has a flagged status
+
+-- Schema Details:
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+--7. Find the CompanyName of clients whose average verification check cost (CostZAR) across all their candidates is strictly greater than 200.00.
+
+SELECT cl.CompanyName, AVG(v.CostZAR) AS AverageVerificationCheckCost
+FROM Clients cl
+JOIN Candidates ca ON cl.ClientID = ca.ClientID
+JOIN Verifications v ON ca.CandidateID = v.CandidateID
+GROUP BY cl.CompanyName
+HAVING AVG(v.CostZAR) > 200;
