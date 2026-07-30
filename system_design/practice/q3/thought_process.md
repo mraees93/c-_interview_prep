@@ -21,11 +21,11 @@ Raw batch upload on my drawing:
 1. Contract Service sends the heavy raw file into AWS S3.
 2. Producer Execution, Contract Service publishes the request token to the Kafka Requests Topic. It attaches a key-value attribute inside the Kafka Message Headers 
     (e.g., `target-db: postgres` or `target-db: cassandra`) to signal the downstream data requirements. Contract Service (now holding the AWS S3 metadata pointer link) immediately drops that link into Kafka. 
-3. Kafka streams that link to your Workers.
+3. Independent background consumer workers pull this lightweight message off their designated Kafka partitions.
 4. Workers download the file from AWS S3, extract the text.
 5. write it into Cassandra.
-
-Whether a client uploads a scanned PDF or a text-only document, they all enter via the same pipeline. The Contract Service saves the raw file to S3 for compliance archiving, and drops a metadata pointer into Kafka. The background workers pull the pointer, read the file, process the text—whether that requires full OCR for images or just a stream read for text—and normalize the output before writing it to Cassandra.
+**if rabbitMQ: Independent workers asynchronously pull messages out of the RabbitMQ queue**
+Whether a client uploads a scanned PDF or a text-only document, they all enter via the same pipeline. The Contract Service saves the raw file to S3 for compliance archiving, and drops a metadata pointer into Kafka. The background workers pull the pointer, read the file, process the text—whether that requires full OCR for images or just a stream read(tiny JSON message string) for text—and normalize the output before writing it to Cassandra.
 
 
 
