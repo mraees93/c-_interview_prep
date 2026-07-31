@@ -8,3 +8,12 @@ contract service => kafka => async workers
 
 (Producer Execution - whether to write to cassandra or postgreSQL)
 2. c service (gets s3 link) => raw file to s3 blob => c service sends link(tokenized event containing metadata and s3 file pointer) to kafka => async consumer worker pulls lightweight message off designated Kafka partitions OR stream reads tiny JSON message string => async worker downloads raw pdf file from s3 blob => worker writes legal contracts OR court transcripts to cassandra.
+
+
+
+2. Third-Party Integration: The system must securely send the extracted text to external, specialized AI legal-compliance engines and government trademark/patent database APIs for validation. These external API calls are highly throttled, prone to intermittent timeouts, and take anywhere from 15 seconds to 3 minutes to return results.
+
+third party service => kafka => tasks goes in message queue => async workers securely send the extracted text to external api's 
+        => notification service gets notification via websocket that api validation completed => sends completion message to ui or email
+
+[Third-Party Service] ➔ [Kafka: Requests] ➔ [Workers] ➔ [Kafka: Completions] ➔ [Notification Service] ➔ [Client Browser]
