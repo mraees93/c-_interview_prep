@@ -2,4 +2,4 @@ Software entities (classes, modules, functions, etc.) should be open for extensi
 
 This principle promotes the idea that existing code should be able to be extended with new functionality without modifying its source code. It encourages the use of abstraction and polymorphism to achieve this goal, allowing for code to be easily extended through inheritance or composition.
 
-extending the codebase with more classes, implementing the interface and overriding its method is called the strategy pattern
+extending the codebase with more classes, implementing the interface and overriding its method is called the **strategy pattern**
