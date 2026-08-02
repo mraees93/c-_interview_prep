@@ -25,16 +25,21 @@ a LEFT JOIN is more "expensive" for the database than an INNER JOIN, and that yo
 
 Tip:
 If they ask you to filter based on an aggregate (Sum, Count, Avg), always reach for HAVING. If they ask you to filter based on a specific row property, use WHERE.
+If an interviewer asks you to filter based on a number of occurrences (like "more than 1", "at least 5"), your brain should immediately think: "Group By + Having Count."
+
+-- Schema Details:
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+--7. Find the CompanyName of clients whose average verification check cost (CostZAR) across all their candidates is strictly greater than 200.00.
 
 
 
 The Bottom Line:
 Mastering Inner and Left Joins is 80% of the battle. The other 20%—which is what the interview focuses on—is knowing when to use which one and how to keep the query fast as the database grows to millions of records.
 
-
-
-
-If an interviewer asks you to filter based on a number of occurrences (like "more than 1", "at least 5"), your brain should immediately think: "Group By + Having Count."
 
 
 tips to avoid duplicates:
@@ -128,6 +133,15 @@ SELECT Gender, Name, Total
     
 FROM baby_names
 
+
+-- Schema Details:
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+--9. Write a query to show the CandidateID, CheckType, and CostZAR, alongside a new column displaying the average cost of that specific CheckType across the entire 
+-- database.
 
 
 
