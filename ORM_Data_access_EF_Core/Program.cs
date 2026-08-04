@@ -11,7 +11,7 @@ class Program
         // Console.WriteLine(count);
 
         // List<int> points = new List<int> { 10, 20, 30 };
-        // var query = points.Where(p => p > 15).ToList(); //breaks deferred execution,forces Immediate Execution.
+        // var query = points.Where(p => p > 15).ToList(); //breaks deferred(delayed) execution,forces Immediate Execution.
         // points.Add(40);
         // Console.WriteLine(query.Count);
 
