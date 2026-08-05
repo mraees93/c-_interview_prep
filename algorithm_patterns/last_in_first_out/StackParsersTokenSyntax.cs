@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 /*
-The Prompt: Given a string containing only structural bracket tokens—specifically (, ), {, }, [ and ]—write a validation check that returns a boolean indicating if 
+The Prompt: Given a string containing only structural bracket tokens—specifically (, ), {, }, [ and ]—write a validation check that 
+returns a boolean indicating if 
 the input string pattern closes in a valid sequence.
 Example Input: "()[]{}" ➔ Expected Output: true
 Example Input: "(]" ➔ Expected Output: false
