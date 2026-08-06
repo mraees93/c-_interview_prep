@@ -51,10 +51,17 @@ public class Program
 
         //Console.WriteLine(WhatsYourName("raees"));
 
+        // --- REFERENCE TYPE COPYING ---
         // Customer c1 = new Customer { Name = "Alice" };//customer object is created in heap memory, c1 holds a pointer (reference address) to that spot
         // Customer c2 = c1;//not copying the object. Only copying the pointer. c1,c2 point to the exact same customer object in memory
         // c2.Name = "Bob";//modifying the shared object
         // Console.WriteLine(c1.Name);
+
+        // --- VALUE TYPE COPYING ---
+        // int originalInt = 10;
+        // int copyInt = originalInt; // A completely independent copy is created on the stack
+        // copyInt = 20;
+        // System.Console.WriteLine(originalInt);  // originalInt remains 10
 
         // FileLogger logger = new FileLogger();
         // ((ILogger)logger).Log("Logging"); //You must explicitly cast the object to the interface type first
