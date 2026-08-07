@@ -7,7 +7,7 @@ This module tracks state-management state isolation, asynchronous template rende
 ## 1. UI Performance: Virtual DOM (React) vs. Change Detection (Angular)
 
 ### The Panel Question
-How do React and Angular handle view updates under the hood, and how do you prevent performance degradation when displaying a deep, heavy list of legal document search results?
+How do React and Angular handle view updates under the hood, <br>and how do you prevent performance degradation when displaying a deep, heavy list of legal document search results?
 
 ### Core Answer
 *   **React (Virtual DOM)**: React updates a lightweight copy of the real DOM in memory first. It uses a diffing algorithm ("reconciliation") to calculate the minimum footprint of changes, then surgically updates *only* those specific target elements in the real UI tree to protect responsiveness.
