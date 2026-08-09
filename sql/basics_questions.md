@@ -13,6 +13,8 @@
 
 --5. Find Orders where the total quantity of items is greater than 10
 
+--6. Show every Product and its Category. If a product has no category (NULL CategoryID), show 'Uncategorized' using COALESCE.
+
 
 
 -- Schema Details:
@@ -27,3 +29,15 @@
 
 
 -- 3. Calculate total documents per Lawyer, ensuring that if two lawyers have the same name, they are not combined.
+
+-- 4. List Matters that have a total file size greater than 10,000 KB, 
+--but ignore any individual documents that are smaller than 100 KB in that calculation.
+
+--5. List all Lawyers and any Matters they lead with 'Litigation' in the title. Lawyers with no 'Litigation' matters must still 
+-- appear in the list.
+
+--6. Find the average document size (FileSizeKB) for each Department.
+
+-- 7. Find the single largest document (highest FileSizeKB) for each Department. Show the Department name, the Document ID, and the size.
+
+--8. List all Lawyers who lead more than one Matter in the 'Litigation' department.
