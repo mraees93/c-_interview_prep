@@ -9,5 +9,5 @@ public class LegalEngine
 public class SpecializedSearchEngine : LegalEngine
 {
     public override void Process() => Console.WriteLine("Specialized Engine");
-    public override void Run() => Console.WriteLine("Specialized Run");
+    public new void Run() => Console.WriteLine("Specialized Run");
 }
