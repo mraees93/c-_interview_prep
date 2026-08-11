@@ -5,8 +5,8 @@ class Program
     static void Main(string[] args)
     {
         // List<string> apps = new List<string> { "Loan", "Credit", "Savings" };
-        // var query = apps.Where(a => a.StartsWith("L")); //compiler doesnt actually run the filtering logic,creates a blueprint
-        // apps.Add("Lease"); //step 1
+        // var query = apps.Where(a => a.StartsWith("C")); //compiler doesnt actually run the filtering logic,creates a blueprint
+        // apps.Add("Crease"); //step 1
         // int count = query.Count(); //step 2 - only executes when forced to materialize data with .Count()
         // Console.WriteLine(count);
 
