@@ -225,3 +225,20 @@ FROM Verifications;
 SELECT CandidateID, CheckType, CostZAR, 
        AVG(CostZAR) OVER(PARTITION BY CheckType) AS AvgCostCheckType -- Groups the average calculation by CheckType across the whole table
 FROM Verifications;
+
+--7. Find the most expensive Product in each Category (using a Window Function).
+
+-- Categories (CategoryID, CategoryName)
+-- Products (ProductID, ProductName, CategoryID, Price)
+-- Orders (OrderID, OrderDate, CustomerName)
+-- OrderItems (ItemID, OrderID, ProductID, Quantity)
+
+WITH RankedProducts AS (
+    SELECT c.CategoryName, p.ProductName, p.Price,
+        ROW_NUMBER() OVER(PARTITION BY p.CategoryID ORDER BY p.Price DESC) AS rank
+        FROM Categories c
+        JOIN Products p ON c.CategoryID = p.CategoryID
+)
+SELECT CategoryName, ProductName, Price
+FROM RankedProducts
+WHERE rank = 1;
