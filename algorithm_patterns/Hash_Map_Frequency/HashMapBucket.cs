@@ -42,6 +42,43 @@ namespace algorithm_patterns.Hash_Map_Frequency
             return anagramBuckets.Values.Cast<IList<string>>().ToList();
         }
 
+        public IList<IList<string>> Anagrams(string[] stringsList)
+        {
+            if (stringsList == null || stringsList.Length == 0) return new List<IList<string>>();
+
+            var anagramBuckets = new Dictionary<string, List<string>>();
+
+            foreach (string str in stringsList)
+            {
+                char[] charArray = str.ToCharArray();
+                Array.Sort(charArray);
+                string sortedKey = new string(charArray);
+
+                if (!anagramBuckets.TryGetValue(sortedKey, out List<string> bucket)) //TryGetValue eliminates the need to query the dictionary twice by looking up the key and retrieving its value in a single atomic operation
+                {
+                    bucket = new List<string>();
+                    anagramBuckets[sortedKey] = bucket;
+                }
+
+                bucket.Add(str);
+            }
+
+            return anagramBuckets.Values.Cast<IList<string>>().ToList();
+        }
+
+        public IList<IList<string>> Anagrams2(string[] stringsList)
+        {
+            // 1. Mandatory guard clause for edge case inputs
+            if (stringsList == null || stringsList.Length == 0)
+                return new List<IList<string>>();
+
+            // 2. LINQ pipeline executing grouping, sorting, and casting
+            return stringsList
+                .GroupBy(str => new string(str.OrderBy(c => c).ToArray()))
+                .Cast<IList<string>>()
+                .ToList();
+        }
+
     }
 }
 /*
