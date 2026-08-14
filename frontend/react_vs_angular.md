@@ -171,3 +171,5 @@ If a LexisNexis panel asks you how you deal with switching between these context
 2. **`useState()` hooks** translate straight into **Angular Class properties** or high-performance modern **`signal()` hooks**.
 3. **`useEffect()` execution paths** translate straight into structural runtime lifecycles like **`ngOnInit()`**, **`ngOnDestroy()`**, or signal **`effect()` hooks**.
 4. **React Prop Callback functions** translate straight into standardized declarative Angular **`output()` pipelines**.
+5. useRef
+6. useMemo
