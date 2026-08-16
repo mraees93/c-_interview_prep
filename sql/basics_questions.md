@@ -41,3 +41,21 @@
 -- 7. Find the single largest document (highest FileSizeKB) for each Department. Show the Department name, the Document ID, and the size.
 
 --8. List all Lawyers who lead more than one Matter in the 'Litigation' department.
+
+-- Schema Details:
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+--1. Find the FullName and SubmissionDate of all candidates who submitted their details in January 2026.
+
+--2. List the FullName of the candidate, the CheckType, and the Status for all individual checks that have been 'Flagged'.
+
+--3. Find the CompanyName and the total sum of CostZAR spent on all verifications ordered by that client.
+
+--4. Display the Industry name and the total count of candidates submitted under each industry.
+
+--5. List all corporate CompanyName entries that currently have zero candidates submitted in the Candidates table.
+
+--7. Find the CompanyName of clients whose average verification check cost (CostZAR) across all their candidates is strictly greater than 200.00.
