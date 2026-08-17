@@ -165,16 +165,12 @@ export class DeleteButtonComponent {
 
 ## 6. Structural Mapping Cheat Sheet for Interview Strategy
 
-If a LexisNexis panel asks you how you deal with switching between these contexts on a full-stack platform, use this direct mental translation matrix:
+If a LexisNexis panel asks how you handle switching between these contexts on a full-stack platform, use this direct, signal-aligned mental translation matrix:
 
-1. **JSX elements** translate straight into separated **HTML templates**.
-2. **`useState()` hooks** translate straight into **Angular Class properties** or high-performance modern **`signal()` hooks**.
-3. **`useEffect()` execution paths** translate straight into structural runtime lifecycles like **`ngOnInit()`**, **`ngOnDestroy()`**, or signal **`effect()` hooks**.
-4. **React Prop Callback functions** translate straight into standardized declarative Angular **`output()` pipelines**.
-5. `useRef`
-* **React Concept:** Persists mutable values across renders without triggering a re-render, or creates a direct reference to a DOM node.
-* **Angular Translation:** Translates straight into **Template Reference Variables** (e.g., `#myElement`) coupled with the **`@ViewChild`** decorator or modern **`viewChild()`** signal query for DOM access. For persisting values without UI updates, it translates into a standard **Class Property** excluded from template binding.
-6. `useMemo`
-* **React Concept:** Caches the result of an expensive calculation so it only recomputes when specific dependencies change.
-* **Angular Translation:** Translates straight into modern high-performance **`computed()`** signals, which automatically track dependencies and cache values. In legacy architectures, this maps to pure **Angular Pipes** or RxJS pipelines using the **`shareReplay()`** operator.
+1.  **JSX Tree Blocks** translate straight into separated, high-utility **HTML Templates**.
+2.  **`useState()` State Hooks** translate straight into fine-grained reactive modern **`signal()` hooks**.
+3.  **`useEffect()` Execution Paths** translate straight into structural runtime lifecycles like **`ngOnInit()`** / **`ngOnDestroy()`**, or modern signal **`effect()` closures**.
+4.  **React Prop Callback Functions** translate straight into standardized declarative Angular **`output()` pipelines**.
+5.  **`useRef()` DOM Handles** translate straight into **Template Reference Variables** (e.g., `#myElement`) coupled with the modern **`viewChild()` signal query engine** for direct DOM element manipulation. For mutable value storage without re-rendering, it translates into a basic **Class Property** excluded from template binding.
+6.  **`useMemo()` Calculation Buffers** translate straight into high-performance modern **`computed()` signals**, which automatically track internal data changes and cache the output values natively.
 

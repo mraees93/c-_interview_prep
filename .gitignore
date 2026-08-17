@@ -480,3 +480,10 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# ==========================================
+# 1. JavaScript & Frontend (React / Angular)
+# ==========================================
+# Dependency directories
+/node_modules
+/jspm_packages/
