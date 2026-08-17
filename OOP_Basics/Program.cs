@@ -26,16 +26,15 @@
 // myCat.animalSound();
 // myDog.animalSound();
 
- //using OOP_Basics.practice;
- //practice_1
+using OOP_Basics.practice;
+//practice_1
 // ParentDocument doc = new LegalBrief();
-// doc.Render();
-//System.Console.WriteLine(doc);
+// System.Console.WriteLine(doc);
 
 //practice_2
-// LegalEngine engine = new SpecializedSearchEngine();
-// engine.Process();
-// engine.Run();
+LegalEngine engine = new SpecializedSearchEngine();
+engine.Process();
+engine.Run();
 
 //practice_4
 // FleetCar car = new FleetCar {Color="Green"};

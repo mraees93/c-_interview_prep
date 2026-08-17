@@ -5,7 +5,7 @@ public class ParentDocument
     public ParentDocument()
     {
         Console.WriteLine("Parent Constructor");
-        //Render();
+        Render();
     }
 
     public virtual void Render() => Console.WriteLine("Parent Rendering");

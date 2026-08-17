@@ -41,22 +41,18 @@ public interface ILogger
     void Log(string message);
 }
 
-public class LegalBriefFix
+public class LegalBrief3
 {
-    // The class 'Has-A' reference to the logging behavior instead of inheriting it.
     private readonly ILogger _logger;
 
-    // The dependency is injected dynamically at runtime
-    public LegalBriefFix(ILogger logger)
+    public LegalBrief3(ILogger logger)
     {
         _logger = logger;
     }
 
     public void ProcessCase()
     {
-        _logger.Log("Processing brief metadata safely via composition...");
-        // Core business logic here
+        _logger.Log("object composition favored over inheritance");
     }
 }
-
 
