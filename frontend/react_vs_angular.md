@@ -171,5 +171,10 @@ If a LexisNexis panel asks you how you deal with switching between these context
 2. **`useState()` hooks** translate straight into **Angular Class properties** or high-performance modern **`signal()` hooks**.
 3. **`useEffect()` execution paths** translate straight into structural runtime lifecycles like **`ngOnInit()`**, **`ngOnDestroy()`**, or signal **`effect()` hooks**.
 4. **React Prop Callback functions** translate straight into standardized declarative Angular **`output()` pipelines**.
-5. useRef
-6. useMemo
+5. `useRef`
+* **React Concept:** Persists mutable values across renders without triggering a re-render, or creates a direct reference to a DOM node.
+* **Angular Translation:** Translates straight into **Template Reference Variables** (e.g., `#myElement`) coupled with the **`@ViewChild`** decorator or modern **`viewChild()`** signal query for DOM access. For persisting values without UI updates, it translates into a standard **Class Property** excluded from template binding.
+6. `useMemo`
+* **React Concept:** Caches the result of an expensive calculation so it only recomputes when specific dependencies change.
+* **Angular Translation:** Translates straight into modern high-performance **`computed()`** signals, which automatically track dependencies and cache values. In legacy architectures, this maps to pure **Angular Pipes** or RxJS pipelines using the **`shareReplay()`** operator.
+

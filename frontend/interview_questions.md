@@ -10,7 +10,7 @@ This module tracks state-management state isolation, asynchronous template rende
 How do React and Angular handle view updates under the hood, <br>and how do you prevent performance degradation when displaying a deep, heavy list of legal document search results?
 
 ### Core Answer
-*   **React (Virtual DOM)**: React updates a lightweight copy of the real DOM in memory first. It uses a diffing algorithm ("reconciliation") to calculate the minimum footprint of changes, then surgically updates *only* those specific target elements in the real UI tree to protect responsiveness.
+*   **React (Virtual DOM)**: React updates a lightweight copy of the real DOM in memory first. It uses a diffing algorithm ("reconciliation") to calculate the minimum footprint of changes, then updates *only* those specific target elements in the real UI tree to protect responsiveness.
     *   *Optimization*: Use `React.memo` to skip child component re-renders if props haven't changed, and wrap heavy sorting/filtering routines in a `useMemo` hook to save CPU cycles.
 *   **Angular (Zone.js / Signals)**: Angular runs a change detection graph top-down through the component tree when asynchronous events fire. 
     *   *Optimization*: By default, this evaluation uses the strict `Default` strategy (checking everything). You must switch heavy components to the **`OnPush` Change Detection Strategy**, forcing Angular to bypass checking that entire subtree unless an immutable `@Input` bound reference changes or an explicit event triggers. Modern Angular also utilizes **Signals** for fine-grained reactivity, updating specific DOM elements without executing traditional top-down component tree scans.
