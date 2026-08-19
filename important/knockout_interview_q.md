@@ -18,8 +18,8 @@ public string GetCompressedDocumentJson(string docId)
 ```
 
 ### The Defensive Response
-*   **The Runtime Disaster:** This triggers **Thread Pool Starvation** and an immediate deadlock. In a web environment, the request thread blocks synchronously waiting for `task.Result`. When `CompressAsync` finishes, it attempts to return to the original thread context using the `SynchronizationContext`. Because that thread is blocked waiting, and the task needs that thread to complete, the system deadlocks. Under load, the engine runs out of threads completely, causing a global service crash.
-*   **The Safe Remediation:** You must enforce an asynchronous pipeline from top to bottom. Replace the synchronous blocking parameter with an explicit `await` modifier and update the method signature to return a `Task`.
+*   **The Disaster:** Causes **Thread Pool Starvation** and an immediate deadlock. The request thread blocks waiting synchronously on `.Result`, while the async task tries to use the same thread via the `SynchronizationContext` to finish up. Under traffic, the system runs out of execution threads entirely, freezing the API globally.
+*   **The Fix:** Maintain a non-blocking asynchronous pipeline from top to bottom. Swap the blocking parameter with an explicit `await` modifier and change the method signature to return a `Task`.
 
 ```csharp
 public async Task<string> GetCompressedDocumentJsonAsync(string docId)
@@ -48,8 +48,8 @@ public class TokenCache
 ```
 
 ### The Defensive Response
-*   **The Runtime Disaster:** A standard `Dictionary<K,V>` is **not thread-safe**. When multiple execution threads attempt to modify internal hash buckets or trigger an internal array resize simultaneously, the internal structure becomes corrupted. This results in unpredictable memory drift, missing records, or a classic endless loop condition that spikes the hosting server's CPU to 100% instantly.
-*   **The Safe Remediation:** Swap the data layer structure with a native **`ConcurrentDictionary<K,V>`**. This utilizes fine-grained bucket-level locking under the hood, allowing concurrent threads to write to separate structural hash segments simultaneously without risking state corruption or thread pool locking.
+*   **The Disaster:** A standard `Dictionary<K,V>` is **not thread-safe**. Concurrent thread updates corrupt the internal structural hash buckets and array resizing operations, leading to missing data records, internal memory drift, or a continuous CPU spike to 100%.
+*   **The Fix:** Implement a native **`ConcurrentDictionary<K,V>`**. This introduces fine-grained, bucket-level lock striping under the hood to ensure multiple executing threads can safely write to independent data addresses simultaneously.
 
 ```csharp
 private readonly ConcurrentDictionary<string, string> _tokens = new();
@@ -70,8 +70,8 @@ public struct CaseMetadata
 ```
 
 ### The Defensive Response
-*   **The Runtime Disaster:** Structs are **Value Types** allocated on the Stack. When you pass a struct into a method, assign it to a new variable, or iterate over it inside certain loops, the .NET runtime does not pass a reference—it makes a **complete copy of the entire memory footprint across the stack**. Any mutations performed inside sub-methods or loops modify the hidden stack copy, not the original instance, causing silent data loss bugs.
-*   **The Safe Remediation:** Structs must always be designed as immutable. Enforce the **`readonly struct`** constraint to force all properties to use `init`-only setters, or transition the architecture cleanly to a `record class` if reference identity is required.
+*   **The Disaster:** Structs are **Value Types** managed on the Stack. Passing a mutable struct into methods or parsing loops forces the runtime to make a **complete copy of the entire memory footprint across the stack**, meaning mutations target a hidden copy while leaving the original instance completely unchanged.
+*   **The Fix:** Enforce immutability. Apply the **`readonly struct`** constraint to force fields to use `init`-only setters, or migrate the domain model to a reference-tracked `record class`.
 
 ```csharp
 public readonly struct CaseMetadata
@@ -102,8 +102,8 @@ public async Task<UserSettings> GetSettingsAsync(int userId)
 ```
 
 ### The Defensive Response
-*   **The Runtime Disaster:** The developer leaked database connections, causing **Connection Pool Starvation**. ADO.NET limits the connection pool to a default cap (usually 100 connections). Because the `SqlConnection` is a disposable resource wrapped around unmanaged network sockets, failing to dispose of it properly means the connection is not returned to the pool. When the pool runs dry, subsequent threads block waiting for a connection until they time out and crash the API, even if the database server itself is completely empty.
-*   **The Safe Remediation:** Wrap the database connection and command allocation blocks inside an explicit C# **`using` statement or declaration**. This guarantees that the connection safely closes and returns to the internal pool immediately when the method scope exits, under any exception scenario.
+*   **The Disaster:** The developer leaked unmanaged network resources, triggering **Connection Pool Starvation**. ADO.NET pools are capped at a default limit (usually 100 connections). Because unclosed `SqlConnection` sockets are not returned to the pool, incoming request threads block waiting indefinitely until they time out and crash the API.
+*   **The Fix:** Wrap the connections, commands, and reader allocation scripts inside block-scoped **`using` statements**. This forces an automatic `try/finally` context that guarantees unmanaged sockets close and return to the pool immediately upon exit.
 
 ```csharp
 public async Task<UserSettings> GetSettingsAsync(int userId)
@@ -118,8 +118,6 @@ public async Task<UserSettings> GetSettingsAsync(int userId)
     return MapSettings(reader);
 }
 ```
-
----
 
 ## 5. The Entity Framework Memory Leak Knockout
 
@@ -139,8 +137,8 @@ public async Task ProcessAuditLogsAsync()
 ```
 
 ### The Defensive Response
-*   **The Runtime Disaster:** The application has a hidden memory leak inside the **Entity Framework Change Tracker**. By default, whenever you execute a standard LINQ query, EF Core instantiates a tracking snapshot of every single domain entity it fetches and holds that copy inside the active `DbContext` instance memory context. Because millions of logs are read, the Change Tracker expands indefinitely, ballooning the Managed Heap size until the operating system terminates the process due to a critical memory breach.
-*   **The Safe Remediation:** For read-only operations where you do not plan to modify those specific entity fields and write them back to the database, you must explicitly apply the **`.AsNoTracking()`** extension modifier. This instructs the ORM engine to completely bypass tracking snapshot generation, keeping your memory usage flat and significantly speeding up query execution times.
+*   **The Disaster:** Causes an internal tracking memory leak. By default, EF Core creates and holds data tracking snapshots of every entity fetched inside the `DbContext` instance [Glassdoor]. Processing millions of logs expands this internal tracking cache indefinitely, ballooning the Managed Heap size until the OS kills the process via an Out-Of-Memory (OOM) crash.
+*   **The Fix:** Apply the **`.AsNoTracking()`** extension modifier to the LINQ query. This explicitly instructs the ORM to completely bypass state-tracking snapshot generation, keeping memory usage flat and significantly speeding up query execution speeds.
 
 ```csharp
 var logs = await _context.AuditLogs
@@ -167,8 +165,8 @@ public class BillingEngine
 ```
 
 ### The Defensive Response
-*   **The Runtime Disaster:** The developer utilized a **Binary Floating-Point Type (`double`/`float`)** for exact precision calculations. Primitives like `double` store numbers internally in base-2 binary format. Because of this, certain base-10 fractional decimal values (like `0.1` or `0.7`) cannot be represented exactly in binary and are stored as repeating approximations [Glassdoor]. When you execute millions of calculations over time, these microscopic rounding errors accumulate, leading to visible precision drift and financial compliance corruption.
-*   **The Safe Remediation:** You must enforce the usage of the **`decimal`** type for all financial, currency, and high-precision calculations. The `decimal` type is a 128-bit **Decimal Floating-Point Type** stored internally in base-10 format, completely eliminating base-2 rounding discrepancies. While it carries a minor performance trade-off because it is calculated via software emulation rather than native CPU hardware registers, it guarantees 100% mathematical precision.
+*   **The Disaster:** Creates compounding precision errors. Primitives like `double`/`float` are base-2 binary floating-point numbers [Glassdoor]. Base-10 fractional decimals (like `0.1` or `0.7`) cannot be represented exactly in binary and are stored as repeating approximations [Glassdoor]. Over millions of continuous operations, these tiny rounding errors accumulate, leading to compounding data corruption.
+*   **The Fix:** Enforce the use of the **`decimal`** type (and suffix literals with `m`). The `decimal` type is a 128-bit base-10 structure computed via software emulation, which completely eliminates base-2 fractional rounding anomalies to guarantee 100% mathematical accuracy.
 
 ```csharp
 public class BillingEngine
@@ -179,4 +177,3 @@ public class BillingEngine
     }
 }
 ```
-

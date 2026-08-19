@@ -34,8 +34,11 @@ A stateless app is a system where the server does not store any user data, histo
 Benefits:
 
 Horizontal Scaling: You can instantly add or remove servers to handle traffic spikes, since any server can process any incoming request.
+
 High Availability: If a server crashes, users can be seamlessly rerouted to a healthy one without losing their session progress.
+
 Lower Server Costs: The server consumes less memory because it does not need to store and maintain millions of active user sessions.
+
 Simpler Maintenance: Deploying updates is easier because you can restart or replace servers without needing to migrate live session data.
 
 Trade-offs
