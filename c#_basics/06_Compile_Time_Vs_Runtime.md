@@ -7,12 +7,13 @@
 
 To explain this clearly to an interviewer, use the analogy of building a corporate skyscraper:
 
-*   **Compile Time is the Architectural Blueprint Stage:** The structural engineer sits at a desk checking blueprints for math errors, missing support pillars, or physical impossibilities. 
-    *   *TypeScript:* It is like drawing lines on paper with a pencil. You can draw anything, and you can erase your guidelines (type erasure) right before you give the blueprint to the workers.
-    *   *C#:* It is like creating a strict, highly detailed 3D digital model. The software checks physical boundaries, structural loads, and precise measurements. If the lines do not connect perfectly, the model rejects it.
-*   **Runtime is the Active Construction Site:** The workers are on-site pouring concrete and laying bricks. 
-    *   *TypeScript:* The workers get a generic text description of what to build because the pencil guidelines were erased. If a delivery contains wood instead of steel, the workers do not realize it until they try to bolt it together, causing a structural collapse (runtime crash).
-    *   *C#:* The workers are equipped with electronic scanners checking the reified digital model in real-time. If someone tries to pass off wood instead of steel, the scanner sounds an immediate alarm (Runtime Exception) before the weak material can be built into the structure.
+### 1. Compile Time (The Blueprint Stage)
+*   **TypeScript:** Like drawing lines on paper with a pencil. You can draw anything, but the pencil guidelines are completely erased (**type erasure**) right before the plans go out. A **Compile-Time error** here is simply the architect flagging an invalid pencil sketch on the paper before handing it over.
+*   **C#:** Like creating a strict, 3D digital engineering model. The software checks physical loads and structural measurements. If a line does not connect perfectly, the system throws a **Compile-Time error** and physically blocks you from printing—the factory machinery refuses to generate the block molds entirely and **no assembly (.dll) is produced.**
+
+### 2. Runtime (The Active Construction Site)
+*   **TypeScript:** The workers build using a generic text description because the guidelines were wiped. If a delivery contains wood instead of steel, they don't realize it until they bolt it together, causing a structural collapse (**runtime crash**).
+*   **C#:** The workers are equipped with electronic scanners verifying the real model in real-time (**reified types**). If someone delivers wood instead of steel, the scanner sounds an immediate alarm (**Runtime Exception**) before it can be built into the structure.
 
 ---
 
@@ -31,6 +32,16 @@ When your application boots up on the server (e.g., Kestrel web host), the **CLR
 The phase where the machine code actively executes on the CPU, managing variables on the Stack, spinning up Garbage Collection passes on the Heap, and throwing runtime exceptions if live operations fail.
 
 ---
+
+### 🚀 The `dotnet run` Pipeline
+
+`dotnet run` is a developer utility that automates the execution lifecycle sequentially under the hood:
+
+1. **`dotnet build` (Compile Time):** Automatically compiles your source code into an Intermediate Language (IL) assembly (`.dll` or `.exe`).
+2. **CLR Loading (Runtime Boot):** Boots the .NET runtime engine (the CLR) and loads the compiled IL assembly.
+3. **JIT Compilation (Just-In-Time):** Instantly converts the generic IL functions into machine code the first time they are called.
+4. **CPU Execution (Live App):** The processor immediately executes that hardware-specific machine code to run your application live.
+
 
 ## 📊 Summary Comparison: C# vs. TypeScript Execution
 

@@ -15,7 +15,7 @@ A mechanism that handles many async tasks concurrently within a single thread.
 
 4. Whats a promise?
 
-A promise is an object that links code that takes time (producing code) AND code that must wait for a result (consuming code).
+A promise is an object that links **code that takes time (producing code)** AND **code that must wait for a result (consuming code)**.
 
 5. How many states can a promise be in? 
 
@@ -60,10 +60,18 @@ Async is not same as parallel:
 
 Async programming is ONE chef prepping 3 dishes so they never stay idle.
 
-Parallel programming is TWO chefs chopping onions at the exact same time.
-**Javascript:** NON-EXISTENT for that single chef. To get parallel work, you must hire an entirely separate chef in a separate kitchen (using Web Workers or Worker Threads) who cannot share the same cutting board.
+c#: Parallel programming is TWO chefs chopping onions at the exact same time.
+**Javascript:** Parallel programming is NON-EXISTENT for that single chef. To get parallel work, you must hire an entirely separate chef in a separate kitchen (using Web Workers or Worker Threads) who cannot share the same cutting board.
 
+## 1. C# Parallel Programming
+*   **The Mechanics:** Executes tasks simultaneously across multiple CPU cores via the CLR ThreadPool.
+*   **Memory Profile:** Shared Memory Architecture. All threads access the identical managed heap space concurrently.
+*   **The Risk:** High threat of race conditions and state corruption. Requires explicit locking strategies or concurrent collection wrappers.
 
+## 2. JavaScript Parallel Programming (Node.js Worker Threads)
+*   **The Mechanics:** Delegates CPU-heavy tasks to an isolated `Worker` execution context running a separate instance of the V8 runtime.
+*   **Memory Profile:** Shared-Nothing Architecture. Workers possess completely isolated heaps and communication happens strictly via message-passing channels (`postMessage`).
+*   **The Benefit:** Inherently safe from shared-memory cross-thread data mutation defects.
 
 
 8. Synchronous programming explained: 
