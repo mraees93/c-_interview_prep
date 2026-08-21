@@ -1,0 +1,51 @@
+<div class="case-dashboard">
+  <h2>LexisNexis Legal Case Explorer</h2>
+  
+  <div class="search-box">
+    <!-- #region CONCEPT 5 (PART 1): Template Reference Variable (#searchInput) used by viewChild() -->
+    <input 
+      #searchInput 
+      type="text" 
+      placeholder="Search by case index or keywords..."
+      (input)="onSearchChange(searchInput.value)" />
+    <!-- #endregion -->
+    <button (click)="focusSearchInput()">Focus Input</button>
+  </div>
+
+  <div *ngIf="isLoading()" class="spinner">Querying systems...</div>
+
+  <div class="results-table" *ngIf="!isLoading()">
+    <table>
+      <thead>
+        <tr>
+          <th>Case Number</th>
+          <th>Title</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- #region CONCEPT 1: TEMPLATE TREES (JSX Component Trees vs. HTML Templates & @for loops) -->
+        <!-- REACT TRANSLATION: '@for... track' replaces array.map() and key={caseItem.id} properties -->
+        <!-- #endregion -->
+        @for (caseItem of filteredCases(); track caseItem.id) {
+          <tr>
+            <td>{{ caseItem.caseNumber }}</td>
+            <td>{{ caseItem.title }}</td>
+            <td>
+              <button (click)="selectCase(caseItem)">
+                Select Case Record
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="3">No legal records match the current criteria.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="footer-metrics">
+    Active Matches Displayed: <strong>{{ totalMatchesCount() }}</strong> 
+    (Unrendered calculation pass count: {{ diagnosticAccessCount }})
+  </p>
+</div>
