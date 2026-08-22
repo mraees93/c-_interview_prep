@@ -2,7 +2,9 @@ High level classes shouldnt depend on low level classes. They should depend on a
 
 Abstractions are abstract classes and interfaces.
 
-Dependency inversion is the strategy of depending on abstract classes and interfaces rather than concreate classes. 
+Dependency inversion is the strategy of depending on abstract classes and interfaces rather than concrete classes. 
+
+newing up a concrete child class inside a parent class’s fields or constructor is the absolute textbook violation of the Dependency Inversion Principle
 
 To satisfy DIP, I move the dependency out of the high-level module. Instead of the high-level class 'newing up' a specific low-level tool, I define an Interface (the contract). I then Inject that interface into the high-level class's constructor.
 This creates a buffer zone. Now, I can change or swap the low-level implementation (e.g., switching from SQL to a Web API) without needing to modify or re-test the high-level business logic. The two modules are no longer 'glued' together; they are both connected to a stable abstraction.
