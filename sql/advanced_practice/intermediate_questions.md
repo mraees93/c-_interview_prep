@@ -15,6 +15,7 @@
 --10. Select the CandidateID, FullName, and SubmissionDate, along with a column that assigns a sequential row number to candidates for each unique client, 
 -- ordered by their SubmissionDate from earliest to latest.
 
+-- 20. Show the CheckID, CandidateID, CostZAR, and a dense ranking of the check costs within each specific CheckType, where the most expensive check gets a rank of 1.
 
 --7. Find the most expensive Product in each Category (using a Window Function).
 
