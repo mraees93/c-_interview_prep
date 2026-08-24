@@ -61,3 +61,8 @@ Think of high-throughput like a 10-lane highway:It is not built to make a single
 
 Benefits:
 Massive Concurrency: The system handles thousands or millions of concurrent users without crashing.
+
+# Whats a distributed system?
+
+At its core, a distributed system is a collection of independent computers (often called nodes or machines) that work together to appear to the end-user as a single, unified system.
+Instead of one massive, expensive server handling everything (a monolithic or centralized system), the workload, data, and processing are split across multiple machines connected over a network.
