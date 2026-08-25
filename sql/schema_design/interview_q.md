@@ -13,7 +13,7 @@ LexisNexis needs to track legal **Matters** (court cases) and **Lawyers**.
 * We must track the precise date a lawyer was assigned to a matter and their specific role on that case (e.g., "Lead Counsel", "Researcher").
 
 ### The Solution Blueprint (The Junction Table Pattern)
-To resolve a many-to-many relationship in a relational database, you must introduce a third table called a **Junction (or Bridge) Table**. This moves the architecture into two distinct one-to-many relationships, allowing you to store payload data specific to the relationship itself.
+To resolve a many-to-many relationship in a relational database, you must introduce a third table called a **Junction (or Bridge) Table**. This moves the architecture into **two distinct one-to-many relationships**, allowing you to store payload data specific to the relationship itself.
 
 ```sql
 -- 1. Strong Entity Table
