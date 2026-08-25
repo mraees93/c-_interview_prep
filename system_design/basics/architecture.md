@@ -187,3 +187,26 @@ The main difference is **how they are deployed and how they communicate**. A Mod
 When launching a new product, the biggest risk is not system scale—it is **market fit and changing requirements**. Microservices slow down early-stage development. The safest, most future-proof strategy is to start with a **Modular Monolith using Onion Architecture inside each module**.
 
 [ Your Entire App (Single Deployable Process) ]├── Module A (e.g., Identity) ──> Internal Onion Architecture├── Module B (e.g., Billing)  ──> Internal Onion Architecture└── Module C (e.g., Ordering) ──> Internal Onion Architecture
+
+
+### 🎯 Domain-Driven Design (DDD) Integration
+
+*   **The Blueprint Rule:** Use DDD **Bounded Contexts** to draw the vertical boundaries for your **Modular Monolith modules** or **Microservices** (e.g., separating `Billing` from `CaseManagement`), preventing the code from degrading into a "Big Ball of Mud".
+*   **The Inward Core:** Inside each module, place your DDD **Aggregate Roots, Entities, and Value Objects** at the absolute center of the **Onion Architecture**. This ensures core business rules have zero compile-time dependencies on database ORMs or cloud providers.
+
+### Monolith to Microservices Transition
+*   **Strategy:** Implement the **Strangler Fig Pattern** to break down legacy apps incrementally instead of a risky "Big Bang" rewrite.
+*   **Execution:** 
+    1. Define domain boundaries using Domain-Driven Design (DDD).
+    2. Route all traffic through an **API Gateway** pointing initially to the monolith.
+    3. Carve out a single domain into an independent .NET container with its own database schema.
+    4. Repoint the gateway route to the new microservice. Repeat until the monolith is deprecated.
+
+
+| What the Panel Asks | The Knockout Keywords You Will Use |
+| :--- | :--- |
+| **"How do you prevent a codebase from becoming a Big Ball of Mud?"** | Using **DDD Bounded Contexts** to establish strict vertical feature walls. |
+| **"What is the actual downside of moving directly to Microservices?"** | **The Fallacy of Distributed Computing**; trading local memory speed for network latency and partial failure modes. |
+| **"How do you ensure your domain logic isn't tied to your database choice?"** | **The Dependency Inversion Principle (DIP)**; the Core Domain defines abstractions, and Infrastructure implements them. |
+| **"What happens if Services need to share a database?"** | That creates a **Distributed Monolith** anti-pattern, combining microservice network tax with monolithic coupling. |
+| **"How do we transition a live legacy monolith safely?"** | Deploying an API Gateway layer to execute the **Strangler Fig Pattern** incrementally. |
