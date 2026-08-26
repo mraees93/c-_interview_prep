@@ -10,11 +10,10 @@ This module tracks state-management state isolation, asynchronous template rende
 How do React and Angular handle view updates under the hood, and how do you prevent performance degradation when displaying a deep, heavy list of legal document search results?
 
 ### Core Answer
-*   **React (Virtual DOM)**: React updates a lightweight copy of the real DOM in memory first, runs a diffing algorithm ("reconciliation"), and patches only the      altered elements in the real UI tree.
-    *   *Optimization*: Use `React.memo` to skip child component re-renders if props haven't changed, and wrap heavy sorting/filtering routines in a `useMemo` hook to save CPU cycles.
-*   **Angular (Signal Graph)**: Bypasses legacy top-down component tree scans and `Zone.js` dirty-checking loops entirely via a fine-grained reactive dependency graph.
-    *   *The Action:* State signals map dependencies directly to their exact micro-nodes in the HTML template.
-    *   *Optimization:* Changing a signal updates that specific DOM element directly in-place with zero tree-traversal overhead, achieving native rendering speeds without manual configuration.
+*   **React (Virtual DOM)**: Updates a lightweight DOM copy in memory, runs a diffing algorithm, and patches altered elements in the real UI tree.
+    *   *Optimization*: Use `React.memo` to skip child re-renders and wrap heavy routines in `useMemo` hooks.
+*   **Angular (Signal Graph)**: State signals map dependencies directly to their exact template micro-nodes via a fine-grained reactive graph.
+    *   *Optimization*: Changing a signal updates specific DOM elements directly in-place with zero tree-traversal overhead.
 
 ---
 

@@ -174,3 +174,14 @@ If a LexisNexis panel asks how you handle switching between these contexts on a 
 5.  **`useRef()` DOM Handles** translate straight into **Template Reference Variables** (e.g., `#myElement`) coupled with the modern **`viewChild()` signal query engine** for direct DOM element manipulation. For mutable value storage without re-rendering, it translates into a basic **Class Property** excluded from template binding.
 6.  **`useMemo()` Calculation Buffers** translate straight into high-performance modern **`computed()` signals**, which automatically track internal data changes and cache the output values natively.
 
+---
+
+| React Concept & Mapped Angular Equivalent | Architectural Purpose & Execution Behavior |
+| :--- | :--- |
+| **JSX Tree Blocks** ➡️ **HTML Templates** | Splits visual markup out of controller logic into distinct compilation files. *(e.g., separating component UI markup into a `.html` template).* |
+| **`useState()`** ➡️ **`signal()`** | Manages localized dynamic state variables via fine-grained, micro-reactive tracking. *(e.g., tracking a search query string or an isLoading toggle).* |
+| **`useEffect()`** ➡️ **`ngOnInit()` / `effect()`** | Executes runtime side-effects, resource allocations, and auto-triggered tracking closures. *(e.g., fetching initial data on-mount or logging state updates).* |
+| **Prop Callbacks** ➡️ **`output()` pipelines** | Dispatches declarative data tokens upward from a child component to its parent layer. *(e.g., passing a selected table row object back to the parent).* |
+| **`useRef()` (DOM)** ➡️ **Template Ref (`#`) + `viewChild()`** | Selects and holds direct reference pointer handles to raw physical HTML tags without re-rendering. *(e.g., dropping focus onto a text input element).* |
+| **`useRef()` (Value)** ➡️ **Standard Class Property** | Caches mutable internal execution variables silently while bypassing template view updates. *(e.g., counting structural calculation passes without triggering loops).* |
+| **`useMemo()`** ➡️ **`computed()` signals** | Buffers and caches heavy data parsing array loops natively until underlying dependencies change. *(e.g., filtering a live list of 50 case records).* |
