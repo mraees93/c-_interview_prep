@@ -7,17 +7,19 @@
 -- Return the CompanyName, FullName, and the total combined cost. If there is a tie, return only one row per client.
 
 WITH CandidateTotals AS (
-    SELECT cl.ClientID, ca.CandidateID, SUM(v.CostZAR) AS TotalCost
+    SELECT cl.CompanyName, ca.FullName, ca.ClientID, SUM(v.CostZAR) AS TotalCost
     FROM Clients cl
     JOIN Candidates ca ON cl.ClientID = ca.ClientID
     JOIN Verifications v ON ca.CandidateID = v.CandidateID
-    GROUP BY cl.ClientID, ca.CandidateID
+    GROUP BY cl.CompanyName, ca.FullName, ca.ClientID
 ),
-RankedTotals AS (
+
+RankedCandidates AS (
     SELECT CompanyName, FullName, TotalCost,
-           RANK() OVER(PARTITION BY ClientID ORDER BY TotalCost DESC) AS HighestTotal
+           ROW_NUMBER() OVER(PARTITION BY ClientID ORDER BY TotalCost DESC) AS rank
     FROM CandidateTotals
 )
+
 SELECT CompanyName, FullName, TotalCost
-FROM RankedTotals
-WHERE HighestTotal = 1;
+FROM RankedCandidates
+WHERE rank = 1;

@@ -134,3 +134,63 @@ FROM HighestCostZAR
 WHERE CostZAR > AverageCostZAR;
 
 --"I chose a CTE to separate the concerns of the calculation logic from the final filtering logic, maximizing code readability and maintainability for the team.
+
+
+-- 12. Show the CheckID, CandidateID, CostZAR, and a dense ranking of the check costs within each specific CheckType, where the most expensive check gets a rank of 1.
+
+SELECT CheckID, CandidateID, CostZAR,
+        DENSE_RANK() OVER(PARTITION BY CheckType ORDER BY CostZAR DESC) AS RankingTheCheckCosts
+FROM Verifications;
+
+
+-- Clients (ClientID, CompanyName, Industry)
+-- Candidates (CandidateID, ClientID, FullName, SubmissionDate)
+-- Verifications (CheckID, CandidateID, CheckType, CostZAR, Status)
+-- VerificationLogs (LogID, CheckID, ActionTaken, LogTimestamp)
+
+-- 13. For each client, find the single candidate who has the highest total combined verification CostZAR. 
+-- Return the CompanyName, FullName, and the total combined cost. If there is a tie, return only one row per client.
+
+WITH HighestTotal AS (
+    SELECT c.ClientID, v.CandidateID, SUM(v.CostZAR),
+            ROW_NUMBER() OVER(PARTITION BY c.ClientID ORDER BY SUM(v.CostZAR) DESC) AS rank
+    FROM Candidates c 
+    JOIN Verifications v ON c.CandidateID = v.CandidateID
+    GROUP BY c.ClientID, v.CandidateID
+)
+SELECT CandidateID 
+FROM HighestTotal 
+WHERE rank = 1;
+
+-- TODO: Add 2 CTE'S for production - best practice
+
+WITH CandidateTotals AS (
+    -- Step 1: Safely sum up the total costs per candidate
+    SELECT 
+        cl.CompanyName,
+        ca.FullName,
+        ca.ClientID,
+        SUM(v.CostZAR) AS TotalCost
+    FROM Clients cl
+    JOIN Candidates ca ON cl.ClientID = ca.ClientID
+    JOIN Verifications v ON ca.CandidateID = v.CandidateID
+    GROUP BY cl.CompanyName, ca.FullName, ca.ClientID
+),
+
+RankedCandidates AS (
+    -- Step 2: Rank the candidates within each client group
+    SELECT 
+        CompanyName,
+        FullName,
+        TotalCost,
+        ROW_NUMBER() OVER(
+            PARTITION BY ClientID 
+            ORDER BY TotalCost DESC
+        ) AS rnk
+    FROM CandidateTotals
+)
+
+-- Step 3: Extract only the top-spending candidate per client
+SELECT CompanyName, FullName, TotalCost
+FROM RankedCandidates
+WHERE rnk = 1;
