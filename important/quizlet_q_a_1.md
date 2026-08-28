@@ -29,7 +29,7 @@ C#: The workers are equipped with electronic scanners verifying the real model i
 
 3. What is stack memory?
 
-The clipboard on the desk using strict Last-In, First-Out (LIFO). Everytime a method is called, a new sheet(stack frame) is stacked on top of clipboard. Sheet stores method Value Types (int, bool, double, struct, readonly record struct) and reference pointers to larger types stored on the storage floor (Heap memory) needed for that method/task. When task completes, sheet is thrown into recycle bin requiring zero help from GC.
+The clipboard on the desk using strict Last-In, First-Out (LIFO). Everytime a method is called, a new sheet(stack frame) is stacked on top of clipboard. Sheet stores method Value Types (int, bool, double, struct, readonly record struct) and reference pointers to larger types stored on the warehouse floor (Heap memory) needed for that method/task. When task completes, sheet is thrown into recycle bin requiring zero help from GC.
 
 *(Note: Value types are only stack-allocated if they are local method variables. If an int lives inside a class container, it is dragged onto the Heap to maintain contiguous memory boundaries).*
 

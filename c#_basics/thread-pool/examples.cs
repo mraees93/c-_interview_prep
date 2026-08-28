@@ -22,13 +22,13 @@ public class SyncKitchen
     }
 }
 
-//CONCURRENT PROGRAMMING - 1 chef prepping 3 dishes so never stays idle OR 3 chefs prepping 1 big dish
+//CONCURRENT PROGRAMMING - 2 chefs prepping 3 dishes so never stays idle(ASYNC) OR 3 chefs prepping 1 big dish to complete it faster(PARALLEL)
 public class AsyncKitchen
 {
     public async Task PrepareOrderAsync()
     {
-        Task cakeTask = await CookCakeAsync();
-        Task sauceTask = await SimmerSauceAsync();
+        Task cakeTask = CookCakeAsync();
+        Task sauceTask = SimmerSauceAsync();
 
         await Task.WhenAll(cakeTask, sauceTask);
     }
