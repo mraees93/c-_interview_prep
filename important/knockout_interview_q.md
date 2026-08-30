@@ -177,3 +177,16 @@ public class BillingEngine
     }
 }
 ```
+
+---
+
+
+| 🚨 Problem Description | 🛠️ The Fix | 💥 The Disaster | 🎭 The House Plot Analogy |
+| :--- | :--- | :--- | :--- |
+| **Global Async Starvation:** Wrapping async tasks inside sync methods using `.Result` or `.Wait()`. | Maintain an async pipeline from top to bottom using the `await` modifier and `Task` signatures. | **Thread Pool Starvation:** Request threads block synchronously, forcing a global API freeze under heavy traffic. | **The Frozen Chef:** A family chef starts a task, then stands completely frozen staring at the wall waiting for it, blocking the counter until the whole kitchen locks up. |
+| **Multi-Threaded State Corruption:** Sharing a standard `Dictionary<K,V>` inside a Singleton for background concurrent caching. | Implement a native **`ConcurrentDictionary<K,V>`** for bucket-level lock striping under the hood. | **Hash Bucket Corruption:** Concurrent mutations corrupt memory addresses, driving host CPU to 100%. | **The 3-Chef Fight:** 3 family chefs try to chop food on the exact same cutting board at the same millisecond, slicing each other's fingers and ruining the recipe. |
+| **Structural Data Mutation:** Modifying internal property states inside a mutable custom tracking `struct`. | Apply the **`readonly struct`** constraint with `init`-only setters, or migrate to a `record class`. | **Hidden Memory Copying:** Structs are value types; passing them duplicates data across the stack, making changes hit copy instances blindly. | **The Photocopy Mistake:** Writing changes on a photocopy of a recipe sheet down in the workshop, while the original master page in the lounge remains completely untouched. |
+| **Connection Pool Starvation:** Instantiating `SqlConnection` structures without explicitly disposing of them after data mapping. | Wrap connections, commands, and readers inside block-scoped **`using` statements** to guarantee teardowns. | **Pool Socket Draining:** Unclosed connections fail to return to the pool, triggering immediate `TimeoutExceptions` under load. | **The Stuck Plugs:** Leaving power cables plugged into the Kitchen Cupboard Power Board after use. Once all 100 plugs are full, the next appliance sits in the dark and errors out. |
+| **Entity Framework Memory Leak:** Querying millions of logs via a standard EF Core `DbContext` reference collection loop. | Apply the **`.AsNoTracking()`** extension modifier to the root LINQ data execution pipe. | **Change Tracker Snapshot Bloat:** The context caches memory tracking snapshots for every row, ballooning the Heap until an OOM crash. | **The High-Def Photo Album:** Taking a permanent, high-definition photograph of every single drop of water poured from the local jug. The photo album eventually bursts the cupboard walls. |
+| **Precision Financial Corruption:** Defining transaction fee calculations using floating-point primitives like `double` or `float`. | Enforce the **`decimal`** data type for absolute precision alignment at the code level. | **Base-2 Floating-Point Drift:** Rounding errors accumulate fractional-cent variances, causing audit failures and ledger data corruption. | **The Leaking Tape Measure:** Measuring your driveway with a cheap, stretching tape measure. Over a million blocks, your final boundary calculations are completely wrong. |
+
