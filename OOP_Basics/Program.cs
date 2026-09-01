@@ -32,7 +32,7 @@ using OOP_Basics.encapsulation;
 // myCat.animalSound();
 // myDog.animalSound();
 
-//using OOP_Basics.practice;
+using OOP_Basics.practice;
 //practice_1
 // ParentDocument doc = new LegalBrief();
 // System.Console.WriteLine(doc);
@@ -49,3 +49,7 @@ using OOP_Basics.encapsulation;
 // car1.Color = "Red";
 // System.Console.WriteLine(car.Color);
 // System.Console.WriteLine(FleetCar.TotalCarsCreated);
+
+//practice_5
+// ChildPrinter printer = new ChildPrinter(); 
+// System.Console.WriteLine(printer);

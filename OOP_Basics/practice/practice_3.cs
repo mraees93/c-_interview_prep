@@ -55,4 +55,3 @@ public class LegalBrief3
         _logger.Log("object composition favored over inheritance");
     }
 }
-
