@@ -176,3 +176,21 @@ Developers frequently confuse Abstraction and Encapsulation. What is the definit
 ### Core Answer
 *   **Abstraction (The "What")**: Focuses on hiding internal complexity and showing only the essential features of an object. You achieve this using **Interfaces** or **Abstract Classes** to present a simple exterior contract while hiding the underlying mechanism.
 *   **Encapsulation (The "How")**: Focuses on **information hiding and state protection**. It groups data (fields) and methods together inside a class and restricts direct access from the outside using access modifiers (`private`, `protected`). This ensures an object maintains absolute control over its internal state via validation rules or guard clauses.
+
+---
+
+## 9. Interface vs Abstract class
+
+### The Panel Question
+How do you decide whether to use an interface or an abstract class?
+
+### Core Answer
+I use an interface when the strategies are performed in a unique way. I use an abstract class when strategies need to share fields/helper methods via inheritance.
+
+---
+
+## 📐 Interface Members: Property vs. Field Contracts
+
+* **The Hard Language Rule:** Instance fields are completely forbidden inside C# interfaces because interfaces cannot maintain instance data state on the heap.
+* **The Property Exception:** Interfaces can declare properties (`get; set;`) because the compiler converts them into standard method footprints under the hood.
+* **The Strategic Deployment:** Only include a property on a strategy interface when the orchestrating execution container needs to read metadata (like a lookup string key) to route traffic to the correct implementation.
