@@ -1,6 +1,6 @@
 1. Is node.js single threaded?
 
-Yes and it utilizes event-driven architecture and non-blocking I/O operations.
+Yes and it utilizes event-driven architecture.
 
 2. What kind of API functions are supported in node.js?
 
@@ -39,7 +39,7 @@ Thread pool: kitchen of chefs
 async method: complex recipe
 
 2. await(set timer): add recipe in oven, set timer => await doesnt mean freeze, it means yield
-**JavaScript**: Chef Alex hands the dish to an external smart appliance (Browser Web API or Node.js runtime) to track the time because he cannot track background tasks himself.
+**JavaScript**: Chef Alex hands the dish to an external smart appliance (Browser Web API or Node.js runtime) to track the time.
 
 3. current thread becomes free: chef alex
 
