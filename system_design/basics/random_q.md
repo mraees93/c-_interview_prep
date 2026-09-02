@@ -66,3 +66,11 @@ Massive Concurrency: The system handles thousands or millions of concurrent user
 
 At its core, a distributed system is a collection of independent computers (often called nodes or machines) that work together to appear to the end-user as a single, unified system.
 Instead of one massive, expensive server handling everything (a monolithic or centralized system), the workload, data, and processing are split across multiple machines connected over a network.
+
+
+
+## 🗄️ Vertical Scaling vs. Replication Boundaries
+
+* **The Rule:** Read replicas are never utilized to achieve vertical scaling. Vertical scaling strictly increases the hardware resources (CPU, RAM, NVMe IOPS) of a single database node.
+* **The High Availability Exception:** A replica can live alongside a vertically scaled instance purely as a **Synchronous Standby Failover Node** for high availability and disaster recovery. It processes zero application read/write traffic and only activates if the primary server suffers a fatal hardware crash.
+* **The Scaling Line:** The moment your application routes active query traffic to multiple database instances over the network to distribute load, you have officially transitioned from vertical scaling to horizontal scaling.
