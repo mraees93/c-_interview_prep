@@ -18,7 +18,7 @@ To resolve a many-to-many relationship in a relational database, you must introd
 ```sql
 -- 1. Strong Entity Table
 CREATE TABLE Lawyers (
-    LawyerId INT IDENTITY(1,1) PRIMARY KEY,
+    LawyerId INT IDENTITY(1,1) PRIMARY KEY, --IDENTITY(1,1) starts at 1 for new row and increments by 1 for each new row
     FullName VARCHAR(150) NOT NULL,
     Department VARCHAR(100) NOT NULL
 );
