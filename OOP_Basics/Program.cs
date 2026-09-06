@@ -53,3 +53,5 @@ using OOP_Basics.practice;
 //practice_5
 // ChildPrinter printer = new ChildPrinter(); 
 // System.Console.WriteLine(printer);
+
+//prac_6
