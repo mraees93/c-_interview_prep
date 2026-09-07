@@ -202,6 +202,29 @@ When launching a new product, the biggest risk is not system scale—it is **mar
     3. Carve out a single domain into an independent .NET container with its own database schema.
     4. Repoint the gateway route to the new microservice. Repeat until the monolith is deprecated.
 
+# 🗺️ Architectural Transitions: The Strangler Fig Pattern
+
+## 🎭 The Warehouse Analogy: The Phased Building Migration
+* **The Core Strategy:** Never execute a "Big Bang" rewrite. Instead, wrap the legacy system in an evolutionary wrapper, incrementally replacing business domains over time without interrupting active production traffic.
+
+| Transition Step | 🎭 Kitchen Analogy Action | 💻 Technical Execution Mechanic |
+| :--- | :--- | :--- |
+| **Step 1: Boundaries** | Group recipes into logical categories (Bread, Cakes, Pastries). | Apply **Domain-Driven Design (DDD)** to discover Bounded Contexts. |
+| **Step 2: Interception** | Station a **Maître D'** at the main entrance gate to route all order tickets. | Deploy an **API Gateway** (e.g., YARP, Ocelot) to intercept 100% of legacy routing strings. |
+| **Step 3: Carve-Out** | Erect a brand-new, isolated factory room in the parking lot for just one recipe type. | Extract the bounded domain into an **independent dockerized .NET Container** with its own **isolated database schema**. |
+| **Step 4: Shift** | Inform the Maître D' to hand all Pastry tickets to the new room, bypassing the old kitchen. | Repoint the specific **API Gateway route** to the new container. |
+| **Step 5: Strangle** | Repeat for all categories until the old kitchen receives zero traffic. Deconstruct the old room. | Progressively migrate all domains until the legacy monolith is completely deprecated. |
+
+## 🚨 The Critical Strangler Fig Production Traps
+
+### 💥 Trap 1: The Database Shadow-Join Trap
+* **The Disaster:** The newly carved-out microservice container code still reaches across network boundaries to execute direct SQL `INNER JOIN` strings against the legacy monolith's database tables. This destroys the migration entirely, instantly creating a **Distributed Monolith** that introduces high network latency and tight deployment coupling.
+* **The Fix:** The new service must strictly own its data. If it requires data from the monolith, it must fetch it via an HTTP API contract or consume asynchronous domain events broadcasted by the monolith.
+
+### 💥 Trap 2: The Monolith-to-Service Loop Deadlock
+* **The Disaster:** The API Gateway routes a request to the new microservice. The microservice calls a shared logic branch back inside the monolith, which then queries the new microservice again. This circular runtime dependency creates immediate execution deadlocks and thread pool starvation under high load.
+* **The Fix:** Maintain a strict **one-way dependency flow**. Re-architect common logic boundaries into shared NuGet packages or independent helper libraries before attempting to split the runtime boundaries.
+
 
 | What the Panel Asks | The Knockout Keywords You Will Use |
 | :--- | :--- |
