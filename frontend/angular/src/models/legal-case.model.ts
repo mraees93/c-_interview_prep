@@ -1,7 +1,6 @@
 export interface LegalCase {
-  id: string;
-  caseNumber: string;
-  title: string;
-  court: string;
-  filedDate: string;
+  id: number;       
+  title: string;    
+  body: string;     
+  userId: number; 
 }
