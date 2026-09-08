@@ -13,13 +13,11 @@ WITH CandidateTotals AS (
     JOIN Verifications v ON ca.CandidateID = v.CandidateID
     GROUP BY cl.CompanyName, ca.FullName, ca.ClientID
 ),
-
 RankedCandidates AS (
     SELECT CompanyName, FullName, TotalCost,
-           ROW_NUMBER() OVER(PARTITION BY ClientID ORDER BY TotalCost DESC) AS rank
+        ROW_NUMBER() OVER(PARTITION BY ClientID ORDER BY TotalCost DESC) AS rank 
     FROM CandidateTotals
 )
-
 SELECT CompanyName, FullName, TotalCost
-FROM RankedCandidates
+FROM RankedCandidates 
 WHERE rank = 1;
