@@ -1,4 +1,7 @@
-﻿namespace ORM_Data_access_EF_Core;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace ORM_Data_access_EF_Core;
 
 class Program
 {
@@ -14,6 +17,8 @@ class Program
         // var query = points.Where(p => p > 15).ToList(); //breaks deferred(delayed) execution,forces Immediate Execution.
         // points.Add(40);
         // Console.WriteLine(query.Count);
+        // Console.WriteLine(points.Count);
+        // points.ForEach(num => Console.WriteLine(num));
 
         // List<int> transactions = new List<int>();
         // int result = transactions.First(t => t > 100); //throws InvalidOperationException runtime error
@@ -59,5 +64,32 @@ class Program
 
         // The Standard Workaround: If a developer actually needs to filter items safely out of a list, they should use a 
         // standard for loop counting backward, or utilize a clean LINQ filtering method like .RemoveAll(item => item == 20);
+
+        // .ToList() transforms the blueprint into an optimized query then the filtered data only crosses the network boundary into c# app memory
+        // IQueryable<CaseDocument> casesA = _context.Cases;
+        // var resultA = casesA.Where(c => c.Category == "Criminal").Take(10).ToList(); 
+
+        // // IEnumerable acts as an in-memory collection pointer, the ORM translates _context.Cases to a "SELECT * FROM Cases;", then only filters that data which results in a heap OutOfMemoryException crash
+        // IEnumerable<CaseDocument> casesB = _context.Cases;
+        // var resultB = casesB.Where(c => c.Category == "Criminal").Take(10).ToList();
+
+        // //MODIFYING DB DATA - Avoiding N+1 trap
+        // //Avoid N+1 trap with eager loading using the .Include() extension method
+        // var casesWithAttachments = _context.Cases.Include(c => c.Attachements).ToList();
+        // foreach (var courtCase in casesWithAttachments)
+        // {
+        //     ProcessAttachements(courtCase.Attachments);
+        // }
+
+        // //READ-ONLY DB DATA - Avoiding N+1 trap
+        // // Project the query into a DTO, this disables EF Core's change tracker and forces the DB to only transmit the needed columns over the network
+        // public record CaseSummaryDto(string CaseId, string Title, List<string> AttachmentNames);
+        // var summaryReport = _context.Cases
+        //     .Select(c => new CaseSummaryDto(
+        //         c.Id,
+        //         c.Title,
+        //         c.Attachments.Select(a => a.FileName).ToList()
+        //     ))
+        //     .ToList();
     }
 }
