@@ -1,10 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CaseSearchComponent } from '../components/case-search/case-search.component'
+import { ApiConsumptionComponent } from '../components/api-consumption/api-consumption.component'
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CaseSearchComponent],
+  imports: [RouterOutlet, ApiConsumptionComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })

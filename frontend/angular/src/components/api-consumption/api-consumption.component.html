@@ -1,0 +1,50 @@
+<div class="api-container">
+  
+  <!-- Controller Toolbelt Grid -->
+  <div class="control-panel">
+    <div class="search-box">
+      <label for="search">Live Filter Logs:</label>
+      <input 
+        id="search"
+        type="text" 
+        [value]="searchTerm()" 
+        (input)="handleSearch($event)" 
+        placeholder="Search by name or email..." />
+    </div>
+
+    <button class="sort-btn" (click)="toggleSort()">
+      Sort ID: {{ sortDirection() === 'ASC' ? '▲ Oldest' : '▼ Newest' }}
+    </button>
+  </div>
+
+  <!-- Loading State Indicator -->
+  @if (rawCommentsResource.isLoading()) {
+    <div class="loading-state">
+      <p>Downloading 500 record entries from matrix...</p>
+    </div>
+  }
+
+  <!-- Data Renderer Grid -->
+  @if (rawCommentsResource.value()) {
+    <div class="meta-row">
+      <p>Showing <strong>{{ processedComments().length }}</strong> of 500 records matching criteria</p>
+    </div>
+
+    <div class="cards-grid">
+      @for (item of processedComments(); track item.id) {
+        <div class="comment-card">
+          <div class="card-header">
+            <span class="id-badge">#{{ item.id }}</span>
+            <span class="email-text">{{ item.email }}</span>
+          </div>
+          <h4>{{ item.name }}</h4>
+          <p>{{ item.body }}</p>
+        </div>
+      } @empty {
+        <div class="empty-state">
+          <p>No comments match your search criteria. Try a different query term.</p>
+        </div>
+      }
+    </div>
+  }
+</div>
