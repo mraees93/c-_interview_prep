@@ -1,4 +1,5 @@
-//How would you design a backend system that consumes incoming Kafka messages and routes them to different storage engines—like PostgreSQL or Cassandra—based on attributes attached inside the Kafka Message Headers, without hardcoding a massive, fragile switch statement inside your consumer loop?
+//How would you design a backend system that consumes incoming Kafka messages and routes them to different storage engines—like PostgreSQL 
+// or Cassandra—based on attributes attached inside the Kafka Message Headers, without hardcoding a massive, fragile switch statement inside your consumer loop?
 // Implement OCP
 
 // The application cannot anticipate the exact concrete type of class it needs to 
@@ -60,7 +61,7 @@ public class CassandraMessageHandler : MessageHandler
     public override string TargetDatabaseType => "cassandra";
     public override IKafkaProcessor CreateProcessor()
     {
-        throw new CassandraProcessor();
+        return new CassandraProcessor();
     }
 }
 
