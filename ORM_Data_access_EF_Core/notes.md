@@ -11,6 +11,13 @@
 * Result: Halves memory usage and speeds up read-only queries by up to 2x.
 * Golden Rule: If the endpoint doesn't call _context.SaveChanges(), use .AsNoTracking().
 
+### 🗄️ ORM Optimization Boundaries: Projection vs. Tracking
+
+* **The Rule:** Explicitly appending `.AsNoTracking()` is completely redundant when projecting rows directly into a custom DTO shape via `.Select()`. 
+* **The Mechanic:** The EF Core Change Tracker only possesses the capability to monitor official Entity schemas mapping to database tables. Custom POCO shapes (DTOs or Records) cannot be tracked, forcing the query compiler to bypass change tracking automatically.
+* **The Exception Trap:** If a DTO property maps a full reference to a database Entity instance (e.g., `RawEntity = c`), EF Core will activate tracking for that specific sub-object. Enforce strict primitive projections to ensure memory remains completely unindexed.
+
+
 ## 3. The N+1 Query Problem
 * Cause: Fetching a parent list and looping through it to fetch child records individually.
 * Fix: Use Eager Loading (.Include()) or explicit Projection (.Select() into a DTO) to force EF Core to fetch all data in a single, clean SQL JOIN.

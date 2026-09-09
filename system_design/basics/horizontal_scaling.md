@@ -43,7 +43,6 @@ public class CaseRepository : ICaseRepository
     public async Task<CaseDocketDto> GetReadOnlyCaseAsync(Guid caseId)
     {
         return await _readContext.Cases
-            .AsNoTracking() // Performance Optimization: Disables Entity Framework change tracking
             .Where(c => c.Id == caseId)
             .Select(c => new CaseDocketDto(c.Id, c.Title, c.Status))
             .FirstOrDefaultAsync();
