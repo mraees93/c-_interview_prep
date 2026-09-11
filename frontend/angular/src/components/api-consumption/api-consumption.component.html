@@ -3,7 +3,7 @@
   <!-- Controller Toolbelt Grid -->
   <div class="control-panel">
     <div class="search-box">
-      <label for="search">Live Filter Logs:</label>
+      <label for="search">Live Filter Logs (effect-driven):</label>
       <input 
         id="search"
         type="text" 
@@ -17,17 +17,24 @@
     </button>
   </div>
 
-  <!-- Loading State Indicator -->
-  @if (rawCommentsResource.isLoading()) {
+  <!-- 1. Handle Loading State -->
+  @if (isLoading()) {
     <div class="loading-state">
-      <p>Downloading 500 record entries from matrix...</p>
+      <p>Streaming data matrices down via background effect()...</p>
     </div>
   }
 
-  <!-- Data Renderer Grid -->
-  @if (rawCommentsResource.value()) {
+  <!-- 2. Handle Error State -->
+  @if (error()) {
+    <div class="error-state">
+      <p><strong>System Exception:</strong> {{ error() }}</p>
+    </div>
+  }
+
+  <!-- 3. Handle Successful Data Render -->
+  @if (!isLoading() && !error()) {
     <div class="meta-row">
-      <p>Showing <strong>{{ processedComments().length }}</strong> of 500 records matching criteria</p>
+      <p>Showing <strong>{{ processedComments().length }}</strong> of 500 records found</p>
     </div>
 
     <div class="cards-grid">
