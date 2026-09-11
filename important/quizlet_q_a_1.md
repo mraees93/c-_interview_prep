@@ -59,3 +59,8 @@ To explain visibility parameters seamlessly to a panel using a domestic setting,
 *   **`protected internal` (The Driveway):** Open to anyone inside your house lot OR children down the street. Because it is a loose **OR** rule, any unrelated neighbour (separate class with no inheritance) inside your assembly can walk up the driveway and overwrite the asset.
 *   **`private protected` (The Kid’s Bedroom):** Accessible *only* to children (subclasses) **AND** they must still physically live inside your exact house lot (same assembly).
 *   **`static` (The House Address Sign):** A single blueprint asset fixed permanently to the physical house itself rather than belonging to an individual person. You don't ask an individual sibling what the house number is; you read it directly off the structure.
+
+Q7: Explain Dependency Injection (DI)?
+
+* **The Punchy Answer:** "Dependency Injection is the practice of passing external dependencies into a class—typically via its constructor—rather than letting the class instantiate them internally."
+* **The Senior Architectural Reason:** "By doing this, we completely decouple our business logic from specific concrete implementations, satisfying the Dependency Inversion Principle. It allows us to easily swap dependencies for mock objects during unit testing, and completely hands off object lifetime management (Transient, Scoped, Singleton) to the framework container, preventing critical resource leaks on the managed heap."

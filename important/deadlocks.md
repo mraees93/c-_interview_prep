@@ -34,6 +34,24 @@ public async Task<string> GetDocumentJsonAsync(string id)
 }
 ```
 
+If you are writing pure, synchronous code where you want everything to run line-by-line on a single thread, the synchronous methods below are completely fine to use.
+The danger happens when you mix them—known as the "sync-over-async" anti-pattern which causes thread pool starvation.
+
+### Cheat Sheet: Synchronous vs. Asynchronous Replacements
+
+| Do Not Use (Synchronous / Blocking) | Use Instead (Asynchronous / Non-blocking) |
+| :--- | :--- |
+| `task.Result` / `task.Wait()` | `await task;` |
+| `task.GetAwaiter().GetResult()` | `await task;` |
+| `Task.WaitAll(t1, t2);` | `await Task.WhenAll(t1, t2);` |
+| `Thread.Sleep(1000);` | `await Task.Delay(1000);` |
+| `lock (locker) { ... }` | `await semaphore.WaitAsync(); try { ... } finally { semaphore.Release(); }` |
+| `stream.Read(buffer, 0, len);` | `await stream.ReadAsync(buffer, 0, len);` |
+| `query.ToList();` | `await query.ToListAsync();` |
+| `query.ToArray();` | `await query.ToArrayAsync();` |
+| `query.FirstOrDefault();` | `await query.FirstOrDefaultAsync();` |
+| `query.Count();` | `await query.CountAsync();` |
+
 ---
 
 ## 2. Database Storage Deadlock (SQL Engine Page Locks)
