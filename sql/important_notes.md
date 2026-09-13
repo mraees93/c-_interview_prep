@@ -248,3 +248,198 @@ FROM Candidates c
 JOIN Verifications p ON c.CandidateID = p.CandidateID AND p.Status = 'Pending' -- filters candidate pool to only include individuals who have at least one 'Pending' check
 LEFT JOIN Verifications f ON c.CandidateID = f.CandidateID AND f.Status = 'Flagged' --find only the 'Flagged' checks for those exact same candidates.
 WHERE f.CandidateID IS NULL; --drop anyone who has a flagged status
+
+
+# SQL Query Execution Order Reference
+
+This reference guide maps out the difference between how you **write** an SQL query versus how the database engine actually **executes** it. Understanding this distinction is critical for debugging queries and acing technical interviews.
+
+---
+
+## 🚀 The Core Logical Execution Order
+
+When a database processes your query, it follows this strict step-by-step sequence:
+
+1. **`FROM` / `JOIN`**
+   - The engine identifies the target tables and combines them to form the base dataset.
+2. **`ON`**
+   - Join conditions are evaluated to filter the combined rows.
+3. **`WHERE`**
+   - Base rows are filtered by conditions *before* any grouping or aggregation occurs.
+4. **`GROUP BY`**
+   - The remaining rows are collapsed into summary rows based on matching column values.
+5. **`HAVING`**
+   - Conditions are applied to filter the aggregated groups (unlike `WHERE`, which filters raw rows).
+6. **`SELECT`**
+   - The database determines which columns to return, calculates expressions, and applies aliases.
+7. **`DISTINCT`**
+   - Duplicate rows are removed from the selected output dataset.
+8. **`ORDER BY`**
+   - The final result set is sorted sequentially by the specified columns.
+9. **`LIMIT` / `OFFSET` / `TOP`**
+   - The dataset is restricted to a maximum number of rows for presentation or pagination.
+
+---
+
+## 📊 Summary Comparison Matrix
+
+| Step | Written Order (Syntax) | Execution Order (Logical) | Interview Crucial Note |
+| :--- | :--- | :--- | :--- |
+| **1** | `SELECT` | `FROM` / `JOIN` | Base dataset must exist before anything else. |
+| **2** | `FROM` / `JOIN` | `WHERE` | Filters rows early to save computing power. |
+| **3** | `WHERE` | `GROUP BY` | Collapses rows; standard column data is lost unless aggregated. |
+| **4** | `GROUP BY` | `HAVING` | Filters aggregate results (e.g., `COUNT(*) > 5`). |
+| **5** | `HAVING` | `SELECT` | Evaluates expressions and assigns `AS` aliases. |
+| **6** | `ORDER BY` | `DISTINCT` | Deduplicates data right before final presentation. |
+| **7** | `LIMIT` / `TOP` | `ORDER BY` | Sorts data so that limits fetch the correct "top" rows. |
+| **8** | — | `LIMIT` / `OFFSET` | Cuts the final feed to the exact pagination size requested. |
+
+---
+
+## 💡 Practical Interview Traps & Pitfalls
+
+### ❌ Trap 1: Using Aliases in the `WHERE` Clause
+This query fails because the engine runs `WHERE` **before** it processes `SELECT` (where the alias is created).
+```sql
+-- INVALID QUERY
+SELECT DepartmentID AS Dept, AVG(Salary) AS AvgSal
+FROM Employees
+WHERE Dept = 10; -- Error: "Dept" does not exist yet!
+```
+
+### ✅ The Fix
+You must repeat the literal column name in the `WHERE` clause, or use a Subquery / Common Table Expression (CTE).
+```sql
+-- VALID QUERY
+SELECT DepartmentID AS Dept, AVG(Salary) AS AvgSal
+FROM Employees
+WHERE DepartmentID = 10; 
+```
+
+### ❌ Trap 2: Using Aggregate Functions in the `WHERE` Clause
+This query fails because individual rows are filtered **before** the engine groups or aggregates them together.
+```sql
+-- INVALID QUERY
+SELECT DepartmentID, AVG(Salary)
+FROM Employees
+WHERE AVG(Salary) > 50000 -- Error: An aggregate may not appear in the WHERE clause
+GROUP BY DepartmentID;
+```
+
+### ✅ The Fix
+Filter aggregated groups using the `HAVING` clause, which executes **after** `GROUP BY`.
+```sql
+-- VALID QUERY
+SELECT DepartmentID, AVG(Salary)
+FROM Employees
+GROUP BY DepartmentID
+HAVING AVG(Salary) > 50000;
+```
+
+### ❌ Trap 3: Structural Aliasing Limits in `GROUP BY`
+Trying to group by a newly calculated column alias declared in the `SELECT` statement (specifically in MS SQL Server).
+* **Why it breaks:** The engine groups data at Step 4, but your `SELECT` aliases are not evaluated or assigned until Step 6. PostgreSQL and MySQL have compiler workarounds for this, but MS SQL Server strictly adheres to the standard and throws an exception.
+```sql
+-- 🚫 FAILS (In MS SQL Server)
+SELECT CASE WHEN Score > 80 THEN 'High Risk' ELSE 'Low Risk' END AS RiskTier, COUNT(*)
+FROM RiskAssessments
+GROUP BY RiskTier; -- Error: Invalid column name 'RiskTier'
+
+-- ✅ FIXED (Repeat the expression or wrap it in a CTE)
+SELECT CASE WHEN Score > 80 THEN 'High Risk' ELSE 'Low Risk' END AS RiskTier, COUNT(*)
+FROM RiskAssessments
+GROUP BY CASE WHEN Score > 80 THEN 'High Risk' ELSE 'Low Risk' END;
+```
+
+### ❌ Trap 4: Non-Deterministic `DISTINCT` + `ORDER BY` Mismatch
+Using `SELECT DISTINCT` while ordering your result set by a column that was not explicitly included in the `SELECT` list.
+* **Why it breaks:** `DISTINCT` runs at Step 7 to collapse duplicate rows. `ORDER BY` runs later at Step 8. If multiple rows have identical selected data but different values in the sorting column, the engine does not know which sorting value to prioritize, creating a mathematical ambiguity.
+```sql
+-- 🚫 FAILS
+SELECT DISTINCT Country
+FROM LegalEntities
+ORDER BY DateCreated DESC; -- Error: ORDER BY items must appear in the select list if SELECT DISTINCT is specified
+
+-- ✅ FIXED
+SELECT Country, MAX(DateCreated) as MaxDate
+FROM LegalEntities
+GROUP BY Country
+ORDER BY MaxDate DESC;
+```
+
+
+# 🚀 Advanced SQL Execution Order: Part 2 (Software Engineer Focus)
+### 🎯 Target: LexisNexis Cape Town — Intermediate SE Assessment
+
+This document houses the advanced architectural and optimization traps where the database engine's logical execution pipeline can cause production performance degradation or silent application logic bugs.
+
+---
+
+## ⚠️ Additional Intermediate Software Engineering Traps
+
+### ❌ Trap 5: The `COUNT(column)` vs. `COUNT(*)` Null Mirage
+Assuming `COUNT(ColumnName)` and `COUNT(*)` do the exact same thing when calculating aggregates.
+* **Why it breaks:** During Step 4 (`GROUP BY`) and Step 6 (`SELECT`), the engine allocates memory differently for these functions. `COUNT(*)` counts every row matching the criteria (including rows where all columns are null). `COUNT(ColumnName)` looks explicitly at that column and silently discards any row containing a `NULL`.
+* **The Impact:** This creates critical bugs in application metrics, billing code calculations, or payment volume tracking if columns contain optional parameters.
+```sql
+-- 🚫 POTENTIAL APPLICATION BUG
+SELECT DepartmentId, COUNT(ManagerId) as TotalStaff 
+FROM Teams 
+GROUP BY DepartmentId; -- Missing all staff members who do not have a manager assigned!
+
+-- ✅ FIXED (Counts actual transaction/row records defensively)
+SELECT DepartmentId, COUNT(*) as TotalStaff 
+FROM Teams 
+GROUP BY DepartmentId;
+```
+
+### ❌ Trap 6: Subquery Unnesting & The `NOT IN` Black Hole
+Using a standard `NOT IN` condition against a dynamic subquery to filter records.
+* **Why it breaks:** If the subquery executed in Step 1/3 returns even a single `NULL` value, the entire `NOT IN` expression evaluates to `UNKNOWN`. Due to SQL's three-valued logic, the database engine will return zero rows for the entire query.
+```sql
+-- 🚫 DANGEROUS (If any user has a NULL Email, this returns exactly 0 results)
+SELECT AppId FROM Applications 
+WHERE UserEmail NOT IN (SELECT Email FROM BlacklistedUsers);
+
+-- ✅ FIXED (Use NOT EXISTS, which uses two-valued boolean logic safely)
+SELECT a.AppId FROM Applications a
+WHERE NOT EXISTS (
+    SELECT 1 FROM BlacklistedUsers b WHERE b.Email = a.UserEmail
+);
+```
+
+### ❌ Trap 7: Non-SARGable Expressions Wiping Out Indexes
+Wrapping an indexed table column inside an inline function (like `DATEPART`, `LEFT`, or `CONVERT`) inside your filter constraints.
+* **Why it breaks:** To process a filter at Step 3 (`WHERE`), the engine needs to evaluate the function for *every single row* in the database sequentially before it can compare it. This completely prevents the Query Optimizer from performing a rapid **Index Seek**.
+* **The Impact:** A query that should take 2 milliseconds ends up executing a massive **Full Table Scan**, locking production database tables at scale.
+```sql
+-- 🚫 PERFORMANCE NIGHTMARE (Forces Table Scan)
+SELECT CaseId FROM LegalCases 
+WHERE YEAR(ClosedDate) = 2026;
+
+-- ✅ FIXED (SARGable: Allows the engine to use a B-Tree Index Seek)
+SELECT CaseId FROM LegalCases 
+WHERE ClosedDate >= '2026-01-01' AND ClosedDate < '2027-01-01';
+```
+
+### ❌ Trap 8: The Accumulator Illusion with Window Functions
+Omitting the `ORDER BY` clause inside a cumulative Window Function partition and expecting a row-by-row running total.
+* **Why it breaks:** When evaluating a window function at Step 6, adding an `ORDER BY` tells the query processor to treat the framing bounds as `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` (a running tally). If you omit the sorting clause, the engine assumes the frame is the entire partition chunk (`RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING`).
+* **The Result:** Instead of an incremental step calculation, every row in the partition receives the exact same final aggregated sum.
+```sql
+-- 🚫 FAILS (Returns the total sum of all rows on every single line)
+SELECT TransactionId, Amount,
+       SUM(Amount) OVER (PARTITION BY AccountId) as RunningTotal
+FROM Ledger;
+
+-- ✅ FIXED (Forces the execution planner to accumulate sequentially)
+SELECT TransactionId, Amount,
+       SUM(Amount) OVER (PARTITION BY AccountId ORDER BY TransactionDate) as RunningTotal
+FROM Ledger;
+```
+
+---
+
+## 💡 Pro-Tips for the LexisNexis Interview Panel
+1. **Never use deep subquery nesting.** Opt for clear, modular **Common Table Expressions (CTEs)**. This signals to engineering leads that you prioritize code readability and maintainability.
+2. **Mention memory buffers (TempDB).** When discussing `GROUP BY` or `DISTINCT`, mention that filtering out records early using `WHERE` minimizes data volume before it hits the database sorting buffers.
