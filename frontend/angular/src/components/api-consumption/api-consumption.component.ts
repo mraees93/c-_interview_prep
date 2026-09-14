@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { Component, computed, effect, ElementRef, inject, OnDestroy, OnInit, output, Signal, signal, viewChild, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommentLog } from '../../models/comment-log.model';
 import { firstValueFrom } from 'rxjs';
 
@@ -30,7 +29,6 @@ export class ApiConsumptionComponent {
         effect(async () => {
             try {
                 this.isLoading.set(true);
-                this.error.set(null);
 
                 const data = await firstValueFrom(
                     this.http.get<CommentLog[]>('https://jsonplaceholder.typicode.com/comments')
