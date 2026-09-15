@@ -29,5 +29,30 @@ FROM Transactions;
 -- service (longest-serving employee gets rank 1), regardless of their Role.
 
 SELECT EmployeeID, StoreID, Role, HireDate,
-       DENSE_RANK() OVER(PARTITION BY StoreID )
+       DENSE_RANK() OVER(PARTITION BY StoreID ORDER BY HireDate ASC) AS EmployeesServiceRank
 FROM Employees;
+
+-- 5. Display the BookID, Title, Category, and BasePrice, alongside a column showing the average BasePrice of all books belonging to that specific book's Category. 
+-- Do not use a GROUP BY clause.
+
+SELECT BookID, Title, Category, BasePrice,
+       AVG(BasePrice) OVER(PARTITION BY Category) AS AvgBasePrice
+FROM SalesBooks;
+
+-- 6. Write a query to show every TransactionID, StoreID, BookID, SalePrice, and a column calculating the exact difference between the 
+-- transaction's individual SalePrice and the overall average SalePrice of that specific StoreID.
+
+-- inline approach
+SELECT TransactionID, StoreID, BookID, SalePrice,
+       (SalePrice - AVG(SalePrice) OVER(PARTITION BY StoreID)) AS PriceDifference
+FROM Transactions;
+
+-- CTE approach:
+WITH AvgSalePrices AS (
+    SELECT TransactionID, StoreID, BookID, SalePrice,
+           AVG(SalePrice) OVER(PARTITION BY StoreID) AS AvgSalePrice
+    FROM Transactions
+)
+SELECT TransactionID, StoreID, BookID, SalePrice,
+       (SalePrice - AvgSalePrice) AS PriceDifference
+FROM AvgSalePrices;
