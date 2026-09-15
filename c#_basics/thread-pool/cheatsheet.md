@@ -82,4 +82,6 @@ catch (Exception)
         }
     }
 }
+
+TODO: you do not always have to rethrow the exception
 ```
