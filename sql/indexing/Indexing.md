@@ -77,7 +77,9 @@ ON LegalCases(JudgeId);
 -- jump over to the main Clustered Index on disk to grab them, and jump back.
 SELECT Id, Title, CaseNumber 
 FROM LegalCases 
-WHERE JudgeId = 5; -- Result: INDEX SEEK + HIGH COST KEY LOOKUP
+WHERE JudgeId = 5; 
+-- 🔍 EXECUTION PLAN: INDEX SEEK + HIGH COST KEY LOOKUP
+-- 💡 WHY? The root/intermediate nodes allow a SEEK on JudgeId, but the missing columns force a table lookup.
 
 
 -- ====================================================================
@@ -93,9 +95,34 @@ INCLUDE (Title, CaseNumber);
 -- Running the exact same SELECT query now results in a 100% pure, lightning-fast INDEX SEEK.
 SELECT Id, Title, CaseNumber 
 FROM LegalCases 
-WHERE JudgeId = 5; -- Result: PURE INDEX SEEK
-```
+WHERE JudgeId = 5; 
+-- 🔍 EXECUTION PLAN: PURE INDEX SEEK (100% Covered)
+-- 💡 WHY? The engine SEEKS on the sorted JudgeId key and finds Title and CaseNumber waiting in the leaf node.
 
+
+-- ====================================================================
+-- 3. THE LIMITATION: When This Covering Index Falls Back to Scans
+-- ====================================================================
+
+-- ⚠️ SCENARIO A: FILTERING BY INCLUDED COLUMNS ONLY
+SELECT Id, Title, CaseNumber 
+FROM LegalCases 
+WHERE Title = 'State vs. Smith';
+-- 🔍 EXECUTION PLAN: INDEX SCAN (or Full Table Scan)
+-- 💡 WHY? Included columns are completely UN SORTED. The engine cannot seek to a specific position; 
+--    it must read the entire index from start to finish (Scan) to find the text matching 'Title'.
+
+-- ⚠️ SCENARIO B: FILTERING BY BOTH KEY AND INCLUDED COLUMNS
+SELECT Id, Title, CaseNumber 
+FROM LegalCases 
+WHERE JudgeId = 5 AND Title = 'State vs. Smith';
+-- 🔍 EXECUTION PLAN: INDEX SEEK (with Residual Predicate Filter)
+-- 💡 WHY? The engine does a SEEK on JudgeId = 5 to isolate those rows. Then, it evaluates 
+--    the unsorted 'Title' column as a filter on just that subset. It is a Seek, but the 'Title' 
+--    part did not help speed up the structural search.
+
+
+```
 ---
 
 ### 💡 Advanced Index Re-Allocation (Moving the Clustered Slot)
