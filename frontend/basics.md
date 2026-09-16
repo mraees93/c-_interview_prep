@@ -17,6 +17,8 @@ A mechanism that handles many async tasks concurrently within a single thread.
 
 A promise is an object that links **code that takes time (producing code)** AND **code that must wait for a result (consuming code)**.
 
+An object representing the eventual completion or failure of an asynchronous operation and its resulting value. **MDN Docs**
+
 5. How many states can a promise be in? 
 
 A promise can be in 3 states; Pending, fulfilled, rejected
