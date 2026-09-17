@@ -1,23 +1,17 @@
 -- Schema Details:
--- Stores (StoreID, StoreName, City)
--- Employees (EmployeeID, StoreID, FullName, Role, HireDate)
--- SalesBooks (BookID, Title, Category, BasePrice)
--- Transactions (TransactionID, StoreID, EmployeeID, BookID, SalePrice, TransactionDate)
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
 
--- 6. Write a query to show every TransactionID, StoreID, BookID, SalePrice, and a column calculating the exact difference between the 
--- transaction's individual SalePrice and the overall average SalePrice of that specific StoreID.
+-- 7. Find the single largest document (highest FileSizeKB) for each Department. Show the Department name, the Document ID, and the size.
 
--- inline approach
-SELECT TransactionID, StoreID, BookID, SalePrice,
-       (SalePrice - AVG(SalePrice) OVER(PARTITION BY StoreID)) AS PriceDifference
-FROM Transactions;
-
--- CTE approach:
-WITH AvgSalePrices AS (
-    SELECT TransactionID, StoreID, BookID, SalePrice,
-           AVG(SalePrice) OVER(PARTITION BY StoreID) AS AvgSalePrice
-    FROM Transactions
+WITH RankedDocuments AS (
+    SELECT l.Department, d.DocID, d.FileSizeKB,
+           ROW_NUMBER() OVER(PARTITION BY l.Department ORDER BY d.FileSizeKB DESC) AS rank
+    FROM Lawyers l
+    JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+    JOIN Documents d ON m.MatterID = d.MatterID
 )
-SELECT TransactionID, StoreID, BookID, SalePrice,
-       (SalePrice - AvgSalePrice) AS PriceDifference
-FROM AvgSalePrices;
+SELECT Department, DocID, FileSizeKB
+FROM RankedDocuments
+WHERE rank = 1;

@@ -12,6 +12,8 @@ You **only** use a CTE or subquery when you want to **filter** on the resulting 
 *   **Matters** (`MatterID`, `Title`, `LeadLawyerID`)
 *   **Documents** (`DocID`, `MatterID`, `FileSizeKB`)
 
+-- 7. Find the single largest document (highest FileSizeKB) for each Department. Show the Department name, the Document ID, and the size.
+
 ---
 
 ## 🛠️ The Target Query
