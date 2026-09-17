@@ -104,3 +104,24 @@ CREATE TABLE JudgeStatuteCitations (
     CONSTRAINT FK_Citations_Statutes FOREIGN KEY (StatuteId) REFERENCES Statutes(StatuteId)
 );
 ```
+
+---
+
+### 🚀 When to Use Denormalization
+
+* **Read-Heavy Architectures:** Use when read volumes vastly outnumber write operations (e.g., 95:5 read-to-write ratio).
+* **High-Scale NoSQL Systems:** Mandatory in Document or Key-Value stores to avoid complex, distributed runtime application joins.
+* **Heavy Aggregations:** Use when queries constantly compute expensive runtime metrics like `SUM()`, `AVG()`, or `COUNT()` over millions of rows.
+* **Reporting & OLAP Warehouses:** Standard practice in data warehouses (Star/Snowflake schemas) to build rapid-fire dashboard reporting layers.
+* **Complex Multi-Table Joins:** Apply when a critical user path requires joining 5+ large tables, crippling application response times.
+* **Historical Snapshots:** Use to lock in point-in-time facts (e.g., saving the exact price and address on an `Invoice` table, even if the product price or user profile changes later).
+
+
+### ⚠️ Production Traps & Trade-offs of Denormalization
+
+* **Write Amplification:** A single user update (e.g., changing a username) forces the system to fire hundreds of background writes to sync duplicate data across other tables.
+* **Eventual Consistency Lag:** Because data isn't updated in one central spot, different screens in your application will show mismatched data until background sync jobs catch up.
+* **Data Corruption & Drift:** If a worker thread fails or an update query crashes halfway through, your duplicated records will become permanently out of sync.
+* **Massive Storage Bloat:** Storing text strings like `CustomerName` or `ItemTitle` thousands of times instead of a simple 4-byte `INT` foreign key causes database file sizes to skyrocket.
+* **Loss of Single Source of Truth:** Debugging data anomalies becomes incredibly difficult because you can no longer tell which record holds the definitive, accurate value.
+* **Code Complexity Overhead:** Your application code becomes highly complex, requiring transactional hooks, message queues, or event-driven pipelines just to keep disparate tables mirrored.
