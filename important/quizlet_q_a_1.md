@@ -60,7 +60,26 @@ To explain visibility parameters seamlessly to a panel using a domestic setting,
 *   **`private protected` (The Kid’s Bedroom):** Accessible *only* to children (subclasses) **AND** they must still physically live inside your exact house lot (same assembly).
 *   **`static` (The House Address Sign):** A single blueprint asset fixed permanently to the physical house itself rather than belonging to an individual person. You don't ask an individual sibling what the house number is; you read it directly off the structure.
 
+
+
+
 Q7: Explain Dependency Injection (DI)?
 
-* **The Punchy Answer:** "Dependency Injection is the practice of passing external dependencies into a class—typically via its constructor—rather than letting the class instantiate them internally."
-* **The Senior Architectural Reason:** "By doing this, we completely decouple our business logic from specific concrete implementations, satisfying the Dependency Inversion Principle. It allows us to easily swap dependencies for mock objects during unit testing, and completely hands off object lifetime management (Transient, Scoped, Singleton) to the framework container, preventing critical resource leaks on the managed heap."
+Dependency injection is when passing external dependencies into a class constructor, rather than letting the class instantiate it internally
+
+Why use it?
+
+Satifies DIP by decoupling business logic from concrete implementations
+
+It allows us to swap dependencies for mock objects during unit testing
+
+It hands off object lifetime-management (T, S, S) to the DI container which prevents resource leaks on managed heap.
+
+
+
+
+8. Explain 2 types of polymorphism?
+
+Compile-time polymorphism is method-overloading - using same methods but different parameters
+
+Runtime polymorphism is method-overriding - using abstract and virtual keywords in parent classes - the .NET runtime evaluates the type of the physical object in memory and uses the **Virtual Method Table (VMT)** to dynamically dispatch the call.

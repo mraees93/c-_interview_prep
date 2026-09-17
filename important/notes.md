@@ -11,3 +11,16 @@ Singleton: Passage geyser heater - One instance created on startup. Long lived f
 
 
 A singleton class MUST be thread-safe but it can either be stateful(mutable) or stateless(immutable)
+
+
+What's Dependency injection?
+
+Dependency injection is when passing external dependencies into a class constructor, rather than letting the class instantiate it internally
+
+Why use it?
+
+Satifies DIP by decoupling business logic from concrete implementations
+
+It allows us to swap dependencies for mock objects during unit testing
+
+It hands off object lifetime-management (T, S, S) to the DI container which prevents resource leaks on managed heap.
