@@ -26,6 +26,21 @@ export class ApiConsumptionComponent {
         //Native effect() (like useEffect(() => {}, []))
         // fires once when component is painted onto the DOM
 
+        // effect(async () => {
+        //     try {
+        //         this.isLoading.set(true);
+
+        //         const data = await firstValueFrom(
+        //             this.http.get<CommentLog[]>('https://jsonplaceholder.typicode.com/comments')
+        //         );
+
+        //         this.comments.set(data);
+        //     } catch (err: any) {
+        //         this.error.set(err.message || 'Failed to populate from API');
+        //     } finally {
+        //         this.isLoading.set(false);
+        //     }
+        // })
         effect(async () => {
             try {
                 this.isLoading.set(true);
@@ -35,8 +50,16 @@ export class ApiConsumptionComponent {
                 );
 
                 this.comments.set(data);
-            } catch (err: any) {
-                this.error.set(err.message || 'Failed to populate from API');
+            } catch (err: unknown) {       // using any type turns off type checking, unknown forces you prove what the error type is before you use it, preventing runtime crashes
+                
+                if(err instanceof Error) {
+                    this.error.set(err.message);
+                } else if (typeof err === "string") {
+                    this.error.set(err || 'Failed to populate from API');
+                } else {
+                    this.error.set("An unexpected system exception occurred.");
+                }
+                
             } finally {
                 this.isLoading.set(false);
             }
