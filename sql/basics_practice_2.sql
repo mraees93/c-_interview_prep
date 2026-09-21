@@ -22,6 +22,13 @@ GROUP BY c.CategoryID, c.CategoryName;
 
 --4. List the Names of Customers who have ordered products from the 'Electronics' category.
 
+SELECT DISTINCT o.CustomerName
+FROM Orders o
+JOIN OrderItems oi ON o.OrderID = oi.OrderID
+JOIN Products p ON oi.ProductID = p.ProductID
+JOIN Categories c ON c.CategoryID = p.CategoryID
+WHERE c.CategoryName = 'Electronics';
+
 
 -- Categories (CategoryID, CategoryName)
 -- Products (ProductID, ProductName, CategoryID, Price)
