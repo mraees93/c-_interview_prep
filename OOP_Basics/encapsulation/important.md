@@ -44,13 +44,85 @@ Encapsulation is not merely data hiding via `private` fields and public properti
 
 ---
 
-## 🏡 The Access Modifier House Plot Matrix (Assembly Physics)
+## 🧱 3. Assembly Scope Encapsulation: The Internal Hard Ceiling
 
-Think of the **Project Assembly (DLL)** as your **Entire Secure House Property Plot**, and an **External Assembly** as the **Neighbor's House across the street**:
+* **The Pattern:** A structural combination of the **Dependency Inversion Principle (SOLID)** and the **Composition Root Pattern**.
+* **The Core Rule:** Mark concrete infrastructure or data classes as **`internal`** instead of `public` inside your data access project assembly (.csproj) [ON, SUN, JUNE 21, 2026 @ 16:32 PM]. Expose *only* a `public` contract Interface [ON, SUN, JUNE 21, 2026 @ 16:32 PM].
+* **The Method Hard Ceiling:** A member's visibility can never exceed its parent class. Making a class `internal` establishes an unbreakable visibility box—all inner methods automatically become internal to outside projects, even if explicitly written as `public`.
+* **The Production Win:** The external API controller is physically blocked from discovering or instantiating the concrete database plumbing class directly on the heap. This prevents tight architectural coupling and forces the API layer to rely solely on clean abstractions.
 
-* **`internal`** = 🛋️ **The Private Lounge:** Open only to people living inside the house (same assembly project). External plots (external assemblies) are completely blocked.
-* **`protected internal`** = 🚗 **The Shared Front Driveway:** A loose **OR** gate. Open to an unrelated roommate living in the house (no inheritance, same assembly), **OR** open to a direct family member (derived subclass) who moved out and lives in a different assembly across the street.
-* **`private protected`** = 🛏️ **The Kids' Bedroom:** A strict **AND** gate. You must live inside the house **AND** you must be a direct child of the family (derived subclass) to gain entry. Neighbors cannot enter, and even if a child grows up and moves out across the street (different assembly), they lose access to the room.
+---
+
+### 📜 Architectural Contract: ICaseRepository.cs
+*Marked public so the external Web API assembly can see the contract handles.*
+
+```csharp
+namespace LexisNexisWorkspace.Modules.Cases.Domain;
+
+public interface ICaseRepository
+{
+    Task<IEnumerable<string>> GetActiveCaseTitlesAsync();
+}
+```
+
+---
+
+### 🛋️ Infrastructure Implementation: SqlCaseRepository.cs
+*Marked internal to lock it inside the private assembly lounge.*
+
+```csharp
+using LexisNexisWorkspace.Modules.Cases.Domain;
+
+namespace LexisNexisWorkspace.Modules.Cases.Infrastructure;
+
+// 🔒 THE VAULT: External assemblies cannot see or compile against this type!
+internal class SqlCaseRepository : ICaseRepository
+{
+    // 🧱 THE HARD CEILING: Trapped inside an internal class, this method is implicitly internal.
+    // Unrelated external assemblies can NEVER call or see this method directly.
+    public async Task<IEnumerable<string>> GetActiveCaseTitlesAsync()
+    {
+        return await Task.FromResult(new List<string> { "S v Zuma", "State v Maharaj" });
+    }
+}
+```
+
+---
+
+### 🏢 External Web API Consumer: CasesController.cs
+*Lives in a completely separate project assembly across the street.*
+
+```csharp
+using Microsoft.AspNetCore.Mvc;
+using LexisNexisWorkspace.Modules.Cases.Domain; // 👈 Only allowed to import the public contract
+
+namespace LexisNexisWorkspace.Modules.Cases.Api;
+
+[ApiController]
+[Route("api/cases")]
+public class CasesController : ControllerBase
+{
+    private readonly ICaseRepository _repository; // ✅ LEGAL: Binds to the public interface contract
+
+    public CasesController(ICaseRepository repository)
+    {
+        _repository = repository;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetSummary()
+    {
+        // 💥 THE INTRUSION FAILURE TRAIL:
+        // var localRepo = new SqlCaseRepository(); // ❌ THROWS COMPILER BUILD ERROR!
+        
+        var data = await _repository.GetActiveCaseTitlesAsync(); // ✅ LEGAL: Executes via abstract gate
+        return Ok(data);
+    }
+}
+```
+
+### ❓ Panel Defense: "If it's internal, how does the container inject it?"
+> "We use the **Composition Root Pattern**. The Data assembly exposes a public service registration extension method. Because that initialization method lives **inside the same assembly house** as the internal class, it has full clearance to instantiate `SqlCaseRepository` on the heap and bind it to the public `ICaseRepository` service collection. The external API layer never discovers the underlying class metadata."
 
 ---
 
