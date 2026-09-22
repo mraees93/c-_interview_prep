@@ -102,7 +102,7 @@ namespace LexisNexisWorkspace.Modules.Cases.Api;
 [Route("api/cases")]
 public class CasesController : ControllerBase
 {
-    private readonly ICaseRepository _repository; // ✅ LEGAL: Binds to the public interface contract
+    private readonly ICaseRepository _repository; // ✅ LEGAL: Binds to the public interface contract. This is "object composition" as well
 
     public CasesController(ICaseRepository repository)
     {
@@ -139,3 +139,13 @@ public class CasesController : ControllerBase
 ### ❓ Q3: Why is `private protected` used almost exclusively on class methods rather than the classes themselves?
 * **The Punchy Answer:** "Because top-level classes cannot be marked `private protected` by the compiler; it is explicitly designed as an internal inheritance lock for class members."
 * **The Panel Defense:** "The purpose of `private protected` is to restrict access to derived subclasses within the same project assembly. Since top-level classes do not have an inheritance parent context above them at the file system root, the modifier only makes sense when applied directly to **Methods, Fields, or Nested Classes** inside a class hierarchy."
+
+---
+
+## 📐 Macro-Encapsulation: Advanced System Patterns
+
+True encapsulation operates as a multi-dimensional paradigm across three additional boundary tiers:
+
+1. **Domain-Driven Value Objects (`Record` Constraints):** Encapsulating raw primitive types (strings, ints) inside custom domain structs or records (e.g., `Money`, `EmailAddress`). This blocks the compilation or execution of invalid formats across the entire framework loop.
+2. **Microservice Data Isolation (Bounded Context Vaults):** Restricting database schema access exclusively to its parent microservice container footprint. Other microservices are barred from executing direct cross-database queries, forcing communication to pass solely through public API contracts or broker event queues.
+3. **Lexical Closures (JavaScript Scope Mechanics):** Trapping state variables inside local function compilation frames. External scopes cannot discover the underlying references, restricting data modifications to authorized nested function handles returned via the execution loop.
