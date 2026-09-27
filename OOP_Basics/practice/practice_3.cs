@@ -25,8 +25,6 @@ public class LegalBrief2 : LoggableDocument
         // Core business logic here
     }
 }
-
-
 /*
 2. The Good Way: Object Composition (Has-A Relationship)This design relies on combining independent behaviors via abstractions. It keeps your class 
     lightweight, flexible, and completely unit-testable.
@@ -36,22 +34,22 @@ public class LegalBrief2 : LoggableDocument
     implementation without modifying a single line of code inside LegalBrief.
 */
 
-public interface ILogger
+public interface IDocumentLogger
 {
-    void Log(string message);
+    void LogToDisk(string message);    
 }
 
 public class LegalBrief3
 {
-    private readonly ILogger _logger;
+    private readonly IDocumentLogger _documentLogger;
 
-    public LegalBrief3(ILogger logger)
+    public LegalBrief3(IDocumentLogger documentLogger)
     {
-        _logger = logger;
+        _documentLogger = documentLogger;
     }
 
     public void ProcessCase()
     {
-        _logger.Log("object composition favored over inheritance");
+        _documentLogger.LogToDisk("Favor object composition over inheritance...");
     }
 }
