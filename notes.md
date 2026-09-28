@@ -1,40 +1,8 @@
-difficult:
-dip
-lsp
-ocp
+28 SEPT, TODO:
 
-once p/week (went deep through all):
-srp, isp - last used 23 apr
+Properties (get, set) and its functionality
 
-
-23, 26 apr, 12 may (went deep through all):
-dip
-lsp 
-ocp
-srp
-isp
-
-(definitions, code examples):
-
-20 may, went deep:
-dip
-lsp
-ocp
-
-28 apr, went deep:
-srp
-isp
-
-
-to test solid further ask ai to give code examples to identify whuch principle its violating
-
-1 May:
-tested all 5 in snippet
-
-skim through basic definitions, smells, fixes in mind
-
-
-4 may - went through all 5 definitions
+How does dip work with injecting into constructors? And in onion architecture?
 
 
 
