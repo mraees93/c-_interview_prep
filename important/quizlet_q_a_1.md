@@ -10,6 +10,29 @@ Runtime (Active Construction Site):
 TypeScript: The workers build using a generic text description because the guidelines were wiped. If a delivery contains wood instead of steel, they don't realize it until they bolt it together, causing a structural collapse (runtime crash).
 C#: The workers are equipped with electronic scanners verifying the real model in real-time (reified types). If someone delivers wood instead of steel, the scanner sounds an immediate alarm (Runtime Exception) before it can be built into the structure.
 
+1. a. boot up sequence in c#?
+
+# .NET Runtime Boot-Up Sequence
+
+## 1. Turning on the Power Grid (`dotnet run`)
+* The Operating System creates a brand new process for your app.
+* **The Global Warehouse Floor (Heap):** Instantly mapped out in memory.
+* **Static Assets:** Static classes (like `Program`) are built directly onto the warehouse floor, ready for use.
+
+## 2. The Head Chef Arrives (The Main Thread)
+* The .NET runtime automatically spawns **one primary worker** called the Main Thread.
+* This Head Chef walks directly to the `Program.cs` master switchboard.
+* They open up a private **Desk Clipboard (Stack)** to track local variables for the starting method.
+
+## 3. Assembling the Crew (The Thread Pool)
+* The runtime opens a backroom filled with idle, pre-hired workers called the **Thread Pool**.
+* Instead of creating new workers from scratch (which wastes time), the app keeps these workers resting until needed.
+
+## 4. Allocating the Tasks
+* **Synchronous Sequences:** The Head Chef prepares multiple dishes strictly one after the other. If the cake needs to bake for 45 minutes, they stand there staring at the oven door, completely freezing the kitchen until it is 100% complete.
+* **Parallel Work:** The manager hires multiple chefs to stand in the kitchen simultaneously. Chef A chops vegetables while Chef B cooks meat on the exact same stovetop at the exact same microsecond.
+* **Asynchronous Tasks (`async/await`):** The chef puts a cake in the oven, sets a digital kitchen timer (`await`), and immediately turns around to chop vegetables. When the timer dings, whichever chef is currently free steps over to pull the cake out.
+
 
 2. What are the foundational architectural pipeline stages of typescript and c#?
 
