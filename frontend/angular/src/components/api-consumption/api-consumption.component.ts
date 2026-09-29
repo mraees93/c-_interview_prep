@@ -25,22 +25,6 @@ export class ApiConsumptionComponent {
     constructor() {
         //Native effect() (like useEffect(() => {}, []))
         // fires once when component is painted onto the DOM
-
-        // effect(async () => {
-        //     try {
-        //         this.isLoading.set(true);
-
-        //         const data = await firstValueFrom(
-        //             this.http.get<CommentLog[]>('https://jsonplaceholder.typicode.com/comments')
-        //         );
-
-        //         this.comments.set(data);
-        //     } catch (err: any) {
-        //         this.error.set(err.message || 'Failed to populate from API');
-        //     } finally {
-        //         this.isLoading.set(false);
-        //     }
-        // })
         effect(async () => {
             try {
                 this.isLoading.set(true);
