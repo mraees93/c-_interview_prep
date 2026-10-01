@@ -2,7 +2,7 @@ CONCEPTS EXPLAINED:
 
 props vs state
 
-Props (or inputs) are external and immutable, they are data passed down from parent component. The child component is forbidden from changing it directly
+Props (or inputs) are external and immutable, they are any data passed down from parent component. The child component is forbidden from changing it directly
 State is internal and mutable, it's data owned and changed by the component itself (e.g searchTerm)
 
 ```javascript
