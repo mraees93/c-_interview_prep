@@ -52,14 +52,14 @@ C#: The workers are equipped with electronic scanners verifying the real model i
 
 3. What is stack memory?
 
-The clipboard on the desk using strict Last-In, First-Out (LIFO). Everytime a method is called, a new sheet(stack frame) is stacked on top of clipboard. Sheet stores method Value Types (int, bool, double, struct, readonly record struct) and reference pointers to larger types stored on the warehouse floor (Heap memory) needed for that method/task. When task completes, sheet is thrown into recycle bin requiring zero help from GC.
+The private clipboard on the desk belonging to a single thread, using strict Last-In, First-Out (LIFO). Everytime a method is called, a new sheet(stack frame) is stacked on top of clipboard. Sheet stores method Value Types (int, bool, double, struct, readonly record struct) and reference pointers to larger types stored on the warehouse floor (Heap memory) needed for that method/task. When task completes, sheet is thrown into recycle bin requiring zero help from GC.
 
 *(Note: Value types are only stack-allocated if they are local method variables. If an int lives inside a class container, it is dragged onto the Heap to maintain contiguous memory boundaries).*
 
 
 4. What is heap memory?
 
-The larger shared warehouse floor. Everytime a large reference object is instantiated using new keyword(heavy class or a standard record), its stored on warehouse floor. The index card(reference pointer) gets clamped to clipboard(stack). When task completes, sheet is thrown into recycle bin, the reference pointer is gone but large object is still on warehouse floor requiring GC to get rid of it.
+The larger shared warehouse floor Everytime a large reference object is instantiated using new keyword(heavy class or a standard record), its stored on warehouse floor. Every thread walks past it. The index card(reference pointer) gets clamped to clipboard(stack). When task completes, sheet is thrown into recycle bin, the reference pointer is gone but large object is still on warehouse floor requiring GC to get rid of it.
 
 Other types stored on heap:
 
@@ -86,7 +86,7 @@ To explain visibility parameters seamlessly to a panel using a domestic setting,
 
 
 
-Q7: Explain Dependency Injection (DI)?
+7. Explain Dependency Injection (DI)?
 
 Dependency injection is when passing external dependencies into a class constructor, rather than letting the class instantiate it internally
 
