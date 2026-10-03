@@ -4,7 +4,13 @@ Properties (get, set) and its functionality
 
 How does dip work with injecting into constructors? And in onion architecture?
 
+RabbitMQ: _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false); should prefetchCount be 10 to avoid memory bloat?
 
+29 SEPT:
+
+LINQ
+Delegates
+Generics
 
 **IMPORTANT:**
 
