@@ -77,3 +77,13 @@ useEffect() VS effect()
 | **Once on Mount** | `useEffect(fn, [])` | Place `effect(fn)` in constructor with **no signals read**. |
 | **On Value Change** | `useEffect(fn, [value])` | Place `effect(fn)` in constructor and **execute `value()` inside it**. |
 | **On Any Change** | `useEffect(fn)` | *Not applicable.* Angular only re-runs if a **tracked dependency signal explicitly changes**. |
+
+---
+
+### UseMemo:
+
+To improve performance it only runs when one of its dependencies update and it can be used to keep resource intensive functions from unecessary.
+
+useMemo returns a memoized value.
+
+useCallback returns a memoized function.
