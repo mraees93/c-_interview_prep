@@ -13,6 +13,7 @@
 | **Unit Testing Strategy** | Complex; requires heavy database mocking/stubbing | Simple; fast unit testing of pure domain logic |
 | **Component Swappability** | Rigid; UI or DB modifications trigger cascading breaks | Fluid; adapters change without impacting the core domain |
 
+3. The Domain Logic	The Secret Family Recipes. The strict rules on how raw ingredients must be mixed, cooked, and validated before being served.	Pure C# classes, methods, and entities (like your LegalCase class) with absolutely zero database references.
 ---
 
 ### Core Structural Layouts
