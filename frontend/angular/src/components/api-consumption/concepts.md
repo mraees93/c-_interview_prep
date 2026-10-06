@@ -82,7 +82,7 @@ useEffect() VS effect()
 
 ### UseMemo:
 
-To improve performance it only runs when one of its dependencies update and it can be used to keep resource intensive functions from unecessary.
+To improve performance it only runs when one of its dependencies update and it can be used to keep resource intensive functions from unecessary running.
 
 useMemo returns a memoized value.
 
