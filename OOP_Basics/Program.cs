@@ -1,5 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
-// using OOP_Basics.abstraction;
+using OOP_Basics.abstraction;
 //  Vehicle myCar = new Car();
 //         myCar.Start();
 //         myCar.Stop();
@@ -8,7 +8,17 @@
 //         myBike.Start();
 //         myBike.Stop();
 
-using OOP_Basics.encapsulation;
+// clean object initialization
+Chef c = new Chef ( initialAge: 12, name: "Alex");
+// System.Console.WriteLine(c.Name);
+
+Order o = new Order
+{
+    Price = 10
+};
+System.Console.WriteLine(o.Price);
+
+//using OOP_Basics.encapsulation;
 // BankAccount myAccount = new BankAccount(1000);
 // myAccount.Balance = 450;
 //Console.WriteLine(myAccount.GetBalance());
@@ -32,7 +42,7 @@ using OOP_Basics.encapsulation;
 // myCat.animalSound();
 // myDog.animalSound();
 
-using OOP_Basics.practice;
+//using OOP_Basics.practice;
 //practice_1
 // ParentDocument doc = new LegalBrief();
 // System.Console.WriteLine(doc);
