@@ -1,6 +1,6 @@
 28 SEPT, TODO:
 
-Properties (get, set) and its functionality
+DONE - Properties (get, set) and its functionality
 
 How does dip work with injecting into constructors? And in onion architecture?
 
