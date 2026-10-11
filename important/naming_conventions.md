@@ -6,20 +6,26 @@ Name interfaces after their **abstract role or capability**, never after a speci
 * **Good:** `INoticeSender`, `IDocumentRepository`, `IPriceCalculator`
 * **Bad:** `IEmailSender`, `ISqlDatabase`, `IExcelWriter`
 
-### 🔵 Concrete & Abstract Classes (The Standard Extension Convention)
-Re-use the abstract base name as the suffix for your concrete classes to keep your architecture uniform and easy to read.
+### 🔵 Abstract & Concrete Classes (Choose ONE Style)
 
-* **The Abstract Class:** Name it using the pure, high-level noun representing the base concept.
+#### Style A: The Pure Noun Suffix Pattern (Clean Semantics)
+* **Abstract Parent:** Pure, high-level generic noun. 
   * *Examples:* `Discount`, `Document`, `Notice`
-* **The Concrete Class:** Simply extend that exact same name by adding a descriptive prefix to show *how* it implements the rule.
+* **Concrete Child:** [Descriptive Prefix] + [Parent Noun Suffix]
   * *Examples:* `FlatTenPercentDiscount`, `SignedStatuteDocument`, `SmtpNotice`
 
-### ⚡ Summary Reference Matrix
+#### Style B: The Suffix Anchor Pattern (Enterprise Visual Scan)
+* **Abstract Parent:** Generic Noun + `Base` suffix.
+  * *Examples:* `DiscountBase`, `DocumentBase`, `NoticeBase`
+* **Concrete Child:** [Descriptive Prefix] + [Generic Noun Suffix]
+  * *Examples:* `FlatTenPercentDiscount`, `SignedStatuteDocument`, `SmtpNotice`
 
-| Architectural Slot | Naming Pattern | Example |
+### ⚡ Summary Reference Matrix (Style A vs Style B)
+
+| Architectural Slot | Style A (Pure Noun) | Style B (Suffix Anchor) |
 | :--- | :--- | :--- |
-| **Interface** | `I` + Role Name | `IAuditLogWriter` |
-| **Abstract Class** | Generic Noun | `LogWriter` |
-| **Class (File Implementation)** | Technology + Abstract Suffix | `LocalFileLogWriter` |
-| **Class (Cloud Implementation)** | Cloud Provider + Abstract Suffix | `AzureBlobLogWriter` |
-| **Class (Mock/Test Implementation)** | `Mock` + Abstract Suffix | `MockLogWriter` |
+| **Interface** | `IAuditLogWriter` | `IAuditLogWriter` |
+| **Abstract Class** | `LogWriter` | `LogWriterBase` |
+| **Concrete Implementation** | `LocalFileLogWriter` | `LocalFileLogWriter` |
+| **Cloud Implementation** | `AzureBlobLogWriter` | `AzureBlobLogWriter` |
+| **Mock / Test Class** | `MockLogWriter` | `MockLogWriter` |

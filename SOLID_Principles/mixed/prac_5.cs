@@ -1,51 +1,127 @@
+/*
 using System;
 using System.Collections.Generic;
 
-public class ContractDocument
+public class CaseFile { public string Id { get; set; } = string.Empty; public string Text { get; set; } = string.Empty; }
+
+public interface ILegalDocumentPipeline
 {
-    public string CaseId { get; set; } = string.Empty;
-    public string RawText { get; set; } = string.Empty;
+    void ExtractPrecedents(CaseFile file);
+    void RedactClientNames(CaseFile file);
+    void PushToArchiveCluster(CaseFile file);
 }
 
-public abstract class Logger
+public class HighCourtPipeline : ILegalDocumentPipeline
 {
-    public abstract void LogPipelineMetric(string action, string caseId);
-}
+    public string OperatorId { get; set; } = "HC_Bot";
+    public List<string> FoundPrecedents { get; set; } = new List<string>();
 
-public interface IDocumentProcessor
-{
-    void ExtractClauses(ContractDocument doc);
-}
+    public void LogMetrics(string step, string id) => Console.WriteLine($"[METRIC] Operator {OperatorId} ran {step} on Case {id}");
 
-public interface IDocumentEditor{
-    void RedactPartyNames(ContractDocument doc);
-}
-
-public class ReadOnlyHistoricalBrief : Logger, IDocumentProcessor
-{
-    public string SystemOperator { get; set; } = "Archival_Bot";
-    public List<string> ExtractedTerms { get; set; } = new List<string>();
-
-    public override void LogPipelineMetric(string action, string caseId)
+    public void ExtractPrecedents(CaseFile file)
     {
-        Console.WriteLine($"[METRIC] Operator {SystemOperator} ran {action} on {caseId}");
+        LogMetrics("Extraction", file.Id);
+        FoundPrecedents.Add("S v Zuma");
     }
 
-    public void ExtractClauses(ContractDocument doc)
+    public void RedactClientNames(CaseFile file)
     {
-        LogPipelineMetric("Extraction", doc.CaseId);
-        ExtractedTerms.Add("Historical Precedent");
+        LogMetrics("Redaction", file.Id);
+        file.Text = file.Text.Replace("Identity", "[HIDDEN]");
+    }
+
+    public void PushToArchiveCluster(CaseFile file) => Console.WriteLine("Archiving securely to disk system.");
+}
+
+public class SealedArchivalPipeline : ILegalDocumentPipeline
+{
+    public string OperatorId { get; set; = "Seal_Bot";
+    public List<string> FoundPrecedents { get; set; } = new List<string>();
+
+    public void LogMetrics(string step, string id) => Console.WriteLine($"[METRIC] Operator {OperatorId} ran {step} on Case {id}");
+
+    public void ExtractPrecedents(CaseFile file)
+    {
+        LogMetrics("Extraction", file.Id);
+        FoundPrecedents.Add("Sealed Case");
+    }
+
+    public void RedactClientNames(CaseFile file) => throw new InvalidOperationException("Altering sealed historical archives is illegal!");
+
+    public void PushToArchiveCluster(CaseFile file) => Console.WriteLine("Archiving securely to disk system.");
+}
+*/
+
+using System;
+using System.Collections.Generic;
+
+public class CaseFile { public string Id { get; set; } = string.Empty; public string Text { get; set; } = string.Empty; }
+
+public interface IPipelineLogger
+{
+    void LogMetrics(string step, string id, string operatorId);
+}
+
+public interface IPrecedentExtractor { void ExtractPrecedents(CaseFile file); }
+
+public interface IClientRedactor { void RedactClientNames(CaseFile file); }
+
+public abstract class LegalPipelineBase
+{
+    public string OperatorId { get; set; } = "Base_Bot";
+    public List<string> FoundPrecedents { get; set; } = new List<string>();
+
+    public void PushToArchiveCluster(CaseFile file)
+    {
+        Console.WriteLine("Archiving securely to disk system.");
     }
 }
 
-public class EditableHistoricalBrief : Logger, IDocumentEditor
+public class HighCourtPipeline : LegalPipelineBase, IPrecedentExtractor, IClientRedactor
 {
-    public override void LogPipelineMetric(string action, string caseId)
+    private readonly IPipelineLogger _logger;
+
+    public HighCourtPipeline(IPipelineLogger logger)
     {
-        Console.WriteLine($"[METRIC] Operator ran {action} on {caseId}");
+        _logger = logger;
+        OperatorId = "HC_Bot";
     }
-    public void RedactPartyNames(ContractDocument doc)
+
+    public void ExtractPrecedents(CaseFile file)
     {
-        LogPipelineMetric("Redaction", doc.CaseId);
+        _logger.LogMetrics("Extraction", file.Id, OperatorId);
+        FoundPrecedents.Add("S v Zuma");
+    }
+
+    public void RedactClientNames(CaseFile file)
+    {
+        _logger.LogMetrics("Redaction", file.Id, OperatorId);
+        file.Text = file.Text.Replace("Identity", "[HIDDEN]");
     }
 }
+
+public class SealedArchivalPipeline : LegalPipelineBase, IPrecedentExtractor
+{
+    private readonly IPipelineLogger _logger;
+
+    public SealedArchivalPipeline(IPipelineLogger logger)
+    {
+        _logger = logger;
+        OperatorId = "Seal_Bot";
+    }
+
+    public void ExtractPrecedents(CaseFile file)
+    {
+        _logger.LogMetrics("Extraction", file.Id, OperatorId);
+        FoundPrecedents.Add("Sealed Case");
+    }
+}
+
+
+/*
+Why this version completely ticks every single box:
+
+• SRP Fixed: Operational log generation is completely offloaded to an injected IPipelineLogger component.
+• ISP & LSP Balanced: ILegalDocumentPipeline is completely eliminated. SealedArchivalPipeline only registers for IPrecedentExtractor, making it impossible to trigger a runtime crash.
+• Abstract Base Class Utilised: LegalPipelineBase cleanly houses the shared state properties (OperatorId, FoundPrecedents) and implements the shared archival capability (PushToArchiveCluster) exactly once.
+*/
