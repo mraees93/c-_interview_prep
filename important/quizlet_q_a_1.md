@@ -106,3 +106,4 @@ It hands off object lifetime-management (T, S, S) to the DI container which prev
 Compile-time polymorphism is method-overloading - using same methods but different parameters
 
 Runtime polymorphism is method-overriding - using abstract and virtual keywords in parent classes - the .NET runtime evaluates the type of the physical object in memory and uses the **Virtual Method Table (VMT)** to dynamically dispatch the call.
+**The `override` keyword updates the Virtual Method Table (VMT) for the object slot**
