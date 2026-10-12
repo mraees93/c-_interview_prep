@@ -1,4 +1,4 @@
-28 SEPT, TODO:
+12 oct, TODO:
 
 DONE - Properties (get, set) and its functionality
 
@@ -7,6 +7,8 @@ Encapsulation - important file - internal class only in same assembly but extern
 How does dip work with injecting into constructors? And in onion architecture?
 
 RabbitMQ: _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false); should prefetchCount be 10 to avoid memory bloat?
+
+SUMMARIZE: system_design\basics\architecture.md AND system_design\basics\architecture_db.md INTO ONE FILE
 
 29 SEPT:
 
