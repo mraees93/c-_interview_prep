@@ -44,6 +44,31 @@ Encapsulation is not merely data hiding via `private` fields and public properti
 
 ---
 
+When a class is marked `internal`, it is completely invisible to external assemblies (separate projects). An external class cannot instantiate or reference it directly. To allow external access while keeping the internal machinery hidden, you must use **Contract Abstraction (Interfaces)**.
+
+### The Component Layout
+
+```text
+ 📦 PROJECT A (Core Engine Assembly)
+ │
+ ├── public interface IService  <─── Public Contract (Visible to everyone)
+ │     └── void Execute();
+ │
+ └── internal class Worker : IService <── Hidden Machinery (Private to Project A)
+       └── public void Execute() { /* Raw complex logic */ }
+
+ ──────────────────────────────────────────────────────────────
+
+ 📦 PROJECT B (External Web App Assembly)
+ │
+ └── class Client
+       └── Uses IService.Execute() 
+           (Class B thinks it's talking to the interface, 
+            but behind the scenes, Worker is doing the heavy lifting!)
+```
+
+---
+
 ## 🧱 3. Assembly Scope Encapsulation: The Internal Hard Ceiling
 
 * **The Pattern:** A structural combination of the **Dependency Inversion Principle (SOLID)** and the **Composition Root Pattern**.
