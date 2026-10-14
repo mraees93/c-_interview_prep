@@ -10,6 +10,10 @@ RabbitMQ: _channel.BasicQos(prefetchSize: 0, prefetchCount: 1, global: false); s
 
 SUMMARIZE: system_design\basics\architecture.md AND system_design\basics\architecture_db.md INTO ONE FILE
 
+12, 13 oct - OOP Basics
+
+15, 16 oct - thread pool
+
 29 SEPT:
 
 LINQ
