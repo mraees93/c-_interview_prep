@@ -12,6 +12,11 @@ When you write clean, SARGable logic, the engine instantly reads the root of the
 
 ---
 
+*   **The Enterprise Trade-off (The "Why not index everything?" interview question):** 
+    If the interview panel asks why we don't just include all columns for every query index, you answer: *"Because every column added to an `INCLUDE` clause takes up extra storage space on disk. More importantly, it slows down our database write performance (`INSERT`, `UPDATE`, `DELETE`), because the engine is forced to physically update those duplicate index pages on disk every time a row changes."*
+
+---
+
 # ⚡ Ultimate Guide to SARGable Queries: Consolidated Interview Patterns
 
 A query is **SARGable** (Search Argument Able) when the database engine can utilize a standard **B-Tree Index Seek** to jump straight to the data, rather than scanning the entire table or index row-by-row. 
