@@ -53,8 +53,8 @@ Ask: *"Do I want to compare all rows against the peak value, or do I want to fil
 
 ## 📌 Ranking Functions
 *   `ROW_NUMBER()`: Assigns a unique sequential integer starting at 1 to each row inside the partition.
-*   `RANK()`: Assigns a shared rank for ties; skips subsequent sequence numbers to account for ties (e.g., 1, 1, 3).
 *   `DENSE_RANK()`: Assigns a shared rank for ties; retains consecutive, gapless sequence numbers (e.g., 1, 1, 2).
+*   `RANK()`: Assigns a shared rank for ties; skips subsequent sequence numbers to account for ties (e.g., 1, 1, 3).
 *   `NTILE(N)`: Divides the rows within a partition into `N` approximately equal buckets and assigns the bucket number (e.g., quartiles = 4).
 
 ## 🔎 Value Functions
