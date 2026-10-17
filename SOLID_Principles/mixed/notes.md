@@ -1,4 +1,6 @@
-prac 1-4, 6, 7, 8 is only OCP, LSP, DIP violations
+prac 1-4, 6, 7, 8, 9 is only OCP, LSP, DIP violations
+
+prac_9 - abstract class solutions
 
 prac 5 - LSP, ISP, SRP
 
