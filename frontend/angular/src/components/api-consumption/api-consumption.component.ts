@@ -17,6 +17,8 @@ export class ApiConsumptionComponent {
 
     //signals (like useState)
     searchTerm = signal<string>('');
+
+    // convert signal to an RXJS observable, apply debounce then convert back to signal
     debouncedSearchTerm = toSignal(
         toObservable(this.searchTerm).pipe(debounceTime(300)),
         { initialValue: '' }
