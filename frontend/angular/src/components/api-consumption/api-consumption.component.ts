@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommentLog } from '../../models/comment-log.model';
-import { firstValueFrom } from 'rxjs';
+import { debounceTime, firstValueFrom } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-api-consumption',
@@ -16,6 +17,11 @@ export class ApiConsumptionComponent {
 
     //signals (like useState)
     searchTerm = signal<string>('');
+    debouncedSearchTerm = toSignal(
+        toObservable(this.searchTerm).pipe(debounceTime(300)),
+        { initialValue: '' }
+    );
+    
     sortDirection = signal<'ASC' | 'DESC'>('ASC');
 
     comments = signal<CommentLog[]>([]);
@@ -54,7 +60,7 @@ export class ApiConsumptionComponent {
     processedComments = computed(() => {
         //fallbacks if data is still streaming down from network
         const list = this.comments();
-        const search = this.searchTerm().toLowerCase().trim();
+        const search = this.debouncedSearchTerm().toLowerCase().trim();
         const isAscending = this.sortDirection() === 'ASC';
 
         let result = list;
