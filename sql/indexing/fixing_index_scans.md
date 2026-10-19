@@ -25,6 +25,38 @@ By grouping similar mistakes together, we can reduce the cheat sheet down to **4
 
 ---
 
+  -- Schema Details:
+-- Lawyers (LawyerID, Name, Department)
+-- Matters (MatterID, Title, LeadLawyerID)
+-- Documents (DocID, MatterID, FileSizeKB)
+
+----5. List all Lawyers and any Matters they lead with 'Litigation' in the title. Lawyers with no 'Litigation' matters must still 
+-- appear in the list.
+
+-------WRONG----------
+SELECT l.Name, m.Title
+FROM Lawyers l 
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+WHERE m.Title = 'Litigation'
+
+SELECT l.Name, m.Title
+FROM Lawyers l
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID 
+     **AND m.Title LIKE '%Litigation%';**
+
+**How to optimize a wildcard partial text matching query?**
+
+**This QUERY doesnt make it truly SARGable in the true sense but it achieves the exact same ultimate goal: high performance without a full table scan.**
+
+SELECT l.Name, m.Title
+FROM Lawyers l 
+LEFT JOIN Matters m ON l.LawyerID = m.LeadLawyerID
+AND CONTAINS(m.Title, 'Litigation'); -- This utilizes an MS SQL Full-Text Index and is highly performant
+
+**normally, wrapping a column inside a function completely destroys SARGability and forces an Index Scan. CONTAINS() is the one major exception to this rule because it does not use standard database indexes it uses Microsoft SQL Server's Full-Text Search (FTS) engine.**
+
+---
+
 ### Pattern 1: Column Scrambling (The Function & Math Trap)
 **The Rule:** Never touch, wrap, modify, or perform math on a table column inside the `WHERE` clause. Doing so forces the engine to calculate that modification for every single row, causing a slow **Index Scan**. Always shift functions and math to the value/variable side instead.
 
