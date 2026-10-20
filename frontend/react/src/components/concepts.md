@@ -27,6 +27,10 @@ State is internal and mutable, it's data owned and changed by the component itse
 
 useEffect() VS effect()
 
+The useEffect Hook allows you to perform side effects in your components.
+
+Some examples of side effects are: fetching data, directly updating the DOM, and timers.
+
 ```javascript
 
     // code runs on every render
