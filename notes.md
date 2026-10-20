@@ -20,6 +20,18 @@ LINQ
 Delegates
 Generics
 
+---
+
+20 Oct - Plan for Java/React role:
+
+20% Java Plan: Normal Toy Problems on CodeWars for muscle memory
+Just 2 or 3 short challenges a day
+
+80% Core Plan: Keep Practicing in C#
+For every other heavyweight concept—System Design, Architecture, Dependency Injection lifecycles, Memory boundaries, and Object Composition—keep practicing and thinking in C#.
+
+---
+
 **IMPORTANT:**
 
 SOLID principles
