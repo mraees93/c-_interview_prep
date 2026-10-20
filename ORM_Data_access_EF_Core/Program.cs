@@ -24,8 +24,8 @@ class Program
 
            apps.add("Crease");
 
-           long size = query.size();
-           System.out.prntln(size);
+           int size = query.size();
+           System.out.println(size);
         */
 
         // List<int> points = new List<int> { 10, 20, 30 };
