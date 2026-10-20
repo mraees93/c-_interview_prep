@@ -13,6 +13,21 @@ class Program
         // int count = query.Count(); //step 2 - only executes when forced to materialize data with .Count()
         // Console.WriteLine(count);
 
+        /* JAVA
+
+           List<String> apps = new ArrayList<>();
+           apps.add("Loan");
+           apps.add("Credit");
+           apps.add("Savings");
+
+           Stream<String> query = apps.stream().filter(a -> a.startsWith("C"));
+
+           apps.add("Crease");
+
+           long size = query.size();
+           System.out.prntln(size);
+        */
+
         // List<int> points = new List<int> { 10, 20, 30 };
         // var query = points.Where(p => p > 15).ToList(); //breaks deferred(delayed) execution,forces Immediate Execution.
         // points.Add(40);
