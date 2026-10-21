@@ -23,8 +23,12 @@ class Program
            Stream<String> query = apps.stream().filter(a -> a.startsWith("C"));
 
            apps.add("Crease");
+           
+           // int type(32 bit) capped at 2.14 billion items
+           // int appSize = apps.size();
 
-           int size = query.size();
+           // long type(64 bit) because a stream count could be infinite 
+           long size = query.count(); 
            System.out.println(size);
         */
 
