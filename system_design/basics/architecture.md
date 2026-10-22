@@ -234,3 +234,32 @@ When launching a new product, the biggest risk is not system scale—it is **mar
 | **"How do you ensure your domain logic isn't tied to your database choice?"** | **The Dependency Inversion Principle (DIP)**; the Core Domain defines abstractions, and Infrastructure implements them. |
 | **"What happens if Services need to share a database?"** | That creates a **Distributed Monolith** anti-pattern, combining microservice network tax with monolithic coupling. |
 | **"How do we transition a live legacy monolith safely?"** | Deploying an API Gateway layer to execute the **Strangler Fig Pattern** incrementally. |
+
+---
+
+### The Three Pillars of a Fault-Tolerant Microservice
+
+When Service A (React App or Gateway) calls Service B (Java Backend), and Service B goes dark, you protect the system using three master patterns at your application switchboard:
+
+[ Cases API Controller ] ──(Calls)──> [ Document Storage Service ] ❌ (CRASHED!)
+         │
+         ├── Rule 1: Timeout ⏱️ (Don't stare at the oven door forever)
+         ├── Rule 2: Circuit Breaker 🔌 (Trips the breaker to stop fire)
+         └── Rule 3: Fallback 🍳 (Serve an alternative backup meal)
+
+
+# 🔌 The 3-Step Fault-Tolerance Pipeline
+
+When a downstream service or database crashes, your API controller handles the failure using this precise, sequential defensive pipeline:
+
+## ⏱️ Step 1: The Timeout (Individual Request Level)
+* **The Rule:** Don't stare at the oven door forever. 
+* **The Action:** Every external network call gets a strict kitchen timer (e.g., 2 seconds). If the dependency fails to answer before the timer dings, the thread instantly drops the request and records a failure.
+
+## 🔌 Step 2: The Circuit Breaker (System Traffic Level)
+* **The Rule:** Trip the main board breaker to stop a fire.
+* **The Action:** This traffic cop monitors the Step 1 scorecard. If requests fail repeatedly (e.g., 5 timeouts in a row), the breaker trips **Open**. It completely cuts the power line, forcing all future incoming requests to fail instantly without wasting CPU cycles on a dead network path.
+
+## 🍳 Step 3: The Fallback (User Experience Level)
+* **The Rule:** Serve an alternative backup meal.
+* **The Action:** Whether an individual request timed out (Step 1) or the circuit breaker blocked it (Step 2), the execution flow safely lands here. The code returns a static, default, or cached payload so the React frontend stays up and displays a graceful offline or maintenance layout instead of a raw crash screen.
