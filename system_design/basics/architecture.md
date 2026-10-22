@@ -237,7 +237,7 @@ When launching a new product, the biggest risk is not system scale—it is **mar
 
 ---
 
-### The Three Pillars of a Fault-Tolerant Microservice
+# The Three Pillars of a Fault-Tolerant Microservice
 
 When Service A (React App or Gateway) calls Service B (Java Backend), and Service B goes dark, you protect the system using three master patterns at your application switchboard:
 
@@ -248,7 +248,7 @@ When Service A (React App or Gateway) calls Service B (Java Backend), and Servic
          └── Rule 3: Fallback 🍳 (Serve an alternative backup meal)
 
 
-# 🔌 The 3-Step Fault-Tolerance Pipeline
+### 🔌 The 3-Step Fault-Tolerance Pipeline
 
 When a downstream service or database crashes, your API controller handles the failure using this precise, sequential defensive pipeline:
 
