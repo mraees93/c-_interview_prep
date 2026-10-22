@@ -54,16 +54,16 @@ export default function ApiConsumption() {
         const search = searchTerm.toLowerCase().trim();
         const isAsc = sortDirection === 'ASC';
 
-        let result = comments;
+        let result = [...comments];
         if(search) {
-            result = comments.filter(item => {
+            result = result.filter(item => {
                 const nameMatch = item.name ? item.name.toLowerCase().includes(search) : false;
                 const emailMatch = item.email ? item.email.toLowerCase().includes(search) : false;
                 return nameMatch || emailMatch;
             })
         }
 
-        return [...result].sort((a, b) => {
+        return result.sort((a, b) => {
             return isAsc ? a.id - b.id : b.id - a.id;
         })
     }, [comments, searchTerm, sortDirection]);
