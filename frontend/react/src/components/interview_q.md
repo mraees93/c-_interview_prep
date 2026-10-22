@@ -17,3 +17,6 @@
 
 ### Q5: Why is it risky to rely on raw `catch (err)` bindings without an explicit Type Guard in TypeScript?
 **A:** In JavaScript runtime engines, a `throw` event is structurally unrestricted. A system function or backend engine can throw a standard `Error` instance, a raw text string, an integer status code, or even a null value. If your code unconditionally tries to read `err.message` without verification, and the runtime throws a raw string instead, your frontend code will experience a null-pointer crash. Using a **TypeScript Type Guard** (like `if (err instanceof Error)`) guarantees compilation safety by forcing you to isolate and verify the object schema before reading properties.
+
+### Q6: Why is direct state mutation like sorting/filtering an array of objects directly BAD?
+**A:** Direct mutation overrides data in place within its existing memory address. Because React relies on shallow reference comparison to detect state updates, returning the same memory pointer tricks the engine into thinking nothing changed, causing the UI to completely skip re-rendering. To keep state transitions predictable, always use operators like the spread syntax `[...]` to spin up a shallow copy in a fresh memory address before executing transforms.
