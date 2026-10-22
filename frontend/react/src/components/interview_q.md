@@ -20,3 +20,6 @@
 
 ### Q6: Why is direct state mutation like sorting/filtering an array of objects directly BAD?
 **A:** Direct mutation overrides data in place within its existing memory address. Because React relies on shallow reference comparison to detect state updates, returning the same memory pointer tricks the engine into thinking nothing changed, causing the UI to completely skip re-rendering. To keep state transitions predictable, always use operators like the spread syntax `[...]` to spin up a shallow copy in a fresh memory address before executing transforms.
+
+### Q7: Why should the `useMemo` hook compute transformations instead of modifying the state directly?
+**A:** The `useMemo` hook should always treat local component state as a read-only, single source of truth. Overwriting your raw state array during filtering or sorting actions causes you to lose your baseline dataset, forcing expensive, redundant network re-fetches when a user clears a search input. By using `useMemo` to create a shallow copy and execute transformations on the fly, you preserve the original data matrix intact in memory, ensure blistering fast client-side updates, and keep the application state highly predictable.
