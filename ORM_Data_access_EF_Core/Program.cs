@@ -59,6 +59,29 @@ class Program
         // int result = transactions.First(t => t > 100); //throws InvalidOperationException runtime error
         //use .FirstOrDefault() => returns default value of underlying data type. Since int is a value type, it would return 0
 
+        /* JAVA
+            List<Integer> transactions = new ArrayList<>();
+
+            int result = transactions.stream()
+                                    .filter(t -> t > 100)
+                                    .findFirst() // returns an optional Integer
+                                    .orElse(0); // if empty, returns default zero
+
+            System.out.println(result);
+
+
+            Performance Note: Primitive Specialisation
+
+            If you are processing highly intensive or massive mathematical arrays, you can use an IntStream in Java. This avoids the object overhead of Integer wrapping on the heap and works directly with primitive memory layouts:
+
+            int result = transactions.stream()
+                                    .mapToInt(Integer::intValue) // converts to primitive IntStream
+                                    .filter(t -> t > 100)
+                                    .findFirst() // Returns an optional Integer
+                                    .orElse(0);
+
+        */
+
         // var users = new[]
         // {
         //     new { ID = 1, Role = "Admin" },
@@ -67,6 +90,23 @@ class Program
         // };
         // var target = users.Where(u => u.ID == 2 || u.Role == "Admin");
         // target.ToList().ForEach(user => Console.WriteLine(user));
+
+        /* JAVA
+            record User(int id, String role) {} // lightweight immutable record
+
+            User[] users = {
+                new User(1, "Admin"),
+                new User(2, "User"),
+                new User(3, "Guest")
+            }
+
+            List<User> target = List.of(users).stream()
+                .filter(u -> u.id() == 2 || "Admin".equals(u.Role()))
+                .toList();
+
+            target.forEach(System.out::println);
+
+        */
 
         // Dictionary<string, int> scores = new Dictionary<string, int>();
         // scores.Add("TeamA", 10);
