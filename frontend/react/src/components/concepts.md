@@ -1,3 +1,41 @@
+BASICS:
+
+Whats JSX and TSX?
+
+It allows devs to write HTML-like syntax in JS or TS files.
+
+---
+
+Why use a functional component? And what's a hook?
+
+Simplicity. Readability. Modern code practices especially with the use of hooks.
+
+Hooks allow devs to hook into state and lifecycle methods.
+
+---
+
+Whats the 3 rules of hooks?
+
+1. Hooks can only be called inside functional components.
+
+2. Hooks can only be called at the top level of components.
+
+3. Hooks cannot be conditional.
+
+---
+
+What's the lifecycle of react components?
+
+Each component has a lifecycle consisting of 3 main stages:
+
+1. Mounting - means adding elements in the DOM.
+
+2. Updating - whenever there's a change in the components state or props.
+
+3. Unmounting - when a component is removed from the DOM.
+
+---
+
 CONCEPTS EXPLAINED:
 
 props vs state
