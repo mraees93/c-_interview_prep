@@ -7,6 +7,15 @@ Focuses on performance, memory profiles, disk reads, and debugging.
 
 ---
 
+### ⚡ Why Non-Clustered Indexes Are Slower Than Clustered Indexes
+
+* **Clustered is the Data:** A Clustered Index *is* the actual table data physically sorted on disk. Finding a match means you are already holding the row.
+* **Non-Clustered is a Pointer:** A Non-Clustered Index is a completely separate lookup sheet containing sorted keys and pointers back to the main table.
+* **The Bookmark Lookup Tax:** If your `SELECT` clause requests extra columns not stored inside the non-clustered index, the engine must execute a secondary jump (**Key/RID Lookup**) to fetch them.
+* **Random vs. Sequential I/O:** Clustered reads contiguous, sequential blocks off disk. Non-Clustered lookup jumps erratically across scattered disk pages, generating slower random I/O.
+
+---
+
 ## 1. Core Mechanics: Scan vs. Seek
 
 When troubleshooting database latency, your primary task is identifying how the storage engine traverses data pages.
@@ -59,6 +68,8 @@ SELECT Id, Title FROM LegalCases WHERE Id = 5000; -- Result: INDEX SEEK
 ```
 
 ---
+### 🔍 Bookmark Lookup (Key Lookup / RID Lookup)
+* **The Mechanic**: A hidden performance trap. This is called a **Key Lookup** if the table has a Clustered Index, or an **RID Lookup** if the table is a Heap. It occurs when your query successfully uses...
 
 ### 🔍 Key Lookup (RID Lookup)
 *   **The Mechanic**: A hidden performance trap. This occurs when your query successfully uses a Non-Clustered index to locate a record, but your `SELECT` statement requests extra columns that do not exist inside that index definition. 
