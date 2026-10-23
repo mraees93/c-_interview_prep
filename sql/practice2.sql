@@ -117,7 +117,7 @@ FROM (
         
         -- THE WINDOW FUNCTION:
         ROW_NUMBER() OVER(
-            PARTITION BY c.CategoryID -- Group 1: Splits all products into virtual "piles" by their Category ID
+            PARTITION BY c.CategoryID -- Group 1: Splits all products into virtual "piles" by their Category ID (because of 1. Database Indexing and Speed, and 2. Safeguarding Against Bad Data (Data Integrity) two exact category names willbe merged into one) The database engine can process, sort, and partition integers much faster than strings (CategoryName). Partitioning by a numeric key allows the SQL query optimizer to leverage existing index structures efficiently, resulting in a faster execution plan.
             ORDER BY p.Price DESC     -- Group 2: Sorts the products *inside* each pile from highest price to lowest
         ) as rnk                      -- Group 3: Assigns a sequential number to each row in that pile (#1 is the most expensive)
         
