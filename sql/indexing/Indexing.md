@@ -3,6 +3,8 @@
 This guide covers how database engines physically retrieve data from disk, how to interpret execution blueprints, and how to debug real-world database latency.
 Focuses on performance, memory profiles, disk reads, and debugging.
 
+            PARTITION BY c.CategoryID -- Group 1: Splits all products into virtual "piles" by their Category ID (because of 1. Database Indexing and Speed, and 2. Safeguarding Against Bad Data (Data Integrity) two exact category names willbe merged into one) The database engine can process, sort, and partition integers much faster than strings (CategoryName). Partitioning by a numeric key allows the SQL query optimizer to leverage existing index structures efficiently, resulting in a faster execution plan.
+
 ---
 
 ## 1. Core Mechanics: Scan vs. Seek
