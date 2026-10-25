@@ -123,6 +123,16 @@ public int Age
 }
 ```
 
+
+| Property Design Strategy | Backing Type / Keyword | Best Used For | Primary Benefits | Avoid When... |
+| :--- | :--- | :--- | :--- | :--- |
+| **Standard Auto-Properties** | `public T Prop { get; set; }` | **Data Transfer Objects (DTOs)**, View Models, and simple public configuration classes. | Fast to write; eliminates boilerplate backing fields; clean syntax. | You need to restrict state modifications or run validation logic when a value changes. |
+| **Immutable Auto-Properties** | `public T Prop { get; init; }` | **Read-only data records**, API requests, and thread-safe data configurations. | Allows safe object-initializer syntax (`new Rect { W = 10 }`) while forcing immutability afterward. | Data needs to change dynamically or frequently throughout the object's lifespan. |
+| **Computed Lambda Properties** | `public T Prop => expression;` | **Derived calculations** (e.g., `Area => Width * Height`), string formatting, or state checks. | Evaluates dynamically at runtime; ensures the data is never stale or out of sync. | The calculation is computationally heavy or requires heavy database/network queries. |
+| **Explicit Backing Fields** | `private T _field;` | **Internal class state**, loop counters, caches, dependency injections, and thread locks. | Absolute encapsulation; prevents leaking internal business logic to outside classes. | You are building simple, public-facing data structures that only store text or numbers. |
+| **Full Properties with Validation** | `get => _field; set { ... }` | **Domain models** requiring data integrity (e.g., checking if a value is negative before saving). | Enforces strict validation rules, fires events, or updates related fields automatically upon assignment. | You are writing high-performance "hot paths" where getter/setter method overhead impacts speed. |
+
+
 ---
 
 ## 📋 Interview Questions & Answers
