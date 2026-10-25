@@ -63,7 +63,8 @@ public class Rectangle
     public double Area => Width * Height; //computed property using lambda syntax
 
     /*
-    The thread looks at the warehouse floor, reads the numbers currently inside Width and Height, and brings copies of those numbers down onto its private Desk Clipboard (the Stack) just for a split second
+    The thread looks at the warehouse floor, reads the numbers currently inside Width and Height, and brings
+     copies of those numbers down onto its private Desk Clipboard (the Stack) just for a split second
     */
 }
 
@@ -71,6 +72,7 @@ public class Rectangle
 
 public class Product
 {
+    // can only be set during initialization
     public string Sku { get; init; } // init  makes the property immutable
 }
 

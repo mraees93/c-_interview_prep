@@ -9,14 +9,19 @@ using OOP_Basics.abstraction;
 //         myBike.Stop();
 
 // clean object initialization
-Chef c = new Chef ( initialAge: 12, name: "Alex");
-// System.Console.WriteLine(c.Name);
+// Chef c = new Chef ( initialAge: 18, name: "Alex");
+// c.CelebrateBirthDay();
+// System.Console.WriteLine(c.Age);
 
-Order o = new Order
-{
-    Price = 10
-};
-System.Console.WriteLine(o.Price);
+// Order o = new Order
+// {
+//     Price = 10
+// };
+// System.Console.WriteLine(o.Price);
+
+Rectangle r = new Rectangle { Width = 2, Height = 5 };
+System.Console.WriteLine(r.Width);
+System.Console.WriteLine(r.Area);
 
 //using OOP_Basics.encapsulation;
 // BankAccount myAccount = new BankAccount(1000);
@@ -45,7 +50,7 @@ System.Console.WriteLine(o.Price);
 //using OOP_Basics.practice;
 //practice_1
 // ParentDocument doc = new LegalBrief();
-// System.Console.WriteLine(doc);
+// doc.Render();
 
 //practice_2
 // LegalEngine engine = new SpecializedSearchEngine();
