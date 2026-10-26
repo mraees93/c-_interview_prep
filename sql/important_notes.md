@@ -1,3 +1,24 @@
+SQL queries are not executed in the order they are written (SELECT is written first but runs near the end). The database engine executes clauses in this exact logical sequence:
+
+1. FROM     -> Identifies the source tables and processes JOINs
+2. WHERE    -> Filters individual rows before aggregation
+3. GROUP BY -> Collapses rows into distinct group buckets
+4. HAVING   -> Filters grouped buckets using aggregate conditions
+5. SELECT   -> Extracts columns, computes aliases, and runs Window Functions
+6. DISTINCT -> Eliminates duplicate rows from the final result set
+7. ORDER BY -> Sorts the final output rows
+8. TOP/LIMIT-> Restricts the number of returned rows
+
+
+Critical Interview Takeaways
+
+• Why aliases fail in WHERE: You cannot use a column alias created in the SELECT clause inside the WHERE clause because the WHERE filter runs long before the SELECT clause even evaluates.
+
+• Window Function placement: Window functions run entirely inside the SELECT stage. Because of this, you cannot use a window function inside a WHERE or HAVING clause, which is why wrapping them inside a CTE or subquery is mandatory when you need to filter their results.
+
+
+---
+
 in a join question how do i differentiate between using an inner join or left join?
 
 I know when they say the right columns data can be empty/null or they refer to it
