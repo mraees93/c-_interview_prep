@@ -84,12 +84,18 @@ most critical symptoms of a distributed monolith:
 #### 2. Synchronous vs. Asynchronous Communication
 * **Synchronous (HTTP/gRPC):** Use strictly when Service A requires an **immediate, blocking response** from Service B to complete the current user action (e.g., checking if a credit card transaction cleared before showing a success screen).
 **Rule:** Use this when a service cannot proceed without an immediate response from another service. It is a "Request/Response" model.
+The Frontend-Gateway needs to fetch the raw ticket details from the Ticket-Service right now to render the screen for the user. If the network call fails or lags, the user sees a loading spinner or an error.
+
 [React UI] ──(HTTP GET /tickets/42)──> [API Gateway] ──(gRPC Request)──> [Ticket-Service]
                                                                                 │ (Queries DB)
 [React UI] <──(Returns JSON Data)────── [API Gateway] <──(Binary Response)──────┘
 
 
 * **Asynchronous (RabbitMQ):** Use for **everything else** where the task can happen out-of-band (e.g., generating a legal PDF, sending notifications, or syncing an analytics database) [dataford]. This ensures loose coupling, insulates against service downtime, and protects application memory [dataford].
+**Rule:** Use this when a service wants to announce that something happened, but doesn't care when or how other services react to it. It is a "Publish/Subscribe" model.
+
+The Ingestion-Service saves the raw ticket. It then needs to trigger the AI Triage process and notify managers. Instead of calling those services over HTTP and waiting for a slow LLM to respond, it drops a message into a queue and finishes immediately.
+
 [Ingestion-Service] 
        │
        ▼ (Publish Event: "TicketReceivedEvent")
