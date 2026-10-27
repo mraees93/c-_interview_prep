@@ -63,13 +63,15 @@ Over-modularising a small domain creates "distributed monolith" symptoms early o
 
 
 
-
+A **distributed monolith** runs as separate microservices but behaves like a tightly coupled monolith, combining network complexities(e.g higher latency) of distributed systems with the rigidity of single-tier apps.
 
 most critical symptoms of a distributed monolith:
 
+1. Coordinated releases - Symptom: you cannot deploy service A without deploying service B and C simultaneously. Cause: breaking changes cause domino effects across the network
 
+2. Chatty sync latency - Symptom: one user request triggers a long chain of synchronous HTTP/gRPC API calls. Cause: Services rely on live network lookups rather than async events or independent data ownership.
 
-
+3. Circular dependencies - Symptom: Service A calls B, which calls C, which loops back to query A. Cause: Poorly defined domain boundaries create structural gridlocks and tracing nightmares.
 
 
 
