@@ -170,7 +170,8 @@ The main difference is **how they are deployed and how they communicate**. A Mod
 | Feature | Modular Monolith | Microservices |
 | :--- | :--- | :--- |
 | **Process Count** | One single process | Many separate processes |
-| **Network Latency** | Zero (In-memory calls) | High (Network calls over HTTP/gRPC) |
+| **Network Latency** | Zero (In-memory calls) | High (Network calls over HTTP/gRPC). An in-memory call is like turning around and talking to your deskmate. A network call over HTTP/gRPC is like packing a box, writing an address, and waiting for a courier to drive it to an office across town.
+From code/threads perspective its async. From architectural level HTTP is synchronous - Your React frontend cannot render the ticket page until the .NET API answers. Your .NET API cannot answer React until the database responds. The loop must close immediately. |
 | **Data Consistency** | Easy (ACID Transactions) | Hard (Eventual Consistency / Saga Pattern) |
 | **DevOps Complexity** | Low (Single CI/CD pipeline) | High (Kubernetes, Service Meshes) |
 | **Scaling** | Scale the whole app together | Scale individual services independently |
@@ -226,6 +227,9 @@ When launching a new product, the biggest risk is not system scale—it is **mar
 * **The Disaster:** The API Gateway routes a request to the new microservice. The microservice calls a shared logic branch back inside the monolith, which then queries the new microservice again. This circular runtime dependency creates immediate execution deadlocks and thread pool starvation under high load.
 * **The Fix:** Maintain a strict **one-way dependency flow**. Re-architect common logic boundaries into shared NuGet packages or independent helper libraries before attempting to split the runtime boundaries.
 
+---
+
+### 🟢 Core Intermediate Expectations (Must Know)
 
 | What the Panel Asks | The Knockout Keywords You Will Use |
 | :--- | :--- |
@@ -234,6 +238,20 @@ When launching a new product, the biggest risk is not system scale—it is **mar
 | **"How do you ensure your domain logic isn't tied to your database choice?"** | **The Dependency Inversion Principle (DIP)**; the Core Domain defines abstractions, and Infrastructure implements them. |
 | **"What happens if Services need to share a database?"** | That creates a **Distributed Monolith** anti-pattern, combining microservice network tax with monolithic coupling. |
 | **"How do we transition a live legacy monolith safely?"** | Deploying an API Gateway layer to execute the **Strangler Fig Pattern** incrementally. |
+| **"How do you prevent a sudden traffic spike from crashing your underlying database servers?"** | Leveraging the **Queue-Based Load Leveling** pattern to buffer incoming writes inside a broker (RabbitMQ) so workers chew through tasks at a safe, predictable pace [dataford]. |
+| **"What happens if a worker processes the exact same message twice due to a network blip?"** | Designing for **Idempotency** by checking a unique Message UUID against a lightweight database tracking table before executing any business logic. |
+| **"How do you prevent a failing downstream service from causing cascading failures upstream and exhausting your calling application's local thread pool?** (Downstream is the direction the data goes, and Upstream is where the data came from. Upstream (The Caller): This is the component closer to the user or the initial trigger. It is the service initiating the request. (e.g., your API Gateway or your front-facing Web API container). Downstream (The Provider): This is the component closer to the database or the background processing layer. It is the service responding to the request. (e.g., a third-party legal validation API, or an internal database cluster).)" | Implementing the **Circuit Breaker Pattern** (typically using the **Polly** library in .NET) to instantly trip and return fast-fail fallback responses when error rates spike. Polly (Nuget package) acts as a protective shield sitting in the .NET microservice container. Polly protects the .NET containers thread pool. |
+| **"How do microservices securely verify user identity without querying a centralized Auth service on every single request?"** | Passing cryptographically signed, stateless **JWTs (JSON Web Tokens)** containing user identity claims that individual microservices verify locally using public keys. |
+
+---
+
+### 🟡 Advanced Senior Boundaries (Bonus Keywords to Recognize)
+
+| What the Panel Asks | The Knockout Keywords You Will Use |
+| :--- | :--- |
+| **"How do we know who changed a record, what they changed, and when they changed it?"** | Deploying an append-only **Audit Log Ledger** completely decoupled via **Change Data Capture (CDC)** to stream database mutations automatically without blocking application threads. |
+| **"What do you do when your read queries need complex joins that slow down your high-speed writes?"** | Enforcing **CQRS (Command Query Responsibility Segregation)** to split your data structure into a rapid write store and a separate, read-optimized replica. |
+| **"How do you handle data updates across multiple microservices without distributed transactions?"** | Enforcing **Sagas (Orchestration or Choreography)** to execute sequential transactions backed by compensating rollbacks to achieve eventual consistency. |
 
 ---
 
@@ -263,3 +281,46 @@ When a downstream service or database crashes, your API controller handles the f
 ## 🍳 Step 3: The Fallback (User Experience Level)
 * **The Rule:** Serve an alternative backup meal.
 * **The Action:** Whether an individual request timed out (Step 1) or the circuit breaker blocked it (Step 2), the execution flow safely lands here. The code returns a static, default, or cached payload so the React frontend stays up and displays a graceful offline or maintenance layout instead of a raw crash screen.
+
+
+# Distributed Monolith Cheat Sheet
+
+A **Distributed Monolith** runs as separate microservices but behaves like a tightly coupled monolith, combining the network complexities of distributed systems with the rigidity of single-tier applications.
+
+---
+
+### 🚨 Core Symptoms
+
+#### 1. Coordinated Releases ("Death Star" Deployment)
+* **Symptom:** You cannot deploy Service A without deploying B and C simultaneously.
+* **Cause:** Breaking changes trigger domino effects across the network.
+
+#### 2. Chatty Synchronous Latency (Temporal Coupling)
+* **Symptom:** One user request triggers a long chain of synchronous HTTP/gRPC API calls.
+* **Cause:** Services rely on live network lookups rather than asynchronous events or independent data ownership.
+
+#### 3. Circular Dependencies
+* **Symptom:** Service A calls B, which calls C, which loops back to query A.
+* **Cause:** Poorly defined domain boundaries create structural gridlocks and tracing nightmares.
+
+#### 4. Shared Binary Libraries (`Shared.dll` / Shared NuGet)
+* **Symptom:** Every service must import a common package containing core business entities.
+* **Cause:** Modifying one business rule forces a recompile and redeployment of every service.
+
+#### 5. Distributed Transactions
+* **Symptom:** Orchestrating complex rollbacks (like a two-phase commit) across independent databases.
+* **Cause:** Trying to enforce strict ACID consistency across network borders instead of Eventual Consistency.
+
+#### 6. Fragile, Coupled Testing
+* **Symptom:** Local debugging requires spinning up a 12-service Docker Compose environment.
+* **Cause:** Massive runtime dependency makes mock testing or data isolation impossible.
+
+---
+
+### ⚖️ The Quick Litmus Test
+
+| Operational Metric | True Microservices | Distributed Monolith |
+| :--- | :--- | :--- |
+| **Independent Deployment?** | **Yes** (Deploy anytime) | **No** (Must coordinate) |
+| **Blast Radius Resilient?** | **Yes** (Graceful degradation) | **No** (Cascading total failure) |
+| **Isolated Storage?** | **Yes** (Owns its data) | **No** (Shared database/tables) |

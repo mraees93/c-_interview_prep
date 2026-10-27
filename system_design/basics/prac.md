@@ -83,7 +83,21 @@ most critical symptoms of a distributed monolith:
 
 #### 2. Synchronous vs. Asynchronous Communication
 * **Synchronous (HTTP/gRPC):** Use strictly when Service A requires an **immediate, blocking response** from Service B to complete the current user action (e.g., checking if a credit card transaction cleared before showing a success screen).
+**Rule:** Use this when a service cannot proceed without an immediate response from another service. It is a "Request/Response" model.
+[React UI] ──(HTTP GET /tickets/42)──> [API Gateway] ──(gRPC Request)──> [Ticket-Service]
+                                                                                │ (Queries DB)
+[React UI] <──(Returns JSON Data)────── [API Gateway] <──(Binary Response)──────┘
+
+
 * **Asynchronous (RabbitMQ):** Use for **everything else** where the task can happen out-of-band (e.g., generating a legal PDF, sending notifications, or syncing an analytics database) [dataford]. This ensures loose coupling, insulates against service downtime, and protects application memory [dataford].
+[Ingestion-Service] 
+       │
+       ▼ (Publish Event: "TicketReceivedEvent")
+ ┌───────────┐
+ │   QUEUE   │ ──(Worker picks up message when ready)──> [AI-Triage-Service] (Calls LLM)
+ │ (Broker)  │ ──(Worker picks up message when ready)──> [Notification-Service] (Sends Email)
+ └───────────┘
+
 
 #### 3. Database Selection: SQL vs. NoSQL
 * **SQL (Relational):** Choose when your data structure demands **strict ACID transactions, complex tabular joins, and structured relationship integrity** (e.g., user authorization roles, billing Ledgers, financial accounting systems).
