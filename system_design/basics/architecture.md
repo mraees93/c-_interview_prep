@@ -170,8 +170,7 @@ The main difference is **how they are deployed and how they communicate**. A Mod
 | Feature | Modular Monolith | Microservices |
 | :--- | :--- | :--- |
 | **Process Count** | One single process | Many separate processes |
-| **Network Latency** | Zero (In-memory calls) | High (Network calls over HTTP/gRPC). An in-memory call is like turning around and talking to your deskmate. A network call over HTTP/gRPC is like packing a box, writing an address, and waiting for a courier to drive it to an office across town.
-From code/threads perspective its async. From architectural level HTTP is synchronous - Your React frontend cannot render the ticket page until the .NET API answers. Your .NET API cannot answer React until the database responds. The loop must close immediately. |
+| **Network Latency** | Zero (In-memory calls) | High (Network calls over HTTP/gRPC). An in-memory call is like turning around and talking to your deskmate. A network call over HTTP/gRPC is like packing a box, writing an address, and waiting for a courier to drive it to an office across town. From code/threads perspective HTTP is async. From architectural level HTTP is synchronous - Your React frontend cannot render the ticket page until the .NET API answers. Your .NET API cannot answer React until the database responds. The loop must close immediately. |
 | **Data Consistency** | Easy (ACID Transactions) | Hard (Eventual Consistency / Saga Pattern) |
 | **DevOps Complexity** | Low (Single CI/CD pipeline) | High (Kubernetes, Service Meshes) |
 | **Scaling** | Scale the whole app together | Scale individual services independently |
