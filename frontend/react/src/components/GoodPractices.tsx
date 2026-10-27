@@ -32,7 +32,9 @@ export function GoodPractices () {
 
     return (
         <div>
-        
+        {/* {
+            comments.map(c => )
+        } */}
         </div>
     );
 }

@@ -77,6 +77,7 @@ export default function ApiConsumption() {
     }
 
     return (
+      <div className="sandbox-container">
     <div className="api-container">
       
       {/* Controller Toolbelt Grid */}
@@ -138,6 +139,7 @@ export default function ApiConsumption() {
           </div>
         </>
       )}
+    </div>
     </div>
   );
 }
