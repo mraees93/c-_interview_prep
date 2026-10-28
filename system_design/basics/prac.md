@@ -51,7 +51,7 @@ If the LLM project were a modular monolith...
 
 📁 dotnet-api/
  ├── 📁 Modules/
- │    ├── 📁 Ingestion/   (Code here CANNOT touch the AI Triage database directly)
+ │    ├── 📁 Ingestion/   (Code here CANNOT touch the AI Triage schema directly)
  │    ├── 📁 AiTriage/    (Isolated logic for prompt engineering and LLM calls)
  │    └── 📁 Operations/  (Isolated logic for human agent assignments)
  └── 📁 Host/             (The Web API project that stitches them together at runtime)
