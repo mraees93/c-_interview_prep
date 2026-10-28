@@ -140,9 +140,10 @@ class Program
         // The Standard Workaround: If a developer actually needs to filter items safely out of a list, they should use a 
         // standard for loop counting backward, or utilize a clean LINQ filtering method like .RemoveAll(item => item == 20);
 
-        // .ToList() transforms the blueprint into an optimized query then the filtered data only crosses the network boundary into c# app memory
-        // IQueryable<CaseDocument> casesA = _context.Cases;
-        // var resultA = casesA.Where(c => c.Category == "Criminal").Take(10).ToList(); 
+        //.ToList() transforms the blueprint into an optimized query then the filtered data only crosses the network boundary into c# app memory
+        IQueryable<CaseDocument> casesA = _context.Cases;
+        var resultA = casesA.Where(c => c.Category == "Criminal").Take(10).ToList(); 
+        // SELECT TOP 10 * FROM [Cases] WHERE [Category] = 'Criminal'; appended .Take(10) before calling .ToList(), the SQL statement sent over network is highly optimized
 
         // // IEnumerable acts as an in-memory collection pointer, the ORM translates _context.Cases to a "SELECT * FROM Cases;", then only filters that data which results in a heap OutOfMemoryException crash
         // IEnumerable<CaseDocument> casesB = _context.Cases;
@@ -167,7 +168,7 @@ class Program
         //     ))
         //     .ToList();
 
-        
+
 
         /* THE DOUBLE EVALUATION TRAP: executes highEarnersQuery blueprint twice and causes TRAPS (severe performance bottlenecks or data corruption bugs) in production
             1. The Performance Tax (Double Database Hits) - result is 2 separate network trips to SQL db.
