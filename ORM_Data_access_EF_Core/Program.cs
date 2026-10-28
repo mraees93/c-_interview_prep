@@ -166,5 +166,31 @@ class Program
         //         c.Attachments.Select(a => a.FileName).ToList()
         //     ))
         //     .ToList();
+
+        
+
+        /* THE DOUBLE EVALUATION TRAP: executes highEarnersQuery blueprint twice and causes TRAPS (severe performance bottlenecks or data corruption bugs) in production
+            1. The Performance Tax (Double Database Hits) - result is 2 separate network trips to SQL db.
+            2. The Heavier "Side-Effect" Tax (API Costs) - results in a doubled API bill.
+            3. The "Moving Target" Bug (Data Consistency) - If another thread inserts a new high-earning staff member into the database in the millisecond between your
+                                                            .Count() call and your foreach loop: count will return 3 and loop will return 4 items.
+        */
+        // List<int> staff = new List<int> { 12, 23, 65, 78, 98};
+
+        // var highEarnersQuery = staff.Where(e => e >= 65);
+
+        // // ❌ INTERVIEW TRAP: Evaluates the predicate logic across the entire list the 1st time
+        // int totalCount = highEarnersQuery.Count(); 
+
+        // // ❌ INTERVIEW TRAP: Evaluates the entire filter logic across the collection a 2nd time!
+        // foreach (var num in highEarnersQuery) 
+        // {
+        //     Console.WriteLine(num);
+        // }
+
+        // FIX
+        // var highEanersQuery = staff.Where(e => e >= 65).ToList(); //query executes once and brings into c# memory/RAM, adds collection onto heap memory
+        // var count = highEanersQuery.Count();
+        // foreach(var num in highEanersQuery) {Console.WriteLine(num);};
     }
 }
