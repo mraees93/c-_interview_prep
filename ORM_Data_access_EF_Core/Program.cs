@@ -157,6 +157,12 @@ class Program
         //     ProcessAttachements(courtCase.Attachments);
         // }
 
+        //OPTIMIZATION: Avoids Cartesian Explosion over the network wire
+        // var casesWithAttachments = _context.Cases
+        //                            .Include(c => c.Attachments)
+        //                            .AsSplitQuery() // Tells EF Core to run separate, clean SELECT queries
+        //                            .ToList();
+
         // //READ-ONLY DB DATA - Avoiding N+1 trap
         // // Project the query into a DTO, this disables EF Core's change tracker and forces the DB to only transmit the needed columns over the network
         // public record CaseSummaryDto(string CaseId, string Title, List<string> AttachmentNames);

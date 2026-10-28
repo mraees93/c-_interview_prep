@@ -22,6 +22,16 @@
 * Cause: Fetching a parent list and looping through it to fetch child records individually.
 * Fix: Use Eager Loading (.Include()) or explicit Projection (.Select() into a DTO) to force EF Core to fetch all data in a single, clean SQL JOIN.
 
+### Cheat Sheet
+
+| Strategy | Performance Characteristic | Best Used For... | N+1 Prevention Mechanism | Modifying Capability? | Change Tracker Footprint |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`.Include()`** | Single SQL query with a JOIN structure. | Small relationships (e.g., a ticket with 1 or 2 config records). | Forces the ORM to load parent and child rows simultaneously in one network trip. | **Yes.** Safely updates records via `_context.SaveChanges()`. | **Heavy** (Tracks all properties of all returned entities). |
+| **`.AsSplitQuery()`** | Multiple sequential SQL queries. | One-to-Many relationships where child collections are large. | Prevents Cartesian Explosion by loading related tables sequentially using the parent IDs. | **Yes.** Safely updates records via `_context.SaveChanges()`. | **Heavy** (Tracks all properties of all returned entities). |
+| **`.Select()` Projection** | Custom SQL targeting precise columns. | **High-performance read pathways** or displaying data on React UI. | Queries only the exact columns requested from both tables, bypassing entity loading entirely. | **No.** Breaks tracking connection; cannot be directly saved to DB. | **Zero** (DTOs/anonymous types are never tracked). |
+| **Batch Loading** | Manual `Where(x => list.Contains(x))` filtering. | Complex loops where child data is only conditionally required. | Consolidates necessary IDs from a loop into a single `IN (...)` database query afterward. | **Yes.** If you query for full tracked entities inside the batch lookup. | **Variable** (Only tracks if projecting into managed entities). |
+
+---
 
 ### 📂 Data Access Performance Modules
 
