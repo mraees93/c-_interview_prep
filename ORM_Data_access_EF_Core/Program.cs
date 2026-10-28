@@ -141,11 +141,11 @@ class Program
         // standard for loop counting backward, or utilize a clean LINQ filtering method like .RemoveAll(item => item == 20);
 
         //.ToList() transforms the blueprint into an optimized query then the filtered data only crosses the network boundary into c# app memory
-        IQueryable<CaseDocument> casesA = _context.Cases;
-        var resultA = casesA.Where(c => c.Category == "Criminal").Take(10).ToList(); 
+        // IQueryable<CaseDocument> casesA = _context.Cases;
+        // var resultA = casesA.Where(c => c.Category == "Criminal").Take(10).ToList(); 
         // SELECT TOP 10 * FROM [Cases] WHERE [Category] = 'Criminal'; appended .Take(10) before calling .ToList(), the SQL statement sent over network is highly optimized
 
-        // // IEnumerable acts as an in-memory collection pointer, the ORM translates _context.Cases to a "SELECT * FROM Cases;", then only filters that data which results in a heap OutOfMemoryException crash
+        // IEnumerable acts as an in-memory collection pointer, when .ToList() is called the ORM translates the blueprint to a "SELECT * FROM Cases;", then only filters that data which results in a heap OutOfMemoryException crash
         // IEnumerable<CaseDocument> casesB = _context.Cases;
         // var resultB = casesB.Where(c => c.Category == "Criminal").Take(10).ToList();
 
