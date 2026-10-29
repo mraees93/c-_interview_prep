@@ -56,3 +56,12 @@
 
     target.forEach(System.out::println);
 ```
+
+```java
+    Map<String, Integer> scores = new HashMap<>();
+
+    scores.put("TeamA", 10);
+    scores.put("teama", 20);
+
+    System.out.println(scores.size());
+```
