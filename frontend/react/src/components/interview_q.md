@@ -4,6 +4,25 @@
 **A:** Right now, our `useMemo` array processor re-evaluates the entire 500-record array matrix on *every single keystroke*. While modern machines can handle 500 entries smoothly, typing rapidly can still waste valuable CPU cycles. 
 * **The Optimization:** In a production-grade application, I would introduce an **input debounce mechanism** (typically using a 300ms window via a timer or a library like Lodash). This stalls processing until the user pauses their typing, executing the filter matrix exactly once instead of 10 times.
 
+```tsx
+export default function SearchInput() {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [debouncedValue, setDebouncedValue] = useState<string>('');
+
+  useEffect(() => {
+    // 1. Set a timer to update the filter value after 300ms
+    const timer = setTimeout(() => {
+      setDebouncedValue(searchTerm);
+    }, 300);
+
+    // 2. Clear the timer instantly if the user types another letter before 300ms passes
+    return () => clearTimeout(timer);
+  }, [searchTerm]); // Re-runs on every keystroke
+
+  // 3. Pass 'debouncedValue' to your filtering logic instead of 'searchTerm'
+}
+```
+
 ### Q2: How would we scale this architecture if the dataset grew from 500 records to 500,000 records?
 **A:** Client-side processing (filtering and sorting directly in browser memory) is excellent for small-to-medium matrices up to a few thousand rows. Passing 500,000 deeply nested objects to the client will stall network bandwidth and freeze the browser thread entirely during array iteration.
 * **The Architecture Pivot:** I would refactor the engine to use **Server-Side Pagination, Filtering, and Sorting**. Instead of pulling the entire database once, the component would track a `page`, `pageSize`, and `searchQuery` state, appending them directly to the API url parameters (e.g., `?page=1&search=nikita`). The backend database then does the heavy lifting, sending down only 20 records at a time.
