@@ -114,6 +114,15 @@ class Program
         // Console.WriteLine(scores.Count);
         //Executes successfully because string keys are completely case-sensitive by default.
 
+        /* JAVA
+            Map<String, Integer> scores = new HashMap<>();
+
+            scores.put("TeamA", 10);
+            scores.put("teama", 20);
+
+            System.out.println(scores.size());
+        */
+
         // int[] salaries = { 40000, 45000, 50000 };
         // var res1 = from s in salaries where s >= 45000 select s;
         // var res2 = salaries.Where(s => s >= 45000);
