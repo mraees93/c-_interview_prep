@@ -73,15 +73,25 @@ Boxed Value Types - any struct cast to an interface or object
 
 6. Access modifiers?
 
-To explain visibility parameters seamlessly to a panel using a domestic setting, compare your compiled **Assembly** to a **Physical House Lot**, and your **Classes** to **Family Members**:
-
 *   **`public` (The Front Gate / Street):** Completely open to the public. Anyone walking past your gate, a neighbour, or an external visitor can access it.
+    *   *Gotcha:* **The Inconsistent Parameter Trap.** You cannot put a method out here on the Front Gate that requires an asset locked in the Lounge (`internal`) as a parameter or return type. The street visitor cannot see or hold an invisible internal type (`Error CS0051`).
+    *   *Gotcha:* **The Lineage Constraint.** A child class standing on the Front Gate cannot inherit from a parent class locked inside the Lounge (`internal`). A child cannot be more visible to the public street than their own family lineage (`Error CS0060`).
+
 *   **`private` (Personal Diary):** Strictly locked. Only you can read your own diary. Your siblings, parents, and outside visitors cannot touch it.
+
 *   **`internal` (Lounge):** Accessible to anyone who lives inside your specific house lot (your **siblings and parents** within the same compiled Assembly). Outside visitors standing on the street cannot access it.
+    *   *Gotcha:* **The Constructor Illusion.** Marking a constructor as `public` inside a class locked in the Lounge is a silent illusion. External neighbors still cannot see the class wrapper to call that constructor; the outer Lounge perimeter remains locked.
+    *   *Gotcha:* **Explicit Intercom Hiding.** An internal family member can prefix a method with its interface name (e.g., `void IIntercom.Ring`) to satisfy a public gate contract while stripping its public keyword. The routine becomes completely invisible on the family member's direct profile unless viewed directly through the gate intercom lens.
+
 *   **`protected` (The Family Safe):** Only bloodline children (subclasses) can open it. They can access it from home or from a separate house down the street (cross-assembly). An unrelated neighbour class cannot touch it.
+
 *   **`protected internal` (The Driveway):** Open to anyone inside your house lot OR children down the street. Because it is a loose **OR** rule, any unrelated neighbour (separate class with no inheritance) inside your assembly can walk up the driveway and overwrite the asset.
+    *   *Gotcha:* **The Driveway Leak.** Developers often mistake this for a strict "AND" rule. Even if your architectural intent is family-only access, any completely unrelated neighbor class inside your same house lot can step onto your driveway and alter the data.
+
 *   **`private protected` (The Kid’s Bedroom):** Accessible *only* to children (subclasses) **AND** they must still physically live inside your exact house lot (same assembly).
+
 *   **`static` (The House Address Sign):** A single blueprint asset fixed permanently to the physical house itself rather than belonging to an individual person. You don't ask an individual sibling what the house number is; you read it directly off the structure.
+
 
 
 
@@ -98,6 +108,30 @@ It allows us to swap dependencies for mock objects during unit testing
 
 It hands off object lifetime-management (T, S, S) to the DI container which prevents resource leaks on managed heap.
 
+7.1. What is IOC/DI container ?
+
+IoC stands for Inversion of Control. It is the core architectural principle behind dependency injection, where control over object creation and lifecycles is inverted—handed over to a centralized engine like your Kitchen Cupboard Power Board (Program.cs) instead of individual classes creating their own resources.
+
+
+7.2. What are the 2 threats of thread-safety on the warehouse floor/heap?
+
+Synchronous concurrency (microsecond collision): Threads/workers going to the same object/pallet at the exact same microsecond tring to mutate the data, bumping into each other. Crashing - causing a runtime error.
+
+Asynchronous interleaving (shift-swap mixup): Worker A walks up to a pallet, reads the inventory, and hits an await (pauses to wait for a forklift). Worker A steps out of the warehouse. While they are gone, Worker B alters the pallet. Worker A returns to finish their task, totally unaware the inventory changed behind their back.
+
+
+7.3. What are the 5 thread-safety tools?
+
+private readonly _variable - only protects variable name from being re-allocated to another variable in another method. It only protects the object/pallets location reference, other threads/workers can still corrupt data with .Add() because the object is still mutable.
+
+Concurrent collections - Best for shared queue's, lists or dictionaries. Replaces standard lists with smart variations (like ConcurrentDictionary) engineered to handle mutiple/threads/workers without crashing.
+
+Semaphoreslim (Pager system) - Best for async methods that need to protect shared warehouse data. Uses WaitAsync() and Release(). If the object/pallet is busy, threads/workers wait outside the warehouse entirely, freeing up the CPU thread to do other work until the pager buzzes.
+
+Interlocked - Best for incrementing numbers or switching single objects at blistering speeds. Performs operations safely at hardware level without setting up software blocks.
+
+Lock (velvet rope) - Best for sync threads/workers updating shared data on warehouse floor. Adds a rope and lock around object/pallet. Only one thread/worker can step in at a time
+**The Rule:** Never use await inside a standard lock (a thread/worker cannot leave the warehouse to wait for a forklift while holding the velvet rope key).
 
 
 
@@ -106,4 +140,19 @@ It hands off object lifetime-management (T, S, S) to the DI container which prev
 Compile-time polymorphism is method-overloading - using same methods but different parameters
 
 Runtime polymorphism is method-overriding - using abstract and virtual keywords in parent classes - the .NET runtime evaluates the type of the physical object in memory and uses the **Virtual Method Table (VMT)** to dynamically dispatch the call.
-**The `override` keyword updates the Virtual Method Table (VMT) for the object slot**
+**The `override` keyword updates the VMT for the object slot**
+
+
+9. How does exception handling differ when an unhandled failure occurs inside an async Task method compared to an async void method?
+
+async Task - The runtime catches the exception and securely wraps the exception inside the returned Task object.
+
+The exception is only thrown and observed when:
+
+The code executes an await on that specific Task
+Inspecting the Tasks .Exception property
+
+
+async void - The exception escapes the Task pipeline completely and thrown into SynchronizationContext. The caller cannot await an async void method which results in an immediate app crash.
+
+async void should only be utilized for top-level UI event handlers (like button clicks) where async return constraints are structurally mandated.
