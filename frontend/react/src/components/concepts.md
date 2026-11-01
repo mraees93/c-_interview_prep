@@ -36,6 +36,12 @@ Each component has a lifecycle consisting of 3 main stages:
 
 ---
 
+How does React handle view updates under the hood?
+
+React updates a lightweight copy of the real DOM in memory first, uses a diffing algorithm then patches the altered elements in the real UI tree.
+
+---
+
 CONCEPTS EXPLAINED:
 
 props vs state
