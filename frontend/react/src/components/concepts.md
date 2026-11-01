@@ -134,4 +134,17 @@ To improve performance it only runs when one of its dependencies update and it c
 
 useMemo returns a memoized value.
 
+
+
+### useCallback:
+
 useCallback returns a memoized function.
+
+---
+
+### useContext:
+
+React Context is a way to manage state globally. It can be used together with the useState Hook to share state between deeply nested components more easily than with useState alone. 
+We can use useContext to avoid prop drilling (pass the state as "props" through each nested component). Prop drilling makes components brittle and hard to unit test.
+
+### useRef:
