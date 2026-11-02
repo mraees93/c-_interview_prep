@@ -1,0 +1,5 @@
+-- Schema details:
+-- Departments (`DeptID`, `DeptName`, `Region`)
+-- Lawyers (`LawyerID`, `FullName`, `DeptID`, `BillingRateZAR`)
+-- LegalDocuments (`DocID`, `Title`, `DocType`, `CreatedDate`, `AuthorID`)
+-- DocumentAccessLogs (`LogID`, `DocID`, `UserRole`, `Action`, `DurationSeconds`, `AccessTimestamp`)
