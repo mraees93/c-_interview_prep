@@ -19,9 +19,9 @@ using OOP_Basics.abstraction;
 // };
 // System.Console.WriteLine(o.Price);
 
-Rectangle r = new Rectangle { Width = 2, Height = 5 };
-System.Console.WriteLine(r.Width);
-System.Console.WriteLine(r.Area);
+// Rectangle r = new Rectangle { Width = 2, Height = 5 };
+// System.Console.WriteLine(r.Width);
+// System.Console.WriteLine(r.Area);
 
 //using OOP_Basics.encapsulation;
 // BankAccount myAccount = new BankAccount(1000);
