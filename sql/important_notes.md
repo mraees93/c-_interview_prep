@@ -42,7 +42,25 @@ Example: If every Matter must have a LeadLawyerID, then Matters JOIN Lawyers is 
 
 a LEFT JOIN is more "expensive" for the database than an INNER JOIN, and that you only use it when strictly necessary.
 
+---
 
+### 🕵️‍♂️ How to Spot Hidden SQL Joins (When Names Mismatch)
+
+Schema details:
+Departments (`DeptID`, `DeptName`, `Region`)
+Lawyers (`LawyerID`, `FullName`, `DeptID`, `BillingRateZAR`)
+LegalDocuments (`DocID`, `Title`, `DocType`, `CreatedDate`, `AuthorID`)
+DocumentAccessLogs (`LogID`, `DocID`, `UserRole`, `Action`, `DurationSeconds`, `AccessTimestamp`)
+
+Lawyers and LegalDocuments can be joined via LawyerID and AuthorID
+
+* **No Exact Match Required:** Tables do not need identical column names to join. They only need matching **data types** and **underlying meanings**.
+* **The Semantic ID Rule:** Look for fields ending in `ID` that describe a role (e.g., `AuthorID`, `ManagerID`, `BuyerID`). These always point back to a primary entity table (e.g., `LawyerID`, `EmployeeID`, `CustomerID`).
+* **Domain Logic Mapping:** Connect columns based on real-world business paths (e.g., a "Document" is written by an "Author", and a firm's authors are its "Lawyers").
+* **Process of Elimination:** Scan the entire schema to find the only logical entity table that stores the unique IDs in question.
+* **The Interview Golden Rule:** Always say your structural assumption out loud before coding: *"I am assuming AuthorID maps directly to LawyerID here—is that correct?"*
+
+---
 
 Tip:
 If they ask you to filter based on an aggregate (Sum, Count, Avg), always reach for HAVING. If they ask you to filter based on a specific row property, use WHERE.
