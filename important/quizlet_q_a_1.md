@@ -156,3 +156,12 @@ Inspecting the Tasks .Exception property
 async void - The exception escapes the Task pipeline completely and thrown into SynchronizationContext. The caller cannot await an async void method which results in an immediate app crash.
 
 async void should only be utilized for top-level UI event handlers (like button clicks) where async return constraints are structurally mandated.
+
+
+
+If you have a child class inheriting from a parent class, the .NET runtime processes the exact sequence from the ground up like this:
+
+1. **Child** field initializers run.
+2. **Parent** field initializers run.
+3. **Parent** constructor body runs.
+4. **Child** constructor body runs.
