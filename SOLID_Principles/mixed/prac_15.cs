@@ -59,10 +59,15 @@ public class ReadOnlyProBonoBilling : Billing, ILegalBillingPipeline
 
 public class BillingEngine
 {
-    protected void ProcessInvoiceBilling(FeeInvoice feeInvoice, StandardCorporateBilling corporateBilling)
+    protected void ProcessStandardBilling(FeeInvoice feeInvoice, ILegalBillingPipeline billingPipeline)
     {
-        corporateBilling.ModifyInvoiceAmount(feeInvoice, 235);
-        corporateBilling.CalculateTax(feeInvoice);
-        corporateBilling.SyncToLedgerCache(feeInvoice);
+        billingPipeline.CalculateTax(feeInvoice);
+        billingPipeline.SyncToLedgerCache(feeInvoice);
+    }
+    protected void ProcessAdjustedBilling(FeeInvoice feeInvoice, ILegalBillingPipeline billingPipeline, IInvoiceModifier invoiceModifier, decimal adjustment)
+    {
+        invoiceModifier.ModifyInvoiceAmount(feeInvoice, adjustment);
+        billingPipeline.CalculateTax(feeInvoice);
+        billingPipeline.SyncToLedgerCache(feeInvoice);
     }
 }
