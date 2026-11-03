@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-const token = (import.meta as any).VITE_TMDB_TOKEN;
+const token = (import.meta as any).env.VITE_TMDB_TOKEN;
 
 interface TMDBMovie {
   id: number;
@@ -37,33 +37,46 @@ export default function Movies () {
       try {
         setIsLoading(true);
 
-        const response: Response = await fetch('https://themoviedb.org', options);
+        const response: Response = await fetch('https://api.themoviedb.org/3/movie/popular', options);
         if(!response.ok) {
           throw new Error(`HTTP network error: ${response.status}`)
         }
 
         const data = await response.json();
         setData(data.results);
+
       } catch (error: unknown) {
 
         if (error instanceof Error) {
           setError(error.message)
         } else if (typeof error === "string") {
-          setError(error || "Failed to populate from API")
+          setError(error || "Failed to populate from API");
         } 
-        // else {
-        //   setError()
-        // }
+        else {
+          setError("An unexpected system exception occured.");
+        }
 
       } finally {
-
+        setIsLoading(false);
       }
     }
+    fetchMovies();
   }, [])
+
+  useEffect(() => {
+    console.log(isLoading, error, data);
+    
+  })
 
   return (
     <div>
-      
+      {isLoading && (
+        <div><p><strong>Movies are loading...</strong></p></div>
+      )}
+
+      {error && (
+        <div><p><strong>{error}</strong></p></div>
+      )}
     </div>
   );
 }
