@@ -73,7 +73,19 @@ most critical symptoms of a distributed monolith:
 
 3. Circular dependencies - Symptom: Service A calls B, which calls C, which loops back to query A. Cause: Poorly defined domain boundaries create structural gridlocks and tracing nightmares.
 
+---
 
+# Architectural Communication Matrix
+
+| Metric | Modular Monolith | Microservices |
+| :--- | :--- | :--- |
+| **Physical Boundary** | Shared Process / Single Server RAM | Network Cables / Separate Servers |
+| **Sync Protocol** | Direct C# Interface Method Invocation | HTTP (REST) / gRPC Network Calls |
+| **Async Protocol** | In-Memory Bus (MediatR / In-Memory MassTransit) | Distributed Message Broker (RabbitMQ / Kafka) |
+| **Latency Cost** | **Nanoseconds** (Direct CPU memory jumps) | **Milliseconds** (Network transport & serialization) |
+| **Failure Risk** | Extremely Low (If the process dies, everything dies) | **High** (Partial network partitions, timeouts, dropped packets) |
+
+---
 
 ### 🟢 Core Intermediate Architectural Triggers
 
