@@ -11,7 +11,7 @@
 
     long count = query.count();
     System.out.println(count);
-    
+
 ```
 
 ```java
@@ -286,4 +286,18 @@ List<Integer> paginatedResult = rawNumbers.stream()
 int sumTotal = rawNumbers.stream()
                          .reduce((runningTotal, nextValue) -> runningTotal + nextValue)
                          .orElse(0); // Reduce returns an Optional if the list could be empty
+```
+
+---
+
+```java
+
+    double vipTotalSpending = userData.stream()
+                                .filter(user -> "vip".equals(user.getRole()))
+                                .flatMap(user -> user.getOrders().stream())
+                                .filter(order -> "delivered".equals(order.getStatus()) || "processing".equals(order.getStatus()))
+                                .mapToDouble(order -> order.getTotal())
+                                .sum()
+
+    System.println.out(vipTotalSpending);
 ```

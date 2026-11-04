@@ -208,5 +208,18 @@ class Program
         // var highEanersQuery = staff.Where(e => e >= 65).ToList(); //query executes once and brings into c# memory/RAM, adds collection onto heap memory
         // var count = highEanersQuery.Count();
         // foreach(var num in highEanersQuery) {Console.WriteLine(num);};
+
+        //-------------------------------
+
+
+        //List<string> emailAddresses = userData.Select(o => o.Email).ToList();
+
+        double vipTotalSpending = userData
+                                    .Where(u => u.Role == "vip")
+                                    .SelectMany(u => u.Orders) // equivalent = js .flatMap()
+                                    .Where(o => o.Status == "delivered" || o.Status == "processing")
+                                    .Sum(o => o.Total);
+
+        System.Console.WriteLine(vipTotalSpending);
     }
 }
