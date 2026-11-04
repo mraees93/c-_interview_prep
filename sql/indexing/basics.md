@@ -39,3 +39,9 @@ The Difference in Heap Tables:
 
 • On a Heap (No Clustered Index): The database engine uses a RID Lookup because the table has no keys. Instead, it must use a physical Row Identifier (RID).
 * **RID Lookup:** Happens when a non-clustered index points to a table with a **Heap** (No Clustered Index).
+
+---
+
+Why does writing WHERE CompanyName LIKE 'Lexis%' allow the database engine to perform a fast Index Seek, while writing WHERE CompanyName LIKE '%Nexis' forces a slow Index Scan?
+
+This happens because db indexes are ordered from LEFT to RIGHT like a dictionary
