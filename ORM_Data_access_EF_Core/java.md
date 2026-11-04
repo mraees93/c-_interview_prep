@@ -1,5 +1,21 @@
 ```java
 
+    List<String> apps = new ArrayList<>();
+    apps.add("Loan");
+    apps.add("Credit");
+    apps.add("Savings");
+
+    Stream<String> query = apps.stream().filter(a -> a.startsWith("C"));
+    
+    apps.add("Crease");
+
+    long count = query.count();
+    System.out.println(count);
+    
+```
+
+```java
+
     List<Integer> points = new ArrayList<>();
     points.add(10);
     points.add(20);
