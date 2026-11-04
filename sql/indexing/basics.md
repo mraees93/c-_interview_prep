@@ -21,3 +21,21 @@ CREATE NONCLUSTERED INDEX IX_Table_SearchKey
 ON Table(FilterColumn) 
 INCLUDE (PayloadColumn1, PayloadColumn2);
 ```
+
+---
+
+You have a table structured as a Heap (no Clustered Index). When a Non-Clustered index executes a bookmark lookup to find missing row data on a heap, what is the specific name of this lookup operation?
+
+RID Lookup (Row Identifier Lookup): A Row Identifier is an 8-byte binary pointer that contains the exact physical address of the row on the storage disk:
+[FileID : PageID : SlotID]
+
+In an execution plan, you will see a RID Lookup node.
+
+
+The Difference in Heap Tables:
+
+• On a Clustered Index: The database engine uses a Key Lookup because it uses the table's clustered key value as a pointer to find the row. 
+* **Key Lookup:** Happens when a non-clustered index points to a table with a **Clustered Index**.
+
+• On a Heap (No Clustered Index): The database engine uses a RID Lookup because the table has no keys. Instead, it must use a physical Row Identifier (RID).
+* **RID Lookup:** Happens when a non-clustered index points to a table with a **Heap** (No Clustered Index).
