@@ -56,6 +56,13 @@ The private clipboard on the desk belonging to a single thread, using strict Las
 
 *(Note: Value types are only stack-allocated if they are local method variables. If an int lives inside a class container, it is dragged onto the Heap to maintain contiguous memory boundaries).*
 
+// VALUE TYPE COPYING 
+```csharp
+int originalInt = 10;
+int copyInt = originalInt; // A completely independent copy is created on the stack
+copyInt = 20;
+System.Console.WriteLine(originalInt);  // originalInt remains 10
+```
 
 4. What is heap memory?
 
