@@ -43,7 +43,6 @@ export default function Movies () {
         method: 'GET',
         headers: {
           accept: 'application/json',
-          // 2. Use that variable inside your template literal
           Authorization: `Bearer ${token}`
         }
       } ;
@@ -66,8 +65,7 @@ export default function Movies () {
           setError(error.message)
         } else if (typeof error === "string") {
           setError(error || "Failed to populate from API");
-        } 
-        else {
+        } else {
           setError("An unexpected system exception occured.");
         }
 
@@ -79,6 +77,7 @@ export default function Movies () {
   }, [])
 
   const visibleMovies = currentSort === "original" ? data : [...data].sort(SORT_METHODS[currentSort]);
+  
   return (
     <div>
       <label htmlFor="sort-select" style={{ marginRight: '10px', fontWeight: 'bold' }}></label>
