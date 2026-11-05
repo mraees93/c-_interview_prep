@@ -74,6 +74,14 @@ Collections - Strings, int[], List<T>, Dictionary<K,V>
 Lambda closures - asynchronous tasks, and delegates.
 Boxed Value Types - any struct cast to an interface or object
 
+// REFERENCE TYPE COPYING
+```csharp
+Customer c1 = new Customer { Name = "Alice" };//customer object is created in heap memory, c1 holds a pointer (reference address) to that spot
+Customer c2 = c1;//not copying the object. Only copying the pointer on stack memory clipboard. c1,c2 point to the exact same customer object in heap memory
+c2.Name = "Bob";//modifying the shared object
+Console.WriteLine(c1.Name);
+```
+
 5. Garbage collection (GC):
 
 
