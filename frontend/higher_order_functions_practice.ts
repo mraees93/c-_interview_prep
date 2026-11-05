@@ -55,5 +55,6 @@ const vipTotal = userData
     return acc + userOrderSum;
   }, 0);
 
-console.log(vipTotal);
+//console.log(vipTotal);
 
+console.log(userData.every(user => user.email.startsWith("t")));
