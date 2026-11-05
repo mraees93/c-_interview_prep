@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 const token = (import.meta as any).env.VITE_TMDB_TOKEN;
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
-interface TMDBMovie {
+export interface TMDBMovie {
   id: number;
   title: string;
   poster_path: string | null;
   vote_average: number;
   overview: string;
-  releaseDate: string
+  release_date: string
 }
 
 interface TMDBResponse {
@@ -27,7 +27,7 @@ const SORT_METHODS: Record<string, (a: TMDBMovie, b: TMDBMovie) => number> = {
 
   rating: (a, b) => b.vote_average - a.vote_average,
 
-  releaseDate: (a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime(),
+  releaseDate: (a, b) => new Date(b.release_date).getTime() - new Date(a.release_date).getTime(),
 }
 
 export default function Movies () {
@@ -75,9 +75,14 @@ export default function Movies () {
     }
     fetchMovies();
   }, [])
+  
+  useEffect(() => {
+    console.log("data", data);
+    
+  })
 
   const visibleMovies = currentSort === "original" ? data : [...data].sort(SORT_METHODS[currentSort]);
-  
+
   return (
     <div>
       <label htmlFor="sort-select" style={{ marginRight: '10px', fontWeight: 'bold' }}></label>
