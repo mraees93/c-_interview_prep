@@ -77,3 +77,60 @@ Java does not have native `{ get; set; }` auto-properties. You declare a strict 
 ### Gotcha 2: Checked Exceptions (Java's Strict Rule)
 * **In C#:** All exceptions are unchecked. The compiler never forces you to wrap code in a `try/catch`.
 * **In Java:** If a method reads from a file, database, or external network driver, the compiler **forces** you to either handle it inside a `try/catch` block or declare `throws IOException` on your method signature, otherwise it will refuse to build.
+
+---
+
+### Asynchronous Execution Style Comparison
+
+#### 1. TypeScript (Async/Await)
+```typescript
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+async function runTask() {
+    try {
+        await delay(1000);
+        const data = "Data loaded";
+        console.log(data.toUpperCase());
+    } catch (err) {
+        console.log("Fallback text");
+    }
+}
+```
+
+#### 2. C# (.NET Task)
+```csharp
+using System;
+using System.Threading.Tasks;
+
+async Task RunTask() {
+    try {
+        await Task.Delay(1000);
+        string data = "Data loaded";
+        Console.WriteLine(data.ToUpper());
+    } catch (Exception) {
+        Console.WriteLine("Fallback text");
+    }
+}
+```
+
+#### 3. Java (JVM CompletableFuture)
+
+```java
+
+    import java.util.concurrent.CompletableFuture;
+
+    void runTask() {
+        CompletableFuture.supplyAsync(() -> {
+            try { 
+                Thread.sleep(1000); 
+            } catch (InterruptedException e) {
+
+            }
+            return "Data loaded";
+        })
+        .thenApply(String::toUpperCase)
+        .exceptionally(err -> "Fallback text")
+        .thenAccept(System.out::println)
+        .join(); // Blocks the current execution context to await fulfillment
+    }
+```
