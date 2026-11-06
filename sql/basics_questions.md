@@ -76,8 +76,6 @@ DocumentAccessLogs (`LogID`, `DocID`, `UserRole`, `Action`, `DurationSeconds`, `
 4. Select the DocID, Title, DocType, and CreatedDate from LegalDocuments. Add a window function column named DocumentSequence that assigns a sequential row number to every document starting from 1, ordered from the newest creation date to the oldest.
 
 
-Question 5 (Dense Ranking)
-
 Show the FullName, DeptID, and BillingRateZAR for all lawyers. Include a window function column named RateRank that ranks lawyers inside their specific DeptID based on their BillingRateZAR from highest to lowest. Ensure that tied rates share the same rank and that the numbering sequence does not skip numbers after a tie.
 
 Question 6 (Inline Multi-Table Aggregation)

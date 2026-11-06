@@ -56,3 +56,23 @@ WITH AvgSalePrices AS (
 SELECT TransactionID, StoreID, BookID, SalePrice,
        (SalePrice - AvgSalePrice) AS PriceDifference
 FROM AvgSalePrices;
+
+
+
+-- Schema details:
+-- Departments (`DeptID`, `DeptName`, `Region`)
+-- Lawyers (`LawyerID`, `FullName`, `DeptID`, `BillingRateZAR`)
+-- LegalDocuments (`DocID`, `Title`, `DocType`, `CreatedDate`, `AuthorID`)
+-- DocumentAccessLogs (`LogID`, `DocID`, `UserRole`, `Action`, `DurationSeconds`, `AccessTimestamp`)
+
+--Write a query to find the DocID, Title, DocType, and CreatedDate of only the documents that are the single absolute oldest document 
+--recorded within each specific DocType. Use a CTE with a window function to filter the results.
+
+WITH RankedDocuments AS (
+    SELECT DocID, Title, DocType, CreatedDate,
+           ROW_NUMBER() OVER(PARTITION BY DocType ORDER BY CreatedDate ASC) AS rank
+    FROM LegalDocuments
+)
+SELECT DocID, Title, DocType, CreatedDate
+FROM RankedDocuments
+WHERE rank = 1;
