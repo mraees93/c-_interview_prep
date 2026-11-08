@@ -69,11 +69,11 @@ public abstract class DiscountBase
         return Math.Round(baselineDeduction, 2);
     }
 }
-public class CorporateBulk : DiscountBase
+public class CorporateBulkDiscount : DiscountBase
 {
     protected override decimal Multiplier => 0.02m;
 }
-public class RetailSme : DiscountBase
+public class RetailSmeDiscount : DiscountBase
 {
     protected override decimal Multiplier => 0.05m;
 }
