@@ -1,11 +1,5 @@
 BASICS:
 
-How does React handle view updates under the hood?
-
-React creates a lightweight copy of the real DOM in memory first, runs a diffing algorithm then patches the altered elements in the real UI tree.
-
----
-
 Whats JSX and TSX?
 
 It allows devs to write HTML-like syntax in JS or TS files.
