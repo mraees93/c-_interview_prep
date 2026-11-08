@@ -1,67 +1,96 @@
-// using System;
+using System;
+/*
+using System;
 
-// public class TransactionPayload { public string ReferenceId { get; set; } = string.Empty; public decimal GrossAmount { get; set; } }
+public class TransactionPayload { public string ReferenceId { get; set; } = string.Empty; public decimal GrossAmount { get; set; } }
 
-// public class LocalOracleDatabaseGateway : IDocumentRepository
-// {
-//     public void SaveCalculatedFee(string refId, decimal dynamicFee)
-//     {
-//         Console.WriteLine($"[ORACLE DATABASE] Committed transactional fee of ZAR {dynamicFee} for ref {refId}");
-//     }
-// }
-// public interface IDocumentRepository
-// {
-//     void SaveCalculatedFee(string refId, decimal dynamicFee);
-// }
-// public abstract class Discount
-// {
-//     protected readonly TransactionPayload _payload;
+public class LocalOracleDatabaseGateway
+{
+    public void SaveCalculatedFee(string refId, decimal dynamicFee)
+    {
+        Console.WriteLine($"[ORACLE DATABASE] Committed transactional fee of ZAR {dynamicFee} for ref {refId}");
+    }
+}
 
-//     public Discount(TransactionPayload payload)
-//     {
-//         _payload = payload;
-//     }
-//     public string ReferenceId => _payload.ReferenceId;
-//     protected abstract decimal baselineDeduction { get; }
-//     protected abstract decimal CalculateFee();
-//     public decimal GetFinalFee()
-//     {
-//         return Math.Round(CalculateFee(), 2);
-//     }
-// }
-// public class CorporateBulk : Discount
-// {
-//     public CorporateBulk(TransactionPayload payload) : base(payload) {}
-//     protected override decimal baselineDeduction => _payload.GrossAmount * 0.02m;
-//     protected override decimal CalculateFee()
-//     {
-//         return baselineDeduction;
-//     }
-// }
-// public class RetailSme : Discount
-// {
-//     public RetailSme(TransactionPayload payload) : base(payload) {}
+public class TransactionFeeEngine
+{
+    private readonly LocalOracleDatabaseGateway _oracleGateway;
 
-//     protected override decimal baselineDeduction => _payload.GrossAmount * 0.05m;
-//     protected override decimal CalculateFee()
-//     {
-//         return baselineDeduction;
-//     }
-// }
-// public class TransactionFeeEngine
-// {
-//     private readonly IDocumentRepository _documentRepository;
+    public TransactionFeeEngine()
+    {
+        _oracleGateway = new LocalOracleDatabaseGateway();
+    }
 
-//     public TransactionFeeEngine(IDocumentRepository documentRepository)
-//     {
-//         _documentRepository = documentRepository;
-//     }
-
-//     public void ProcessTransactionFee(Discount discount)
-//     {
-//         Console.WriteLine($"Processing backend pricing schema variables for: {discount.ReferenceId}...");
+    public void CalculateAndCommitFee(TransactionPayload payload, string calculationTier)
+    {
+        Console.WriteLine($"Processing backend pricing schema variables for: {payload.ReferenceId}...");
         
-//         decimal finalFee = discount.GetFinalFee();
-//         _documentRepository.SaveCalculatedFee(discount.ReferenceId, finalFee);
-//     }
-// }
+        decimal finalFee = 0.00m;
+
+        if (calculationTier == "CorporateBulk")
+        {
+            decimal baselineDeduction = payload.GrossAmount * 0.02m;
+            finalFee = Math.Round(baselineDeduction, 2);
+        }
+        else if (calculationTier == "RetailSme")
+        {
+            decimal baselineDeduction = payload.GrossAmount * 0.05m;
+            finalFee = Math.Round(baselineDeduction, 2);
+        }
+        else if (calculationTier == "ProBonoExempt")
+        {
+            throw new NotSupportedException("Pro-Bono litigation files are entirely tax and fee exempt; processing deductions is blocked!");
+        }
+
+        _oracleGateway.SaveCalculatedFee(payload.ReferenceId, finalFee);
+    }
+}
+*/
+
+public class TransactionPayload { public string ReferenceId { get; set; } = string.Empty; public decimal GrossAmount { get; set; } }
+
+public class LocalOracleDatabaseGateway : IDocumentRepository
+{
+    public void SaveCalculatedFee(string refId, decimal dynamicFee)
+    {
+        Console.WriteLine($"[ORACLE DATABASE] Committed transactional fee of ZAR {dynamicFee} for ref {refId}");
+    }
+}
+public interface IDocumentRepository
+{
+    void SaveCalculatedFee(string refId, decimal dynamicFee);
+}
+public abstract class DiscountBase
+{
+    protected abstract decimal Multiplier { get; }
+    public decimal GetFinalFee(TransactionPayload payload)
+    {
+        decimal baselineDeduction = payload.GrossAmount * Multiplier;
+        return Math.Round(baselineDeduction, 2);
+    }
+}
+public class CorporateBulk : DiscountBase
+{
+    protected override decimal Multiplier => 0.02m;
+}
+public class RetailSme : DiscountBase
+{
+    protected override decimal Multiplier => 0.05m;
+}
+public class TransactionFeeEngine
+{
+    private readonly IDocumentRepository _documentRepository;
+
+    public TransactionFeeEngine(IDocumentRepository documentRepository)
+    {
+        _documentRepository = documentRepository;
+    }
+
+    public void ProcessTransactionFee(TransactionPayload payload, DiscountBase discount)
+    {
+        Console.WriteLine($"Processing backend pricing schema variables for: {payload.ReferenceId}...");
+        
+        decimal finalFee = discount.GetFinalFee(payload);
+        _documentRepository.SaveCalculatedFee(payload.ReferenceId, finalFee);
+    }
+}
