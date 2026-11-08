@@ -140,6 +140,14 @@ useMemo returns a memoized value.
 
 useCallback returns a memoized function.
 
+The useCallback Hook is used to memoize a callback function.
+
+Memoizing a function means caching the result of a function so that it does not need to be recalculated.
+
+The useCallback function only re-executes when one of its dependencies changes value.
+
+This allows us to isolate resource intensive functions so that they will not automatically run on every render.
+
 ---
 
 ### useContext:
