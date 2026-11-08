@@ -156,3 +156,9 @@ React Context is a way to manage state globally. It can be used together with th
 We can use useContext to avoid prop drilling (pass the state as "props" through each nested component). Prop drilling makes components brittle and hard to unit test.
 
 ### useRef:
+
+The useRef Hook allows you to persist values between renders.
+
+It can be used to store a mutable value that does not cause a re-render when updated.
+
+It can be used to access a DOM element directly.
