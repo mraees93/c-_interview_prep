@@ -148,7 +148,11 @@ Interlocked - Best for incrementing numbers or switching single objects at blist
 Lock (velvet rope) - Best for sync threads/workers updating shared data on warehouse floor. Adds a rope and lock around object/pallet. Only one thread/worker can step in at a time
 **The Rule:** Never use await inside a standard lock (a thread/worker cannot leave the warehouse to wait for a forklift while holding the velvet rope key).
 
+7.4. If an object is shared across threads, does wrapping a field in a Property make it thread-safe?
+Answer: It depends on the accessor type used (set vs. init):
 
+No, if you use a standard set or private set: These properties remain mutable (changeable at runtime). If two threads or background tasks try to modify the property at the exact same microsecond, they will collide and corrupt the underlying backing field. To make mutable properties thread-safe, you must protect them manually using your thread-safety toolkit (like a standard lock, an atomic Interlocked operation, or a SemaphoreSlim).
+Yes, if you use an init setter (C# 9+): An init property enforces immutability. It can only be assigned a value during object creation. Once initialization is finished, the underlying backing field is permanently locked down like a readonly field. Because threads are physically prevented from changing the data, multiple threads can safely read it simultaneously with zero risk of race conditions or memory corruption.
 
 8. Explain 2 types of polymorphism?
 
