@@ -165,6 +165,7 @@ public class CasesController : ControllerBase
 * **The Punchy Answer:** "Because top-level classes cannot be marked `private protected` by the compiler; it is explicitly designed as an internal inheritance lock for class members."
 * **The Panel Defense:** "The purpose of `private protected` is to restrict access to derived subclasses within the same project assembly. Since top-level classes do not have an inheritance parent context above them at the file system root, the modifier only makes sense when applied directly to **Methods, Fields, or Nested Classes** inside a class hierarchy."
 
+```csharp
 public class OuterClass
 {
     // This is valid!
@@ -183,7 +184,7 @@ public class OuterClass
         }
     }
 }
-
+```
 
 ---
 
