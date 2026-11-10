@@ -5,7 +5,7 @@ prac_9, 11, 14, 17 - abstract class solutions with only OCP, LSP, DIP violations
 
 
 
-prac 5, 12, 15 - LSP, ISP, SRP violations
+prac 5, 12, 15, 18 - LSP, ISP, SRP violations
 
 
 
