@@ -63,7 +63,7 @@ public interface IDocumentVerification
     void SyncToAuditCache(LegalBrief brief);
 }
 
-public interface IDocumentModifier
+public interface IDocumentModifyVerification : IDocumentVerification
 {
     void UpdateHashSignature(LegalBrief brief, string newHash);
 }
@@ -75,7 +75,7 @@ public abstract class DocumentVerification
     protected void OutputTelemetryLog(string step, string id) => Console.WriteLine($"[TELEMETRY] Operator {SystemOperator} executed {step} on Brief {id}");
 }
 
-public class StandardCorporateVerification : DocumentVerification, IDocumentVerification, IDocumentModifier
+public class StandardCorporateVerification : DocumentVerification, IDocumentModifyVerification
 {
     public StandardCorporateVerification()
     {
@@ -115,16 +115,16 @@ public class ReadOnlyHistoricalBriefVerification : DocumentVerification, IDocume
 
 public class DocumentVerificationEngine
 {
-    public void ProcessCorporateVerification(LegalBrief brief, StandardCorporateVerification corporateVerification, string newHash)
+    public void ProcessModifiableVerification(LegalBrief brief, IDocumentModifyVerification verificationWorkflow, string newHash)
     {
-        corporateVerification.UpdateHashSignature(brief, $"updated with {newHash}");
-        corporateVerification.ValidateSignature(brief);
-        corporateVerification.SyncToAuditCache(brief);
+        verificationWorkflow.UpdateHashSignature(brief, $"updated with {newHash}");
+        verificationWorkflow.ValidateSignature(brief);
+        verificationWorkflow.SyncToAuditCache(brief);
     }
 
-    public void ProcessHistoricalVerification(LegalBrief brief, ReadOnlyHistoricalBriefVerification readOnlyHistoricalBrief)
+    public void ProcessReadOnlyVerification(LegalBrief brief, IDocumentVerification verificationWorkflow)
     {
-        readOnlyHistoricalBrief.ValidateSignature(brief);
-        readOnlyHistoricalBrief.SyncToAuditCache(brief);
+        verificationWorkflow.ValidateSignature(brief);
+        verificationWorkflow.SyncToAuditCache(brief);
     }
 }
