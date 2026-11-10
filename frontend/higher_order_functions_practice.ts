@@ -18,6 +18,9 @@ function compareFn(a, b) {
   }
   // a must be equal to b
   return 0;
+
+• Negative result (-) → Keep the order. (No change needed, a stays on the left).
+• Positive result (+) → Swap the order. (b moves to the left).
 }
 */
 
