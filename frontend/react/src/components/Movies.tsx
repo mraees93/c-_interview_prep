@@ -85,6 +85,17 @@ export default function Movies () {
 
   return (
     <div>
+      {/*     // add searchbar to search movies by genre - add usememo hook with filter inside */}
+      <div>
+            <label htmlFor="search-by-genre">Search by genre:</label>
+            <input
+                id="search"
+                type="text"
+                //value={}
+                //onChange={}
+                placeholder="Search by genre"
+            />
+      </div>
       <label htmlFor="sort-select" style={{ marginRight: '10px', fontWeight: 'bold' }}></label>
       <select
         id="sort-select"
