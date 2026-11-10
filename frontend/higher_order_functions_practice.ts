@@ -1,6 +1,25 @@
 import { userData } from "./data.ts"
 
-//Get a list of all users who are active and have a "vip" role.
+/* SORT compare function to remember
+
+const arr = [4, 5, 3, 1, 2, 6]
+
+const sorted = [...arr].sort((a, b) => b - a);
+
+function compareFn(a, b) {
+  if(a is less than b by some ordering criterion) {
+
+    return -1; // negative value indicates that 'a' should come before 'b'
+
+  }
+  else if (a is greater than b by the ordering criterion) {
+
+    return 1; // positive value indicates that 'b' should come before 'a'
+  }
+  // a must be equal to b
+  return 0;
+}
+*/
 
 //Define the nested order structure
 interface Order {
