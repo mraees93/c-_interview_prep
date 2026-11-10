@@ -190,3 +190,9 @@ If you have a child class inheriting from a parent class, the .NET runtime proce
 Private Data: Always use a raw Field (private string _name;).
 Public Data: Always use a Property—either an Auto-Property ({ get; set; }) for simple data, or a Full Property when you need custom guardrail logic.
 ⚠️ The Double-Backing Trap: Never combine an explicit private field with an auto-property { get; set; }. Doing so accidentally allocates two separate backing fields on the Warehouse Floor (the Heap)—your manual one and the hidden one the compiler automatically generates!
+
+---
+
+Whats a distributed monolith?
+
+A Distributed Monolith runs as separate microservices but behaves like a tightly coupled monolith, combining the network complexities of distributed systems with the rigidity of single-tier applications.
