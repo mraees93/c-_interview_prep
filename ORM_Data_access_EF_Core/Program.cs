@@ -214,12 +214,43 @@ class Program
 
         //List<string> emailAddresses = userData.Select(o => o.Email).ToList();
 
-        double vipTotalSpending = userData
-                                    .Where(u => u.Role == "vip")
-                                    .SelectMany(u => u.Orders) // equivalent = js .flatMap()
-                                    .Where(o => o.Status == "delivered" || o.Status == "processing")
-                                    .Sum(o => o.Total);
+        // double vipTotalSpending = userData
+        //                             .Where(u => u.Role == "vip")
+        //                             .SelectMany(u => u.Orders) // equivalent = js .flatMap()
+        //                             .Where(o => o.Status == "delivered" || o.Status == "processing")
+        //                             .Sum(o => o.Total);
 
-        System.Console.WriteLine(vipTotalSpending);
+        // System.Console.WriteLine(vipTotalSpending);
+
+
+        //int[] numsFixedSize = [10, 20, 30];
+
+        // best for performance and index mutation
+        // for (int i = 0; i < numsFixedSize.Length; i++)
+        // {
+        //     System.Console.WriteLine($"index: {i}, value: {numsFixedSize[i]}");    
+        // }
+
+        // cleanest for readonly access
+        // foreach (int value in numsFixedSize)
+        // {
+        //     System.Console.WriteLine($"value is: {value}");
+        // }
+
+        /* JAVA
+
+            int[] numsFixedSize = {10, 20, 30};
+
+            // best for performance and index mutation
+            for(int i = 0; i < numsFixedSize.length; i++) {
+                System.out.println("index: " + i + ", value: " + numsFixedSize[i]);
+            }
+
+            // best for readonly access (enhanced for-loop)
+            for(int value : numsFixedSize) {
+                System.out.println("value is: " + value);
+            }
+            
+        */
     }
 }

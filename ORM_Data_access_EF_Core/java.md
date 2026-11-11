@@ -301,3 +301,18 @@ int sumTotal = rawNumbers.stream()
 
     System.println.out(vipTotalSpending);
 ```
+
+```java
+
+    int[] numsFixedSize = {10, 20, 30};
+
+    // best for performance and index mutation
+    for(int i = 0; i < numsFixedSize.length; i++) {
+        System.out.println("index: " + i + ", value: " + numsFixedSize[i]);
+    }
+
+    // best for readonly access (enhanced for-loop)
+    for(int value : numsFixedSize) {
+        System.out.println("value is: " + value);
+    }
+```
