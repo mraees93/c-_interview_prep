@@ -89,11 +89,11 @@ most critical symptoms of a distributed monolith:
 
 ### 🟢 Core Intermediate Architectural Triggers
 
-#### 1. Monolith vs. Microservice Split
+#### 1. Monolith vs. Microservice, when to Split?
 * **When to Split:** Only split when a feature demands **drastically different scaling axes** (e.g., heavy CPU document parsing vs. low-idle billing) or when distinct **engineering teams require independent deployment cycles** without code dependency blocks.
 * **The Trade-off:** Microservices are not a free upgrade. You trade simple local code readability and fast in-memory execution for complex network latency, distributed partial failure states, and data consistency overhead.
 
-#### 2. Synchronous vs. Asynchronous Communication
+#### 2. Synchronous vs. Asynchronous Communication in microservices architecture?
 * **Synchronous (HTTP/gRPC):** Use strictly when Service A requires an **immediate, blocking response** from Service B to complete the current user action (e.g., checking if a credit card transaction cleared before showing a success screen).
 **Rule:** Use this when a service cannot proceed without an immediate response from another service. It is a "Request/Response" model.
 The Frontend-Gateway needs to fetch the raw ticket details from the Ticket-Service right now to render the screen for the user. If the network call fails or lags, the user sees a loading spinner or an error.
