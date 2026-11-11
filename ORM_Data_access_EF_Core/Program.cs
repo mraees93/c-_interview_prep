@@ -209,10 +209,10 @@ class Program
         // var count = highEanersQuery.Count();
         // foreach(var num in highEanersQuery) {Console.WriteLine(num);};
 
-        //-------------------------------
+        //------------------------------- userData must still be imported
 
 
-        //List<string> emailAddresses = userData.Select(o => o.Email).ToList();
+        // List<string> emailAddresses = userData.Select(o => o.Email).ToList();
 
         // double vipTotalSpending = userData
         //                             .Where(u => u.Role == "vip")
@@ -250,7 +250,7 @@ class Program
             for(int value : numsFixedSize) {
                 System.out.println("value is: " + value);
             }
-            
+
         */
     }
 }
