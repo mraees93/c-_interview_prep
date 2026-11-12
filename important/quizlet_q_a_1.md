@@ -128,9 +128,22 @@ It hands off object lifetime-management (T, S, S) to the DI container which prev
 IoC stands for Inversion of Control. It is the core architectural principle behind dependency injection, where control over object creation and lifecycles is inverted—handed over to a centralized engine like your Kitchen Cupboard Power Board (Program.cs) instead of individual classes creating their own resources.
 
 
-7.2. What are the 2 threats of thread-safety on the warehouse floor/heap?
+### 7.1.1 What is the difference between Concurrency and a Race Condition?
 
-Synchronous concurrency (microsecond collision): Threads/workers going to the same object/pallet at the exact same microsecond tring to mutate the data, bumping into each other. Crashing - causing a runtime error.
+* **Concurrency (The Master Kitchen Strategy):** The broad umbrella term for managing multiple tasks making progress over the same time window. It achieves this using either **Asynchronous Programming** or **Parallel Programming**. Concurrency is a good thing that keeps applications fast.
+* **Race Condition (The Data Crash):** A specific bug *caused* by unmanaged concurrency. It happens when two or more workers/threads access and mutate the exact same shared pallet on the **Warehouse Floor (Heap)** without proper guardrails, leading to corrupted data (via **asynchronous shift-swap mixups** or **synchronous microsecond collisions**).
+
+
+7.1.2 What are the 2 types of deadlocks (application freezes) in c#/dotnet?
+
+* **1. Sync-Over-Async Deadlock (Thread Pool Starvation):** Mixing synchronous blocking calls (like `.Result` or `.Wait()`) with asynchronous tasks. The request thread freezes waiting for the task to finish, while the finished task gets stuck waiting for a free Thread Pool worker to resume—exhausting the entire backroom crew under high traffic.
+* **2. Classic Mutex Deadlock (Nested Locks):** A circular standoff between two threads. Chef A locks the **Stove** and waits for the **Cutting Board**, while Chef B locks the **Cutting Board** and waits for the **Stove**. Neither lets go, freezing both execution tracks permanently.
+
+
+7.2. What are the 2 threats to thread-safety on the warehouse floor/heap?
+*(Alternative phrasing: "What are the 2 primary concurrency threats / types of race conditions when sharing objects on the Heap?")*
+
+Synchronous concurrency (microsecond collision): Threads/workers going to the same object/pallet at the exact same microsecond trying to mutate the data, bumping into each other. Crashing - causing a runtime error.
 
 Asynchronous interleaving (shift-swap mixup): Worker A walks up to a pallet, reads the inventory, and hits an await (pauses to wait for a forklift). Worker A steps out of the warehouse. While they are gone, Worker B alters the pallet. Worker A returns to finish their task, totally unaware the inventory changed behind their back.
 
