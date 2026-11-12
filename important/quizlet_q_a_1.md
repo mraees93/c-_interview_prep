@@ -135,7 +135,7 @@ Synchronous concurrency (microsecond collision): Threads/workers going to the sa
 Asynchronous interleaving (shift-swap mixup): Worker A walks up to a pallet, reads the inventory, and hits an await (pauses to wait for a forklift). Worker A steps out of the warehouse. While they are gone, Worker B alters the pallet. Worker A returns to finish their task, totally unaware the inventory changed behind their back.
 
 
-7.3. What are the 5 thread-safety tools?
+7.3. What are the 5 thread-safety tools used to prevent Race Conditions (Data Corruption)?
 
 private readonly _variable - only protects variable name from being re-allocated to another variable in another method. It only protects the object/pallets location reference, other threads/workers can still corrupt data with .Add() because the object is still mutable.
 
