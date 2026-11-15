@@ -10,7 +10,7 @@ LLM project:
 perfectly fine for portfolio project:
 
 Single-Module Monolith: handles the entire lifecycle of an LLM triage ticket under one roof.
-LLM project is a monolith with Layered architecture 
+LLM project is a monolith with Layered architecture - organizing folders by technical type (Controllers, Services, Models):
 
 📁 repo-root/
  ├── 📁 react-ui/
