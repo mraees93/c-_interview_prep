@@ -79,4 +79,35 @@ const vipTotal = userData
 
 //console.log(vipTotal);
 
-console.log(userData.every(user => user.email.startsWith("t")));
+//console.log(userData.every(user => user.email.startsWith("t")));
+
+
+/*
+Generate a list of profiles for active users only. Each profile must include the user's name 
+and a calculated metric called averageOrderValue (total value of all their orders divided by 
+the number of orders).
+• Edge Case: If an active user has no orders, their averageOrderValue should be 0.
+• Expected Output: An array/list of new objects containing only name and averageOrderValue.
+*/
+
+const getActiveUsers = () => {
+
+  const activeUsers = userData.filter(user => user["active"]);
+
+  const results = activeUsers.map((user) => {
+    const userOrders = user["orders"];
+    const totalOrderValue = userOrders.reduce((prev, curr) => prev + curr["total"], 0);
+
+    if(userOrders.length > 0) {
+      const averageOrderValue = totalOrderValue / userOrders.length;
+      return { name: user.name,  "averageOrderValue": averageOrderValue };
+
+    } else {
+
+      return { name: user.name,  "averageOrderValue": 0 }
+    }
+  })
+
+  return results;
+}
+console.log(getActiveUsers());
