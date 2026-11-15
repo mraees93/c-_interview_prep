@@ -69,4 +69,6 @@ using OOP_Basics.abstraction;
 // ChildPrinter printer = new ChildPrinter(); 
 // System.Console.WriteLine(printer);
 
-//prac_6
+//prac_7
+// Dog0 dog = new Dog0();
+// dog.Speak();
