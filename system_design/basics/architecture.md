@@ -256,6 +256,10 @@ When launching a new product, the biggest risk is not system scale—it is **mar
 
 # The Three Pillars of a Fault-Tolerant Microservice
 
+### Q: How do you prevent an API endpoint from hanging or crashing the whole server if a downstream microservice or database slows down?
+* **What they are testing:** Fault tolerance and async discipline.
+* **Answer:** First, I ensure we go `async/await` all the way down—never blocking threads with `.Result` or `.Wait()`, which causes Thread Pool Starvation. Second, I use a 3-step resilience pipeline: a **Timeout** to cut off individual slow requests, a **Circuit Breaker** (like Polly or Resilience4j) to trip and fail fast if errors spike, and a **Fallback** routine to serve cached or degraded data so the React UI stays responsive.
+
 When Service A (React App or Gateway) calls Service B (Java Backend), and Service B goes dark, you protect the system using three master patterns at your application switchboard:
 
 [ Cases API Controller ] ──(Calls)──> [ Document Storage Service ] ❌ (CRASHED!)
