@@ -2,6 +2,8 @@
 
 Normalization is the process of organizing data in a db to eliminate redundancy. Think of breaking down a large complex table into smaller tables while maintaining data relationships. It enhances data integrity which ensures that data remains consistent and accurate.
 
+normalization is essentially splitting a flat table into clean parent and child tables (using Primary and Foreign Keys) so each entity lives in one place without redundant data.
+
 ### Normal Forms
 
 There are six primary normal forms, but in practice, most systems aim for the third normal form (3NF).
@@ -10,13 +12,70 @@ If the interviewer asks about normalization, they are usually testing if you kno
 
 "We usually normalize to 3NF to ensure data integrity and avoid redundancy. Going further into 4NF or 5NF often makes the schema too complex and slows down performance due to the high number of joins required."
 
-| Normal Form | Main Rule Enforced | Problem Solved |
-| :--- | :--- | :--- |
-| **1NF (First)** | **Atomicity:** Each cell must contain a single, indivisible value; no repeating groups. | Eliminates multi-valued attributes and repeating columns. |
-| **2NF (Second)** | **Full Functional Dependency:** Every non-key column must depend on the entire primary key. | Removes partial dependencies (where data depends on only part of a composite key). |
-| **3NF (Third)** | **No Transitive Dependency:** Non-key columns must depend only on the primary key, not on other non-key columns. | Eliminates indirect relationships that cause redundant updates. |
-| **BCNF (3.5NF)** | **Determinant is Superkey:** Every determinant in a functional dependency must be a candidate key. | Fixes anomalies in tables with multiple overlapping candidate keys. |
 
+What is a "Non-Key Attribute"?
+
+A non-key attribute (or non-prime attribute) is simply any column in a table that is NOT part of the Primary Key (or any Candidate Key).
+Using your Orders table as a quick visual:
+• Orders (OrderID, OrderDate, CustomerID, CustomerCity)
+• Key Attribute: OrderID (the Primary Key).
+• Non-Key Attributes: OrderDate, CustomerID, and CustomerCity (regular data columns describing the row).
+
+
+How This Connects to Parent & Child Tables
+
+When you normalize, you look at those non-key attributes and ask: "Does this column actually describe the Primary Key of this table, or does it describe something else?"
+• OrderDate describes the OrderID ➔ Stays in the child table (Orders).
+• CustomerCity describes CustomerID (another non-key attribute) ➔ Gets moved out into its own parent table (Customers), leaving only CustomerID behind as a Foreign Key pointer.
+
+
+### 📐 Database Normalization (1NF – BCNF)
+
+| Normal Form | Main Rule Enforced | Problem Solved | Simple Example (Bad → Fix) |
+| :--- | :--- | :--- | :--- |
+| **1NF (First)** | **Atomicity:** Each cell must contain a single, indivisible value; no repeating groups. | Eliminates multi-valued attributes and repeating columns. | **Bad:** `Items = "Book, Pen"` or `Item1, Item2` on `Orders`.<br>**Fix:** Split each item into its own row in `OrderItems`. |
+| **2NF (Second)** | **Full Functional Dependency:** Every non-key column must depend on the *entire* primary key. | Removes partial dependencies (data depending on only part of a composite key). | **Bad:** On `OrderItems(OrderID, ProductID)`, `ProductName` only depends on `ProductID`.<br>**Fix:** Move `ProductName` to `Products`. |
+| **3NF (Third)** | **No Transitive Dependency:** Non-key columns must depend *only* on the primary key, not on other non-key columns. | Eliminates indirect relationships that cause redundant updates. | **Bad:** On `Orders(OrderID)`, `CustomerCity` depends on `CustomerID`, not `OrderID`.<br>**Fix:** Move `CustomerCity` to `Customers`. |
+| **BCNF (3.5NF)** | **Determinant is Superkey:** Every determinant in a functional dependency must be a candidate key. | Fixes anomalies in tables with multiple overlapping candidate keys. | **Bad:** `(StudentID, Subject) -> Teacher`, where each `Teacher` only teaches one `Subject` (`Teacher -> Subject`, yet `Teacher` isn't a key).<br>**Fix:** Split into `(StudentID, TeacherID)` and `(TeacherID, Subject)`. |
+
+#### 🧠 The 10-Second Memory Trick
+> *"Every non-key attribute must provide a fact about **the key** (1NF), **the whole key** (2NF), and **nothing but the key** (3NF)."*
+
+---
+
+### 🏗️ Schema Evolution: Before vs. After Normalization
+
+#### ❌ Before Normalization (Unnormalized Flat Table)
+* Everything is crammed into one table with repeating item columns and duplicated customer/product data.
+```sql
+-- RawOrders (OrderID, OrderDate, CustomerID, CustomerName, CustomerCity, Item1_ID, Item1_Name, Item1_Price, Item2_ID, Item2_Name, Item2_Price)
+```
+
+#### Step 1: Applying 1NF (Remove Repeating Groups)
+* Split `Item1` and `Item2` out into separate rows in `OrderItems`.
+```sql
+-- Orders (OrderID, OrderDate, CustomerID, CustomerName, CustomerCity)
+-- OrderItems (OrderID, ProductID, ProductName, Price, Quantity)
+```
+
+#### Step 2: Applying 2NF (Remove Partial Dependencies)
+* On `OrderItems`, `ProductName` and `Price` depend only on `ProductID` (not the full composite key `OrderID + ProductID`), so move them to `Products`.
+```sql
+-- Orders (OrderID, OrderDate, CustomerID, CustomerName, CustomerCity)
+-- OrderItems (OrderID, ProductID, Quantity)
+-- Products (ProductID, ProductName, Price)
+```
+
+#### ✅ Step 3: Applying 3NF (Final Normalized Schema — Remove Transitive Dependencies)
+* On `Orders`, `CustomerName` and `CustomerCity` depend on `CustomerID` (not `OrderID`), so move them to `Customers`.
+```sql
+-- Customers (CustomerID, CustomerName, CustomerCity)
+-- Orders (OrderID, OrderDate, CustomerID)
+-- Products (ProductID, ProductName, Price)
+-- OrderItems (OrderID, ProductID, Quantity)
+```
+
+---
 
 # Relational Database Relationships: Analogies & Structures
 
