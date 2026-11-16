@@ -26,3 +26,18 @@ THREE Core Entity Tables: Users, Roles, and Permissions
 2. Application-layer awareness: Mention that in Java/Spring (or any backend), you enforce this globally using an ORM filter (like Hibernate's @SQLRestriction("deleted_at IS NULL")) so developers don't accidentally forget WHERE DeletedAt IS NULL in manual queries.
 
 ---
+
+* **3: When would you choose a UUID/GUID over an auto-incrementing integer (`INT`/`BIGINT`) for a primary key?**
+
+  * **A:** UUIDs prevent ID enumeration in public APIs and allow distributed services to generate IDs without database collisions, while auto-incrementing integers keep clustered indexes smaller, sequential, and faster for heavy joins.
+
+* **3.1 Why do random UUIDs hurt clustered indexes?**
+
+* **Page Splits & Fragmentation (`UUIDv4` vs. `UUIDv7`):** Random `UUIDv4` inserts out of order, causing B-Tree page splits and bloating non-clustered indexes; time-ordered **`UUIDv7`** (or `NEWSEQUENTIALID()`) keeps inserts sequential.
+* **The Hybrid Pattern:** Use an internal **`BIGINT` clustered PK** for fast joins and expose a separate **`UUID`** for public REST APIs.
+
+
+
+
+
+
