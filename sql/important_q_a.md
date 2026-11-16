@@ -36,8 +36,35 @@ THREE Core Entity Tables: Users, Roles, and Permissions
 * **Page Splits & Fragmentation (`UUIDv4` vs. `UUIDv7`):** Random `UUIDv4` inserts out of order, causing B-Tree page splits and bloating non-clustered indexes; time-ordered **`UUIDv7`** (or `NEWSEQUENTIALID()`) keeps inserts sequential.
 * **The Hybrid Pattern:** Use an internal **`BIGINT` clustered PK** for fast joins and expose a separate **`UUID`** for public REST APIs.
 
+---
+
+#### 2. Normalization vs. Denormalization
+* **Q: Walk me through 1NF, 2NF, and 3NF using a simple example like an e-commerce `Orders` table.**
+  * **A:** Split repeating item groups into `OrderItems` (**1NF**), move product names/descriptions into a `Products` table so they don't depend on only part of a composite key (**2NF**), and move customer address details into a `Customers` table rather than storing them redundantly on every order (**3NF**).
 
 
 
 
 
+
+
+  
+
+TODO:
+
+* **Q: Can you give an example of when you would intentionally denormalize a table?**
+  * **A:** Store a snapshot of `UnitPriceAtPurchase` directly on the `OrderItems` row so historical invoices don't change when a product's current price updates, or pre-calculate summary totals for heavy reporting dashboards.
+
+#### 3. Indexing & Query Performance
+* **Q: A query filtering by `Status` and `CreatedDate` is taking 4 seconds on a table with 10 million rows. How do you fix it, and does column order in a composite index matter?**
+  * **A:** Add a composite non-clustered index, and **yes, column order matters**—put the equality filter (`Status`) first and the range filter (`CreatedDate`) second so the database engine can seek directly into the matching status slice before scanning the date range.
+
+* **Q: Why wouldn't we just put an index on every column in a table?**
+  * **A:** Every index consumes disk/memory and slows down `INSERT`, `UPDATE`, and `DELETE` operations because the database must update every B-Tree structure whenever data changes.
+
+#### 4. Data Integrity & Concurrency
+* **Q: What is the difference between an `INNER JOIN` and a `LEFT JOIN`, and how can a `WHERE` clause accidentally turn a `LEFT JOIN` into an `INNER JOIN`?**
+  * **A:** `INNER JOIN` returns only matching rows across both tables, while `LEFT JOIN` returns all rows from the left table plus matches from the right (or `NULL` if none exist). Filtering on a column from the right-hand table inside the `WHERE` clause (e.g., `WHERE right_table.status = 'Active'`) eliminates all `NULL` rows—that filter belongs in the `ON` clause instead.
+
+* **Q: Two users try to book the last available seat at the exact same millisecond. How do you prevent double-booking at the database level?**
+  * **A:** Wrap the check-and-update inside an **ACID transaction** using either **optimistic locking** (a `RowVersion` column that fails if modified concurrently) or **pessimistic locking** (`SELECT ... FOR UPDATE`).
