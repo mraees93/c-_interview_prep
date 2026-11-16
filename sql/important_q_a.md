@@ -15,3 +15,14 @@ THREE Core Entity Tables: Users, Roles, and Permissions
 
 * **1.1: What else might you add to those junction tables in a real enterprise system?**
 * **A:** Audit Metadata (keyword: "relationship metadata" (or "relationship attributes")): Adding columns like AssignedDate or AssignedByUserID directly onto the UserRoles junction table so compliance teams can track when and by whom a user was granted specific access rights.
+
+---
+
+* **Q: How do you handle soft deletes in a relational database, and what edge cases do they create with unique constraints?**
+  * **A:** Use an `IsDeleted` boolean or `DeletedAt` timestamp column instead of `DELETE`. A standard `UNIQUE` constraint on an email column will block a soft-deleted user from re-registering unless you use a filtered/partial unique index (`WHERE DeletedAt IS NULL`).
+
+*Bonus points:*
+1. Why you prefer DeletedAt over IsDeleted: Mention that you prefer DeletedAt because a nullable timestamp gives you both the active/deleted state and an audit trail of when the deletion happened in a single column.
+2. Application-layer awareness: Mention that in Java/Spring (or any backend), you enforce this globally using an ORM filter (like Hibernate's @SQLRestriction("deleted_at IS NULL")) so developers don't accidentally forget WHERE DeletedAt IS NULL in manual queries.
+
+---
