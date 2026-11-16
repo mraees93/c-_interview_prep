@@ -155,10 +155,12 @@ app.Run();
 
 If you discuss Singleton implementations with a senior architect panel, you must prove you understand their internal infrastructure risks:
 
+### Q: How can a Singleton break an app via Shared Mutable State?
 ### 💥 Trap 1: The Multi-Threaded State Corruption Knockout (Shared Mutable State)
 *   **The Disaster:** If your Singleton class stores mutable data configurations inside a standard collection (like a primitive `Dictionary<string, string>`), multiple concurrent background web request threads will attempt to write to that exact same reference address space at the same microsecond. This triggers immediate internal hash array corruption, throwing runtime collection errors or locking your host CPU registers to 100%.
 *   **The Fix:** Keep your Singleton component completely **stateless (read-only)**, or enforce internal thread safety by utilizing a native **`ConcurrentDictionary<K, V>`** to implement automatic, bucket-level lock striping under the hood.
 
+### ❓ Q: What is a Captive Dependency, and how do you safely resolve a Scoped or Transient service inside a Singleton?
 ### 💥 Trap 2: The Memory Leak Capture Knockout (Captive Dependencies)
 *   **The Disaster:** Injecting a short-lived service (like a Scoped Entity Framework Core `DbContext`) straight into the constructor of a long-lived Singleton service. Because your Singleton never dies for the entire lifecycle of the application process, it holds that `DbContext` instance hostage on the Heap forever, leaking database sockets and triggering an eventually fatal **Connection Pool Starvation** crash.
 *   **The Fix:** Never mix lifecycles via constructor injection. If a Singleton service absolutely must query the database runtime, inject an **`IServiceScopeFactory`** instead, allowing the code block to open a transient, micro-scoped boundary that disposes of the connection immediately upon method completion.
