@@ -1,13 +1,13 @@
 prac 1-4, 6, 7, 8, 9, 10, 13, 16, 19 - OCP, LSP, DIP violations with interface solutions
 
-prac_9, 11, 14, 17 - abstract class solutions with only OCP, LSP, DIP violations
+prac_9, 11, 14, 17, 20* - abstract class solutions with only OCP, LSP, DIP violations
 
 prac_19 onwards - LSP subtle behavioral violations
 
 
+20, 21 - still needs to be fixed
 
-
-prac 5, 12, 15, 18 - LSP, ISP, SRP violations
+prac 5, 12, 15, 18, 21* - LSP, ISP, SRP violations
 
 prac_15 BillingEngine should be refactored like prac_18 DocumentVerificationEngine
 
