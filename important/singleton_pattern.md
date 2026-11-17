@@ -159,6 +159,7 @@ If you discuss Singleton implementations with a senior architect panel, you must
 ### 💥 Trap 1: The Multi-Threaded State Corruption Knockout (Shared Mutable State)
 *   **The Disaster:** If your Singleton class stores mutable data configurations inside a standard collection (like a primitive `Dictionary<string, string>`), multiple concurrent background web request threads will attempt to write to that exact same reference address space at the same microsecond. This triggers immediate internal hash array corruption, throwing runtime collection errors or locking your host CPU registers to 100%.
 *   **The Fix:** Keep your Singleton component completely **stateless (read-only)**, or enforce internal thread safety by utilizing a native **`ConcurrentDictionary<K, V>`** to implement automatic, bucket-level lock striping under the hood.
+To keep a mutable singleton thread-safe, we can use any of the 5 thread-safety tools thats needed for that specific field
 
 ### ❓ Q: What is a Captive Dependency, and how do you safely resolve a Scoped or Transient service inside a Singleton?
 ### 💥 Trap 2: The Memory Leak Capture Knockout (Captive Dependencies)
