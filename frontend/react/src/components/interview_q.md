@@ -42,3 +42,38 @@ export default function SearchInput() {
 
 ### Q7: Why should the `useMemo` hook compute transformations instead of modifying the state directly?
 **A:** The `useMemo` hook should always treat local component state as a read-only, single source of truth. Overwriting your raw state array during filtering or sorting actions causes you to lose your baseline dataset, forcing expensive, redundant network re-fetches when a user clears a search input. By using `useMemo` to create a shallow copy and execute transformations on the fly, you preserve the original data matrix intact in memory, ensure blistering fast client-side updates, and keep the application state highly predictable.
+
+### Q8: Why should derived variables (like sorting an array) be placed *inside* `useMemo` rather than computed in the component body and passed into `useMemo` as a dependency?
+**A:** In JavaScript, methods like `[...data].sort()` create a brand-new array reference in memory on *every single render*. If you compute a derived variable in the main component body and pass it into `useMemo`'s dependency array, `useMemo` sees a new memory pointer on every render and recalculates anyway—completely defeating the purpose of memoization. Combining both filtering and sorting inside a single `useMemo` that depends directly on raw state (`[data, searchTerm, currentSort]`) guarantees true caching.
+
+### Q9: How does this immutable React `useMemo` filtering and sorting pattern compare to how we handle collections in a Java Spring Boot backend?
+**A:** Both ecosystems follow the exact same **functional immutability paradigm** to ensure predictability and thread safety. In React, we avoid mutating state arrays in-place by creating a shallow copy (`[...data]`) and chaining `.filter()` and `.sort()` inside `useMemo`. In **Java 8+**, instead of mutating a `List<Movie>` directly with loops or `Collections.sort()`, we convert the list into a **Java Stream** (`movies.stream().filter(...).sorted(...).toList()`). Just like React's `useMemo`, Java Streams leave the original source collection completely untouched and produce a fresh, transformed output collection.
+
+### Q10: What is the difference between `useMemo` and `useCallback`?
+**A:** Both hooks optimize performance by caching between renders, but they cache different things:
+* **`useMemo`** caches the **result (return value)** of an expensive calculation (like a filtered `processedMovies` array).
+* **`useCallback`** caches the **function definition itself** so it retains the exact same memory reference across renders. You use `useCallback` when passing callback functions down as props to child components wrapped in `React.memo`, preventing the child from re-rendering needlessly.
+
+### Q11: What is the difference between Controlled and Uncontrolled components in React?
+**A:** 
+* **Controlled Component:** Form input data is handled entirely by React state (`value={searchTerm}` + `onChange={handleSearch}`). React acts as the single source of truth, making instant validation and live search filtering trivial.
+* **Uncontrolled Component:** Form data is handled directly by the DOM itself, accessed via a **`useRef`** hook only when needed (e.g., on form submit). Uncontrolled inputs trigger zero re-renders while typing, making them useful for massive forms where live keystroke tracking isn't needed.
+
+### Q12: How would you reuse API fetching logic (`loading`, `error`, and `data` states) across multiple components without duplicating code?
+**A:** By extracting it into a **Custom Hook** (e.g., `useFetch<T>(url: string)`). Custom hooks let you encapsulate stateful `useState` and `useEffect` logic into a clean, reusable TypeScript function. Any component can then consume the endpoint in a single line (`const { data, isLoading, error } = useFetch<TMDBMovie[]>(url)`), keeping UI components focused strictly on rendering.
+
+### Q13: How do you prevent a runtime JavaScript error inside a child component from crashing the entire React application?
+**A:** By wrapping UI sections in a React **Error Boundary**. Error Boundaries catch unhandled rendering errors anywhere in their child component tree, log the error, and display a graceful fallback UI (e.g., *"Something went wrong loading this widget"*) instead of leaving the user with a blank white screen. *(Note: Error Boundaries still require a class component implementing `componentDidCatch` or a lightweight library like `react-error-boundary`).*
+
+### Q14: What is `React.memo`, and when should you use it (or avoid it)?
+**A:** `React.memo` is a Higher-Order Component that wraps a child component to prevent unnecessary re-renders. By default, when a parent component re-renders, React recursively re-renders all of its children—even if the child's props haven't changed. `React.memo` forces React to perform a **shallow comparison** of the child's props; if they are identical to the previous render, React skips rendering that child and reuses the last painted result.
+* **When to use it:** On pure, presentational child components that render frequently with the exact same props (like an individual `MovieCard` inside a 500-item list).
+* **When to avoid it:** On components whose props change on almost every render anyway, as the shallow comparison adds memory and CPU overhead for zero benefit. *(Note: Always pair `React.memo` with `useCallback` when passing function props, otherwise a new function reference breaks the shallow check).*
+
+### Q15: What is a Higher-Order Component (HOC), and how has its usage changed in modern React?
+**A:** A Higher-Order Component is an advanced design pattern where a **function takes a component as an argument and returns a brand-new, enhanced component** (e.g., `const ProtectedDashboard = withAuth(Dashboard)`). It was historically used to share cross-cutting logic like authentication checks, logging, or data fetching across multiple components.
+* **Modern Shift:** In modern React, **Custom Hooks** (`useAuth()`, `useFetch()`) have largely replaced HOCs for sharing stateful logic because hooks avoid "wrapper hell" (deeply nested component trees in React DevTools) and prevent prop name collisions. However, HOCs are still actively used for UI wrappers like `React.memo` or route-level permission guards.
+
+### Q16: What is Code Splitting (Lazy Loading) / Partial Rendering in React, and how does it improve performance?
+**A:** By default, bundlers like Vite or Webpack compile your entire React application into one massive JavaScript file. If a user visits the login page, they are forced to download the code for heavy admin dashboards and analytics charts they haven't even opened yet.
+* **The Solution:** **Code Splitting** breaks that single bundle into smaller chunks that load on demand. Using **`React.lazy()`** alongside **`<Suspense>`**, you can dynamically import heavy components only when the user actually navigates to them or clicks a tab, displaying a lightweight loading spinner in the meantime. This drastically reduces initial page load times.

@@ -12,12 +12,10 @@ How do React and Angular handle view updates under the hood, and how do you prev
 ### Core Answer
 *   **React (Virtual DOM)**: Updates a lightweight DOM copy in memory, runs a diffing algorithm, and patches altered elements in the real UI tree.
     *   *Optimization*: Use `React.memo` to skip child re-renders and wrap heavy routines in `useMemo` hooks.
-*   **Angular (Signal Graph)**: State signals map dependencies directly to their exact template micro-nodes via a fine-grained reactive graph.
-    *   *Optimization*: Changing a signal updates specific DOM elements directly in-place with zero tree-traversal overhead.
 
 ---
 
-## 2. Dynamic Rendering: Component Identification (`key` vs `track`)
+## 2. Dynamic Rendering: Component Identification (`key`)
 
 ### The Panel Scenario
 An interviewer hands you a component that loops over an array of court cases fetched from an API. If the array updates, the entire list visibly flashes and slow-scrolls.
@@ -27,23 +25,12 @@ An interviewer hands you a component that loops over an array of court cases fet
 {cases.map((item, index) => <CaseRow item={item} key={index} />)}
 ```
 
-### The Angular Code Smell (Legacy Directives)
-```html
-<div *ngFor="let item of cases; let i = index">{{ item.title }}</div>
-```
-
 ### Questions & Core Answers
 *   **Q1: Why is using the array index as a rendering pointer a major performance anti-pattern?**
     *   **Answer**: If the collection updates (e.g., an item is inserted at the top or sorted differently), the indexes shift. The framework gets confused and completely destroys and recreates every single DOM row instead of moving them.
 *   **The Refactored Fix (React)**: Always use a unique domain-specific identifier (like `item.CaseId`).
 ```tsx
 {cases.map((item) => <CaseRow item={item} key={item.CaseId} />)}
-```
-*   **The Refactored Fix (Angular - Modern Control Flow)**: Use the modern `@for` syntax block to declare the unique property constraint explicitly via the built-in `track` engine.
-```html
-@for (item of cases; track item.CaseId) {
-  <div>{{ item.title }}</div>
-}
 ```
 
 ---
@@ -64,14 +51,6 @@ useEffect(() => {
     }, 300);
     return () => clearTimeout(handler); // Clears previous pending timers on new keystrokes
 }, [searchTerm]);
-```
-*   **The Structural Blueprint (Angular - RxJS streams)**: Pipe the template event stream value directly through the `debounceTime(300)` and `distinctUntilChanged()` reactive operators before hitting the service layer.
-```typescript
-this.searchTerms.pipe(
-    debounceTime(300),          // Wait 300ms pause in typing
-    distinctUntilChanged(),     // Skip if query matches previous one
-    switchMap(term => this.citationService.search(term)) // Automatically cancels previous mid-flight requests
-).subscribe(results => this.citations = results);
 ```
 
 ---
@@ -115,14 +94,6 @@ useEffect(() => {
 // Since 'queryCount' is no longer directly accessed, it safely remains omitted from the dependency array.
 setQueryCount(prevCount => prevCount + 1);
 ```
-*   **The Angular Contrast (Class-Based Context)**: In Angular, class-based component properties belong to the class instance (`this`). Methods retain a constant, direct reference to the instance memory space via the `this` pointer, which naturally avoids closure-based stale value side effects.
-```typescript
-// Angular handles instance updates cleanly without closure isolation bugs
-queryCount = 0;
-startTimer() {
-    setInterval(() => { this.queryCount++; }, 1000);
-}
-```
 
 ---
 
@@ -140,69 +111,3 @@ useEffect(() => {
     return () => window.removeEventListener('resize', handleResize); // Cleanup
 }, []);
 ```
-*   **The Angular Cleanup Pattern**: Manually calling `.subscribe()` in an Angular component requires storing the subscription and executing an explicit tear-down inside the `ngOnDestroy` hook. However, the industry best practice is to leverage the **`async` pipe** in the template, which automatically handles subscription initialization, template change detection, and teardown operations.
-```html
-<!-- The Async Pipe Pattern: Zero manual lifecycle code required in TypeScript file -->
-<div *ngIf="documentStream$ | async as doc">
-  <h3>{{ doc.Title }}</h3>
-</div>
-```
-
----
-
-## 7. Angular RxJS Stream Management vs. Promises
-
-### The Panel Question
-Why does Angular rely so heavily on RxJS Observables instead of standard JavaScript Promises for HTTP operations and form events?
-
-### Core Answer
-*   **Promises (Single & Eager)**: A Promise represents a single asynchronous value that executes immediately upon creation (eager). Once it starts executing over the network, it cannot be easily cancelled.
-*   **Observables (Streams & Lazy)**: An Observable represents a continuous stream of events over time that executes only when a consumer actively subscribes to it (lazy). 
-
-### The LexisNexis Performance Advantage
-Observables are highly advantageous for high-density document search portals because they support **mid-flight cancellation**. If a user triggers a heavy legal search query and immediately types a new keyword or switches tabs, the application can use reactive operators to cancel the previous HTTP request instantly, saving server processing power and browser thread capacity.
-
-```typescript
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-
-@Component({
-  selector: 'app-citation-search',
-  template: `
-    <input (input)="onType($event)" placeholder="Search legal citations..." />
-  `
-})
-export class CitationSearchComponent implements OnInit, OnDestroy {
-  private searchTerms = new Subject<string>();
-  private subscription!: Subscription;
-
-  constructor(private http: HttpClient) {}
-
-  ngOnInit(): void {
-    this.subscription = this.searchTerms.pipe(
-      // 1. Wait for 300ms of user silence before emitting
-      debounceTime(300),
-      // 2. Only emit if the current term is different from the last
-      distinctUntilChanged(),
-      // 3. Cancel previous active HTTP request if a new one arrives mid-flight
-      switchMap(term => this.http.get(`https://lexis.com{term}`))
-    ).subscribe({
-      next: (results) => console.log('Search Results:', results),
-      error: (err) => console.error('Search Error:', err)
-    });
-  }
-
-  onType(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.searchTerms.next(input.value);
-  }
-
-  ngOnDestroy(): void {
-    // Prevent memory leaks by cleaning up the active stream pipeline
-    this.subscription.unsubscribe();
-  }
-}
-```
-
