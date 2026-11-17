@@ -209,3 +209,12 @@ Public Data: Always use a Property—either an Auto-Property ({ get; set; }) for
 Whats a distributed monolith?
 
 A Distributed Monolith runs as separate microservices but behaves like a tightly coupled monolith, combining the network complexities of distributed systems with the rigidity of single-tier applications.
+
+
+What are the 3 steps to follow for a fault-tolerant microservice
+
+1. Timeout (individual request level) - Every external network call gets a strict timer (e.g. 2 secs). If a dependency fails to answer before the timer dings, the thread instantly drops request and records failure.
+
+2. The circuit breaker (System traffic level) - This traffic cop monitors the step 1 scorecard. If requests fail repeatedly (e.g 5x in a row) the breaker trips open, cuts the power line forcing all future requests to fail instantly without wasting CPU cycles on a dead network path.
+
+3. The Fallback (User Experience Level) - Whether an individual request timed out (Step 1) or the circuit breaker blocked it (Step 2), the execution flow safely lands here. The code returns a static, default, or cached payload so the React frontend stays up and displays a graceful offline or maintenance layout instead of a raw crash screen.
