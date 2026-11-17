@@ -79,26 +79,29 @@ export default function Movies () {
     fetchMovies();
   }, [])
   
-  const visibleMovies = currentSort === "original" ? data : [...data].sort(SORT_METHODS[currentSort]);
-
-  // TODO: Add sorting functionality for crucial performance, use debounce pattern as well
+  // TODO: Add debounce pattern
   const processedMovies = useMemo<TMDBMovie[]>(() => {
       const userSearch = genreSearchTerm.toLowerCase().trim();
 
-      let result = [...visibleMovies];
+      let result = [...data];
 
-      if(!userSearch) return result;
+      if(userSearch) {
+        result = result.filter((movie) => {
+          if(!movie.genre_ids) return false;
 
-      return result.filter((movie) => {
-        if(!movie.genre_ids) return false;
-
-        return movie.genre_ids.some((id) => {
-          const genreName = TMDBGenre[id]?.toLowerCase() || '';
-          return genreName.includes(userSearch);
+          return movie.genre_ids.some((id) => {
+            const genreName = TMDBGenre[id]?.toLowerCase() || '';
+            return genreName.includes(userSearch);
+          })
         })
-      })
+      }
+
+      if(currentSort !== "original" && SORT_METHODS[currentSort]) {
+        result.sort(SORT_METHODS[currentSort]);
+      }
       
-  }, [visibleMovies, genreSearchTerm]);
+      return result;
+  }, [data, genreSearchTerm, currentSort]);
   
   const handleGenreSearch = (event: ChangeEvent<HTMLInputElement>) => {
       setGenreSearchTerm(event.target.value);
@@ -107,14 +110,14 @@ export default function Movies () {
   return (
     <div>
       <div>
-            <label htmlFor="search-by-genre">Search by genre:</label>
-            <input
-                id="search-by-genre"
-                type="text"
-                value={genreSearchTerm}
-                onChange={handleGenreSearch}
-                placeholder="Search by genre"
-            />
+        <label htmlFor="search-by-genre">Search by genre:</label>
+          <input
+            id="search-by-genre"
+            type="text"
+            value={genreSearchTerm}
+            onChange={handleGenreSearch}
+            placeholder="Search by genre"
+          />
       </div>
       <label htmlFor="sort-select" style={{ marginRight: '10px', fontWeight: 'bold' }}></label>
       <select
@@ -147,7 +150,7 @@ export default function Movies () {
             : 
 
             (
-              visibleMovies.map((movie: TMDBMovie) => 
+              processedMovies.map((movie: TMDBMovie) => 
               <div key = {movie.id}>
                 {movie.poster_path ? (
                   <img
