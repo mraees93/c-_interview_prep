@@ -165,6 +165,13 @@ To keep a mutable singleton thread-safe, we can use any of the 5 thread-safety t
 ### 💥 Trap 2: The Memory Leak Capture Knockout (Captive Dependencies)
 *   **The Disaster:** Injecting a short-lived service (like a Scoped Entity Framework Core `DbContext`) straight into the constructor of a long-lived Singleton service. Because your Singleton never dies for the entire lifecycle of the application process, it holds that `DbContext` instance hostage on the Heap forever, leaking database sockets and triggering an eventually fatal **Connection Pool Starvation** crash.
 *   **The Fix:** Never mix lifecycles via constructor injection. If a Singleton service absolutely must query the database runtime, inject an **`IServiceScopeFactory`** instead, allowing the code block to open a transient, micro-scoped boundary that disposes of the connection immediately upon method completion.
+
+### ❓ Q: When does a Captive Dependency cause Connection Pool Starvation?
+* **Connection Pool Starvation (The Direct Hit):** Happens when a Singleton traps a `DbContext` or database service forever, preventing the DI container from calling `.Dispose()`—leaving database sockets dangling open or corrupted under concurrent traffic until all 100 loading docks run dry.
+
+### ❓ Q: When does a Captive Dependency cause Thread Pool Starvation?
+* **Thread Pool Starvation (The Domino Effect):** Happens when incoming threads pile up and synchronously block (via `.Result`, hung sockets, or emergency `lock` blocks) while waiting in line to use that single captured resource—draining all available chefs from the backroom.
+
 *  **When:** are you forced to use an explicit `IServiceScopeFactory` to generate runtime boundaries inside a Singleton within two primary enterprise patterns:
 1. **Background Tasks & Daemons (`IHostedService`):** Long-running background infrastructure threads are Singletons. To communicate with short-lived database boundaries (`DbContext`) without causing thread contention or memory exhaustion, they must generate an isolated runtime scope per processing tick block.
 2. **Message Queue Listeners (Event Processing Tiers):** Asynchronous brokers (RabbitMQ/Kafka listeners) maintain continuous connection loops as Singletons. When a message payload drops, the handler requires a fresh, atomic sandbox boundary to safely instantiate Transient processors or Scoped state managers per message context.
