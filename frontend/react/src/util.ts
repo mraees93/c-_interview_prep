@@ -19,3 +19,9 @@ export enum TMDBGenre {
   War = 10752,
   Western = 37
 }
+/*
+Reverse mapping. Accessing by number gives you the string key (TMDBGenre[37] → "Western")
+
+Reverse mapping only works for numeric enums. If you ever change the 
+values to strings, TMDBGenre["37"] will return undefined.
+*/
