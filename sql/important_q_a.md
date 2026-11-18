@@ -54,6 +54,7 @@ TODO:
 
 * **Q: Can you give an example of when you would intentionally denormalize a table?**
   * **A:** Store a snapshot of `UnitPriceAtPurchase` directly on the `OrderItems` row so historical invoices don't change when a product's current price updates, or pre-calculate summary totals for heavy reporting dashboards.
+  * **Why:** Normalization prioritizes write consistency, whereas intentional denormalization protects historical immutability (freezing values at the time of a transaction) and pre-calculates aggregates—trading extra write-maintenance complexity for faster, join-free reads on heavy dashboards.
 
 #### 3. Indexing & Query Performance
 * **Q: A query filtering by `Status` and `CreatedDate` is taking 4 seconds on a table with 10 million rows. How do you fix it, and does column order in a composite index matter?**
