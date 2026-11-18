@@ -59,6 +59,9 @@ TODO:
 #### 3. Indexing & Query Performance
 * **Q: A query filtering by `Status` and `CreatedDate` is taking 4 seconds on a table with 10 million rows. How do you fix it, and does column order in a composite index matter?**
   * **A:** Add a composite non-clustered index, and **yes, column order matters**—put the equality filter (`Status`) first and the range filter (`CreatedDate`) second so the database engine can seek directly into the matching status slice before scanning the date range.
+* **Leftmost Prefix Rule & "Equality First, Range Second":**
+  * Composite indexes `(A, B, C)` are sorted strictly left-to-right—the engine can seek on `(A)`, `(A, B)`, or `(A, B, C)`, but cannot seek if a leading column is skipped (e.g., querying only `B` or `C`).
+  * **Equality First, Range Second:** A range filter (`>`, `<`, `BETWEEN`) halts B-Tree seeking for every column to its right, so always place `=` columns before range columns.
 
 * **Q: Why wouldn't we just put an index on every column in a table?**
   * **A:** Every index consumes disk/memory and slows down `INSERT`, `UPDATE`, and `DELETE` operations because the database must update every B-Tree structure whenever data changes.
