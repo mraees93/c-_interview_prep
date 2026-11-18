@@ -16,6 +16,18 @@ Focuses on performance, memory profiles, disk reads, and debugging.
 
 ---
 
+* **Leftmost Prefix Rule & "Equality First, Range Second":**
+  * Composite indexes `(A, B, C)` are sorted strictly left-to-right—the engine can seek on `(A)`, `(A, B)`, or `(A, B, C)`, but cannot seek if a leading column is skipped (e.g., querying only `B` or `C`).
+  * **Equality First, Range Second:** A range filter (`>`, `<`, `BETWEEN`) halts B-Tree seeking for every column to its right, so always place `=` columns before range columns.
+
+---
+
+* **Q: You have a single-column non-clustered index on `CreatedDate`. Why might `SELECT * FROM Orders WHERE CreatedDate >= '2026-01-01'` still trigger a slow Clustered Index Scan instead of an Index Seek?**
+  * **A:** Even though the range filter is sargable, `SELECT *` forces a **Key Lookup** for every matched row—if the date range matches too many rows (crossing the optimizer's **Tipping Point**), thousands of random Key Lookups become slower than a single sequential Clustered Index Scan.
+  * **Summary:** A sargable range filter on a single non-clustered index performs a fast **Index Seek**, unless un-covered columns (`SELECT *`) across a wide range trigger too many **Key Lookups**, forcing the optimizer to fall back to a **Clustered Index Scan** (fixable with a Covering Index).
+
+---
+
 ## 1. Core Mechanics: Scan vs. Seek
 
 When troubleshooting database latency, your primary task is identifying how the storage engine traverses data pages.
