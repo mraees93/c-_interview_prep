@@ -8,6 +8,9 @@ In a relational database, **Locks** prevent data corruption by ensuring multiple
 
 Just like the backend application layer, a SQL database engine uses execution units driven by Operating System processing tracks. Inside the SQL engine, these are formally called **Worker Threads**.
 
+• Connection Pool Starvation: Your C#/Java app runs out of network sockets to reach SQL.
+• SQL Worker Thread Exhaustion: SQL Server itself runs out of internal CPU worker threads to execute your queries.
+
 ### 🚨 The Gotcha: Worker Thread Exhaustion
 Just like .NET or Java has a Thread Pool backroom, the SQL database engine maintains its own internal **Worker Thread Pool** (typically capped at 512 to 1,024 threads depending on the server hardware). 
 
