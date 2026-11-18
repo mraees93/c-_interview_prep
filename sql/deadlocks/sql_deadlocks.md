@@ -37,7 +37,7 @@ To save system memory, if a single query triggers more than **5,000 distinct row
 
 ---
 
-## ⚡ The Three Common Deadlock Scenarios
+## ⚡ The Three Common Deadlock Scenarios & Fixes
 
 ### Scenario 1: The Cyclic Update Standoff (Alternating Access)
 * **The Trap:** Two parallel queries updating the same two tables in an unaligned order.
@@ -46,6 +46,9 @@ To save system memory, if a single query triggers more than **5,000 distinct row
   2. Transaction 2 updates Table B (Locks Row B).
   3. Transaction 1 tries to update Table B ──> *Blocks (Waiting for Trans 2)*.
   4. Transaction 2 tries to update Table A ──> *💥 DEADLOCK Standoff!*
+* **The Fix (Force Strict Order of Execution):** Enforce a team-wide rule that tables must *always* be updated in the exact same sequence across every repository and stored procedure (e.g., Always modify `Orders` before `OrderDetails`).
+
+---
 
 ### Scenario 2: The Table Scan Escalation (Missing Indexes)
 * **The Trap:** Running a basic `UPDATE` statement on a column that lacks an index.
@@ -54,6 +57,9 @@ To save system memory, if a single query triggers more than **5,000 distinct row
   2. Transaction 2 runs an update without an index: `WHERE Status = 'Pending'`.
   3. Because there is no index, Transaction 2 is forced to run a **Table Scan**, sweeping the entire warehouse floor.
   4. As Transaction 2 scans across the floor, it hits Row 10 (Locked by Trans 1) and blocks. Simultaneously, its massive scan has already locked rows Trans 1 needs to finish. *💥 DEADLOCK!*
+* **The Fix (Cover with Pinpoint Indexes):** Ensure every column used inside a `WHERE` clause for updates/deletes has a selective index. This forces the SQL engine to use isolated **Row Locks** instead of sweeping **Table Scans**.
+
+---
 
 ### Scenario 3: Read-Committed Conversion (Shared to Exclusive)
 * **The Trap:** Reading a row first, doing logic, and then updating that exact same row under heavy parallel traffic.
@@ -62,26 +68,17 @@ To save system memory, if a single query triggers more than **5,000 distinct row
   2. Transaction 2 reads Row A using a **Shared Lock (S)** simultaneously.
   3. Transaction 1 wants to update Row A, trying to convert its lock to an **Exclusive Lock (X)** ──> *Blocks (Waiting for Trans 2 to drop its Shared Lock)*.
   4. Transaction 2 wants to update Row A, trying to convert its lock to an **Exclusive Lock (X)** ──> *💥 DEADLOCK Standoff!*
+* **The Fix (Upfront Lock Hints, RCSI, or Read-Past):**
+  1. **Acquire an Update Lock Upfront (`WITH (UPDLOCK)`):** When reading a row you *know* you are about to update, use `SELECT ... WITH (UPDLOCK)` so Transaction 2 waits politely at the door instead of grabbing a conflicting Shared Lock.
+  2. **Enable Read Committed Snapshot Isolation (RCSI):** Database-level setting that lets readers read row versions from `tempdb` without placing Shared Locks at all.
+  3. **Bypass Locks for Reporting (`WITH (NOLOCK)` / `WITH (READPAST)`):** For background stats or queue workers that don't need strict locking, skip locked rows entirely:
+  ```sql
+  -- Read rows cleanly without waiting for other workers to release locks
+  SELECT * FROM Cases WITH (NOLOCK);
 
----
-
-## 📋 The Architectural Remedies
-
-### 1. Cover with Pinpoint Indexes
-* **How it works:** Ensure every column used inside a `WHERE` clause for updates/deletes has a selective index. This forces the engine to use isolated **Row Locks** instead of sweeping **Table Scans**.
-
-### 2. Force Strict Order of Execution
-* **How it works:** Enforce a rule across the entire development team that tables must *always* be updated in the exact same sequence (e.g., Always modify `Orders` before `OrderDetails`).
-
-### 3. Read Past Locked Data (`READPAST` / `NOLOCK`)
-* **How it works:** If a background worker is just reading data for stats and doesn't care about absolute microsecond accuracy, use isolation hints to bypass locks entirely:
-```sql
--- Read rows cleanly without waiting for other workers to release locks
-SELECT * FROM Cases WITH (NOLOCK);
-
--- Skip any pallets currently locked by another worker entirely
-SELECT * FROM Queue WITH (READPAST);
-```
+  -- Skip any pallets currently locked by another worker entirely
+  SELECT * FROM Queue WITH (READPAST);
+  ```
 
 ---
 
