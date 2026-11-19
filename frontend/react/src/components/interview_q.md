@@ -65,6 +65,10 @@ export default function SearchInput() {
 ### Q13: How do you prevent a runtime JavaScript error inside a child component from crashing the entire React application?
 **A:** By wrapping UI sections in a React **Error Boundary**. Error Boundaries catch unhandled rendering errors anywhere in their child component tree, log the error, and display a graceful fallback UI (e.g., *"Something went wrong loading this widget"*) instead of leaving the user with a blank white screen. *(Note: Error Boundaries still require a class component implementing `componentDidCatch` or a lightweight library like `react-error-boundary`).*
 
+Error boundaries catch Errors in rendering, Lifecycle methods, Constructors of class components.
+Error boundaries *DONT* catch Event handlers (use try/catch inside them), Asynchronous code (e.g., setTimeout, Promises), Server-side rendering (SSR) errors
+
+
 ### Q14: What is `React.memo`, and when should you use it (or avoid it)?
 **A:** `React.memo` is a Higher-Order Component that wraps a child component to prevent unnecessary re-renders. By default, when a parent component re-renders, React recursively re-renders all of its children—even if the child's props haven't changed. `React.memo` forces React to perform a **shallow comparison** of the child's props; if they are identical to the previous render, React skips rendering that child and reuses the last painted result.
 * **When to use it:** On pure, presentational child components that render frequently with the exact same props (like an individual `MovieCard` inside a 500-item list).
