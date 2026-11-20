@@ -76,3 +76,11 @@ TODO:
 
 * **Q: Two users try to book the last available seat at the exact same millisecond. How do you prevent double-booking at the database level?**
   * **A:** Wrap the check-and-update inside an **ACID transaction** using either **optimistic locking** (a `RowVersion` column that fails if modified concurrently) or **pessimistic locking** (`SELECT ... FOR UPDATE`).
+
+Concurrency in databases is simply how the engine manages multiple users or threads reading and modifying the exact same data at the exact same time without corrupting it (preventing race conditions like lost updates or double-bookings).
+
+In a distributed backend (like multiple Java/Spring Boot instances running behind a load balancer), an in-memory synchronized block or C# lock only protects threads on one server instance—it won't stop Server A and Server B from double-booking at the same time. Pushing that concurrency control down to the database solves it across every server instance at once.
+
+* **Pessimistic Locking ("Lock First"):** Uses `SELECT ... FOR UPDATE` (or `WITH (UPDLOCK)`) to block other transactions until commit—best for **high contention** (e.g., flash sales) to prevent retry storms.
+* **Optimistic Locking ("Verify at Commit"):** Uses a `Version` column (`WHERE Version = @OldVersion`) to reject stale overwrites without holding locks—best for **low contention** where conflicts are rare.
+* **Atomic Conditional Update:** Combines the check and decrement into one `UPDATE ... WHERE AvailableSeats > 0` query, letting the database's built-in row write lock prevent double-booking in a single step.
