@@ -67,7 +67,7 @@ TODO:
   * **A:** Every index consumes disk/memory and slows down `INSERT`, `UPDATE`, and `DELETE` operations because the database must update every B-Tree structure whenever data changes.
 
 #### 4. Data Integrity & Concurrency
-* **Q: What is the difference between an `INNER JOIN` and a `LEFT JOIN`, and how can a `WHERE` clause accidentally turn a `LEFT JOIN` into an `INNER JOIN`?**
+* **Q: What is the difference between an INNER JOIN and a LEFT JOIN, and how can a WHERE clause turn a LEFT JOIN into an INNER JOIN ?**
   * **A:** `INNER JOIN` returns only matching rows across both tables, while `LEFT JOIN` returns all rows from the left table plus matches from the right (or `NULL` if none exist). Filtering on a column from the right-hand table inside the `WHERE` clause (e.g., `WHERE right_table.status = 'Active'`) eliminates all `NULL` rows—that filter belongs in the `ON` clause instead.
 
 * **Q: Two users try to book the last available seat at the exact same millisecond. How do you prevent double-booking at the database level?**
