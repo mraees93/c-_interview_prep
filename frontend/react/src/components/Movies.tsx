@@ -40,6 +40,7 @@ export default function Movies () {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentSort, setCurrentSort] = useState<string>("original");
   const [genreSearchTerm, setGenreSearchTerm] = useState<string>('');
+  const [debouncedGenreSearchTerm, setDebouncedGenre] = useState<string>('');
 
   useEffect(()=> {
     const fetchMovies = async () => {
@@ -79,9 +80,17 @@ export default function Movies () {
     fetchMovies();
   }, [])
   
-  // TODO: Add debounce pattern
+  // debounce effect: waits 300ms after the last keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedGenre(genreSearchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer); //cleanup cancels the previous timer if the user types again before 300ms
+  }, [genreSearchTerm]);
+  
   const processedMovies = useMemo<TMDBMovie[]>(() => {
-      const userSearch = genreSearchTerm.toLowerCase().trim();
+      const userSearch = debouncedGenreSearchTerm.toLowerCase().trim();
 
       let result = [...data];
 
@@ -101,7 +110,7 @@ export default function Movies () {
       }
       
       return result;
-  }, [data, genreSearchTerm, currentSort]);
+  }, [data, debouncedGenreSearchTerm, currentSort]);
   
   const handleGenreSearch = (event: ChangeEvent<HTMLInputElement>) => {
       setGenreSearchTerm(event.target.value);
@@ -114,7 +123,7 @@ export default function Movies () {
           <input
             id="search-by-genre"
             type="text"
-            value={genreSearchTerm}
+            value={genreSearchTerm} // not debouncedGenreSearchTerm so the user sees their letters appear in the box instantly without lag
             onChange={handleGenreSearch}
             placeholder="Search by genre"
           />

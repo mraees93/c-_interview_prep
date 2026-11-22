@@ -4,6 +4,8 @@
 **A:** Right now, our `useMemo` array processor re-evaluates the entire 500-record array matrix on *every single keystroke*. While modern machines can handle 500 entries smoothly, typing rapidly can still waste valuable CPU cycles. 
 * **The Optimization:** In a production-grade application, I would introduce an **input debounce mechanism** (typically using a 300ms window via a timer or a library like Lodash). This stalls processing until the user pauses their typing, executing the filter matrix exactly once instead of 10 times.
 
+Debouncing and Throttling are two distinct rate-limiting patterns, not different names for the same thing.
+
 ```tsx
 export default function SearchInput() {
   const [searchTerm, setSearchTerm] = useState<string>('');
