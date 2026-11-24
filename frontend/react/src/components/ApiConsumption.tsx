@@ -22,6 +22,7 @@ export default function ApiConsumption() {
     useEffect(() => {
         const fetchComments = async () => {
             try{
+                setError(null); // defensive coding for future changes: 1. If you add a "Retry" button that calls fetchData() again after an error. 2. If you add a dependency to useEffect (like a page or searchQuery state) so fetchData re-runs automatically later. 3. In React Strict Mode (Development), where React mounts, unmounts, and re-runs useEffect twice on startup to catch side-effect bugs.
                 setIsLoading(true);
 
                 const response = await fetch("https://jsonplaceholder.typicode.com/comments");
