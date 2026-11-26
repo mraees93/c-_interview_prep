@@ -1,5 +1,5 @@
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ChangeEvent as changeEvent } from 'react';
 import './ApiConsumption.css';
 
 interface CommentLog {
@@ -51,20 +51,56 @@ export default function Practice() {
 
     const toggleSort = () => setSortDirection(prev => prev === "ASC" ? "DESC" : "ASC"); 
 
-    // const processedComments = useMemo<CommentLog[]>(() => {
-    //     const search = searchTerm.toLowerCase().trim();
-    //     const isAsc = sortDirection === "ASC";
-    // })
+    const processedComments = useMemo<CommentLog[]>(() => {
+        const search = searchTerm.toLowerCase().trim();
+        const isAsc = sortDirection === "ASC";
+
+        let result = [...data];
+        if(search) {
+            result = result.filter(item => {
+                const nameMatch = item.name ? item.name.toLowerCase().includes(search) : false;
+                const emailMatch = item.email ? item.email.toLowerCase().includes(search) : false;
+                return nameMatch || emailMatch;
+            })
+        }
+
+        return result.sort((a, b) => isAsc ? a.id - b.id : b.id - a.id);
+    }, [data, sortDirection, searchTerm]);
+
+    const handleSearch = (event: changeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
+    }
 
     return (
         <div>
+            <div>
+                <label htmlFor='search'>Filter comments:</label>
+                <input
+                    id='search'
+                    type='text'
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    placeholder='Search by name or email...'
+                />
+                <button onClick={toggleSort}>
+                    Sort by: {sortDirection === "ASC" ? "oldest" : "newest"}
+                </button>
+            </div>
             {isLoading && <div>Fetching data...</div>}
             {error && <div>{error}</div>}
-            {data.length === 0 
-                ? <p>No comments available</p>
+            {!isLoading && !error && processedComments.length === 0 
+                ? <p>No comments found</p>
                 : <div>
                     {
-                        data.map((comment) => <div key={comment.id}>{comment.name}</div>)
+                        processedComments.map((comment) => 
+                        <div key={comment.id}>
+                            {comment.id}
+                            {" "}
+                            {comment.name}
+                            {" "}
+                            {comment.email}
+                        </div>
+                        )
                     }
                 </div>
             }
